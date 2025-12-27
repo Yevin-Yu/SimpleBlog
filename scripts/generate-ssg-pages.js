@@ -1,10 +1,21 @@
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { resolve, join, relative } from 'path';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
+import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+const SITE_CONFIG = {
+  name: '耶温博客',
+  url: process.env.SITE_URL || 'https://your-blog-domain.com',
+  locale: 'zh_CN',
+};
+
+const SEO_CONFIG = {
+  defaultImage: '/og-image.jpg',
+};
 
 const markdownRenderer = new MarkdownIt({
   html: true,
@@ -22,94 +33,10 @@ const markdownRenderer = new MarkdownIt({
   },
 });
 
-function parseFrontmatter(markdown) {
-  const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-  const match = markdown.match(frontmatterRegex);
 
-  if (!match) {
-    return {
-      frontmatter: {
-        title: 'Untitled',
-        date: new Date().toISOString().split('T')[0],
-      },
-      content: markdown,
-    };
-  }
-
-  const [, frontmatterText, content] = match;
-  const frontmatter = {
-    title: 'Untitled',
-    date: new Date().toISOString().split('T')[0],
-  };
-
-  for (const line of frontmatterText.split('\n')) {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex > 0) {
-      const key = line.slice(0, colonIndex).trim();
-      const value = line.slice(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
-      frontmatter[key] = value;
-    }
-  }
-
-  return { frontmatter, content };
-}
-
-function generateIdFromFilename(filename) {
-  return filename
-    .replace(/\.md$/, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function generateIdFromPath(relativePath) {
-  const normalizedPath = relativePath.replace(/\\/g, '/');
-  const pathParts = normalizedPath.split('/');
-
-  if (pathParts.length === 1) {
-    return generateIdFromFilename(pathParts[0]);
-  }
-
-  let id = pathParts
-    .join('/')
-    .replace(/\.md$/, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9/]+/g, '-')
-    .replace(/\/+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-
-  return id || 'untitled';
-}
-
-function extractCategoryFromPath(relativePath) {
-  const normalizedPath = relativePath.replace(/\\/g, '/');
-  const pathParts = normalizedPath.split('/');
-
-  if (pathParts.length <= 1) {
-    return '';
-  }
-
-  return pathParts.slice(0, -1).join('/');
-}
-
-function getAllBlogFiles(dir, fileList = []) {
-  const files = readdirSync(dir);
-
-  for (const file of files) {
-    const filePath = join(dir, file);
-    const stat = statSync(filePath);
-
-    if (stat.isDirectory()) {
-      getAllBlogFiles(filePath, fileList);
-    } else if (file.endsWith('.md')) {
-      fileList.push(filePath);
-    }
-  }
-
-  return fileList;
-}
-
+/**
+ * HTML 转义
+ */
 function escapeHtml(text) {
   if (!text) return '';
   return text
@@ -120,6 +47,9 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+/**
+ * 从 HTML 内容中提取资源路径
+ */
 function getAssetPaths(indexHtmlContent) {
   const scriptMatch = indexHtmlContent.match(/src="([^"]+)"/);
   const linkMatch = indexHtmlContent.match(/href="([^"]+\.css)"/);
@@ -130,9 +60,11 @@ function getAssetPaths(indexHtmlContent) {
   };
 }
 
+/**
+ * 渲染博客内容为 HTML
+ */
 function renderBlogContent(blog, blogContent) {
   const htmlContent = markdownRenderer.render(blogContent);
-  
   const categoryHtml = blog.category
     ? `<span class="blog-tree-article-category">${escapeHtml(blog.category)}</span>`
     : '';
@@ -156,53 +88,131 @@ function renderBlogContent(blog, blogContent) {
     </main>`;
 }
 
+/**
+ * 生成结构化数据（Schema.org JSON-LD）
+ */
+function generateStructuredData(blog) {
+  const blogUrl = `${SITE_CONFIG.url}/blog/${blog.id}`;
+  const imageUrl = blog.image 
+    ? (blog.image.startsWith('http') ? blog.image : `${SITE_CONFIG.url}${blog.image}`)
+    : `${SITE_CONFIG.url}${SEO_CONFIG.defaultImage}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: blog.description || blog.title,
+    image: imageUrl,
+    datePublished: blog.date,
+    dateModified: blog.modifiedTime || blog.date,
+    author: {
+      '@type': 'Person',
+      name: SITE_CONFIG.name,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_CONFIG.url}/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': blogUrl,
+    },
+  };
+}
+
+/**
+ * 生成博客 HTML 页面
+ */
 function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const title = blog.title || 'Untitled';
   const description = blog.description || blog.title || '耶温博客文章';
   const category = blog.category || '';
+  const blogUrl = `${SITE_CONFIG.url}/blog/${blog.id}`;
+  const imageUrl = blog.image 
+    ? (blog.image.startsWith('http') ? blog.image : `${SITE_CONFIG.url}${blog.image}`)
+    : `${SITE_CONFIG.url}${SEO_CONFIG.defaultImage}`;
+  
+  const keywords = category 
+    ? `耶温博客,${escapeHtml(category)},${escapeHtml(title)}`
+    : `耶温博客,${escapeHtml(title)}`;
+
+  const structuredData = generateStructuredData(blog);
+  const structuredDataJson = JSON.stringify(structuredData, null, 2);
 
   const renderedContent = renderBlogContent(blog, blogContent);
 
   let html = indexHtmlContent
-    .replace(
-      /<title>.*?<\/title>/,
-      `<title>${escapeHtml(title)} - 耶温博客</title>`
-    )
+    .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)} - 耶温博客</title>`)
     .replace(
       /<meta name="description" content="[^"]*" \/>/,
       `<meta name="description" content="${escapeHtml(description)}" />`
     )
     .replace(
       /<meta name="keywords" content="[^"]*" \/>/,
-      `<meta name="keywords" content="耶温博客,${escapeHtml(category)}" />`
+      `<meta name="keywords" content="${escapeHtml(keywords)}" />`
     )
     .replace(
       /<link rel="canonical" href="[^"]*" \/>/,
-      `<link rel="canonical" href="https://your-blog-domain.com/blog/${blog.id}" />`
+      `<link rel="canonical" href="${blogUrl}" />`
+    )
+    .replace(
+      /<\/head>/,
+      `    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="${escapeHtml(title)}" />
+    <meta property="og:description" content="${escapeHtml(description)}" />
+    <meta property="og:url" content="${blogUrl}" />
+    <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:site_name" content="${SITE_CONFIG.name}" />
+    <meta property="og:locale" content="${SITE_CONFIG.locale}" />
+    <meta property="article:published_time" content="${blog.date}" />
+    ${blog.modifiedTime ? `    <meta property="article:modified_time" content="${blog.modifiedTime}" />` : ''}
+    ${category ? `    <meta property="article:section" content="${escapeHtml(category)}" />` : ''}
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escapeHtml(title)}" />
+    <meta name="twitter:description" content="${escapeHtml(description)}" />
+    <meta name="twitter:image" content="${imageUrl}" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">${structuredDataJson}</script>
+  </head>`
     )
     .replace(
       /<div id="root"><\/div>/,
       `<div id="root">${renderedContent}</div>`
     );
 
+  return adjustAssetPaths(html, assetPaths);
+}
+
+/**
+ * 调整资源路径为相对路径
+ */
+function adjustAssetPaths(html, assetPaths) {
   if (assetPaths.script) {
     const scriptPath = assetPaths.script.replace(/^\//, '');
-    const relativeScriptPath = '../../' + scriptPath;
+    const relativeScriptPath = `../../${scriptPath}`;
     html = html.replace(assetPaths.script, relativeScriptPath);
   }
 
   if (assetPaths.stylesheet) {
     const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
-    const relativeStylesheetPath = '../../' + stylesheetPath;
+    const relativeStylesheetPath = `../../${stylesheetPath}`;
     html = html.replace(assetPaths.stylesheet, relativeStylesheetPath);
   }
 
-  html = html.replace(/([^:])\.\.\/\//g, '$1../');
-
-
-  return html;
+  return html.replace(/([^:])\.\.\/\//g, '$1../');
 }
 
+/**
+ * 生成静态站点页面
+ */
 async function generateSSGPages() {
   try {
     const distPath = resolve(__dirname, '../dist');
@@ -213,29 +223,21 @@ async function generateSSGPages() {
     const indexHtmlContent = readFileSync(indexHtmlPath, 'utf-8');
     const assetPaths = getAssetPaths(indexHtmlContent);
 
-    const blogFiles = getAllBlogFiles(blogsSourcePath);
+    const blogMetas = loadAllBlogs(blogsSourcePath);
     const blogs = [];
 
-    for (const filePath of blogFiles) {
+    for (const blogMeta of blogMetas) {
       try {
+        const filePath = resolve(blogsSourcePath, blogMeta.relativePath);
         const content = readFileSync(filePath, 'utf-8');
-        const { frontmatter, content: markdownContent } = parseFrontmatter(content);
-        
-        const relativePath = relative(blogsSourcePath, filePath).replace(/\\/g, '/');
-        const id = generateIdFromPath(relativePath);
-        const categoryFromPath = extractCategoryFromPath(relativePath);
-        const category = frontmatter.category || categoryFromPath || undefined;
+        const { content: markdownContent } = parseFrontmatter(content);
 
         blogs.push({
-          id: id || 'untitled',
-          title: frontmatter.title,
-          date: frontmatter.date,
-          category,
-          description: frontmatter.description,
+          ...blogMeta,
           content: markdownContent,
         });
       } catch (error) {
-        console.error(`Error parsing blog file: ${filePath}`, error);
+        console.error(`Error loading blog content: ${blogMeta.id}`, error);
       }
     }
 

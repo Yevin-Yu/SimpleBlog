@@ -3,8 +3,8 @@ title: TypeScript 类型系统深入理解
 date: 2024-02-01
 category: 技术
 description: 全面解析TypeScript类型系统，包括基础类型、接口、泛型等核心概念和实践技巧。
+id: vks686wa
 ---
-
 # TypeScript 类型系统深入理解
 
 TypeScript 的类型系统是其最强大的特性之一，提供了静态类型检查，帮助我们在开发阶段发现错误。

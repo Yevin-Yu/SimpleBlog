@@ -19,6 +19,18 @@ const extractCategoryFromPath = (filePath: string): string => {
   return pathParts.slice(blogsIndex + 1, -1).join('/');
 };
 
+/**
+ * 规范化 ID，确保符合 URL 安全格式
+ */
+const sanitizeId = (id: string): string => {
+  return id
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
 const generateIdFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
@@ -44,13 +56,37 @@ const loadBlogsFromFiles = (): {
 } => {
   const blogList: BlogItem[] = [];
   const blogContents: Record<string, BlogContent> = {};
+  const usedIds = new Set<string>();
+
+  const generateUniqueId = (baseId: string): string => {
+    let id = baseId;
+    let counter = 1;
+    
+    while (usedIds.has(id)) {
+      id = `${baseId}-${counter}`;
+      counter++;
+    }
+    
+    usedIds.add(id);
+    return id;
+  };
 
   for (const [path, content] of Object.entries(blogModules)) {
     try {
-      const id = generateIdFromPath(path);
       const { frontmatter, content: markdownContent } = parseFrontmatter(content as string);
       const categoryFromPath = extractCategoryFromPath(path);
       const category = frontmatter.category || categoryFromPath || undefined;
+      
+      const baseId = frontmatter.id 
+        ? sanitizeId(frontmatter.id)
+        : generateIdFromPath(path);
+
+      if (!baseId) {
+        logger.error(`无法生成博客ID: ${path}`);
+        continue;
+      }
+
+      const id = generateUniqueId(baseId);
 
       blogList.push({
         id,

@@ -26,6 +26,7 @@ function BlogTree() {
     setSidebarVisible(false);
   };
 
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -53,8 +54,7 @@ function BlogTree() {
             {sidebarVisible ? '✕' : '☰'}
           </button>
           <Link to={ROUTES.HOME} className="blog-tree-mobile-home-button">
-            <span>⌂</span>
-            <span>首页</span>
+            首页
           </Link>
         </div>
         <nav className="blog-tree-desktop-nav">

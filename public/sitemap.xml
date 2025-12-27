@@ -1,42 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-  <!-- 首页 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://your-blog-domain.com/</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- 博客列表页 -->
   <url>
     <loc>https://your-blog-domain.com/blog</loc>
     <lastmod>2025-12-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-  
-  <!-- 博客文章 -->
   <url>
-    <loc>https://your-blog-domain.com/blog/1</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://your-blog-domain.com/blog/2</loc>
+    <loc>https://your-blog-domain.com/blog/iscsw1sa</loc>
     <lastmod>2024-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://your-blog-domain.com/blog/3</loc>
+    <loc>https://your-blog-domain.com/blog/vks686wa</loc>
     <lastmod>2024-02-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/tnt6gduo</loc>
+    <lastmod>2025-01-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/xn6ayng3</loc>
+    <lastmod>2025-01-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/gxzi0ldn</loc>
+    <lastmod>2025-01-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/3tlvqxfm</loc>
+    <lastmod>2025-01-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/5idgji60</loc>
+    <lastmod>2025-01-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/vfqw0305</loc>
+    <lastmod>2025-01-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/i0gputwh</loc>
+    <lastmod>2024-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/4h8lfg0m</loc>
+    <lastmod>2025-01-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://your-blog-domain.com/blog/o3qdumnl</loc>
+    <lastmod>2025-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>

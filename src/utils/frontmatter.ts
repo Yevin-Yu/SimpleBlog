@@ -3,6 +3,7 @@ export interface Frontmatter {
   date: string;
   category?: string;
   description?: string;
+  id?: string;
   [key: string]: string | undefined;
 }
 

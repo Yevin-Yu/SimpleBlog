@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBlogList, getBlogContent } from '../utils/blog.service';
 import { groupBlogsByCategory } from '../utils/blog.utils';
@@ -23,6 +23,7 @@ export function useBlogTree(): UseBlogTreeReturn {
   const [loading, setLoading] = useState(true);
   const [contentLoading, setContentLoading] = useState(false);
   const loadingRef = useRef(false);
+  const selectedBlogRef = useRef<SelectedBlog | null>(null);
 
   const loadBlogs = useCallback(async () => {
     try {
@@ -59,9 +60,20 @@ export function useBlogTree(): UseBlogTreeReturn {
         content: blogData.content,
       };
 
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      const prevBlog = selectedBlogRef.current;
+      const isSameBlog = 
+        prevBlog?.id === newBlog.id &&
+        prevBlog?.title === newBlog.title &&
+        prevBlog?.content === newBlog.content &&
+        prevBlog?.date === newBlog.date &&
+        prevBlog?.category === newBlog.category;
+
+      if (!isSameBlog) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        setSelectedBlog(newBlog);
+        selectedBlogRef.current = newBlog;
+      }
       
-      setSelectedBlog(newBlog);
       requestAnimationFrame(() => {
         setContentLoading(false);
         loadingRef.current = false;
@@ -129,12 +141,23 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, [id, categories, navigate, loadBlogContent]);
 
-  return {
-    categories,
-    selectedBlog,
-    loading,
-    contentLoading,
-    toggleCategory,
-    handleBlogClick,
-  };
+  const stableSelectedBlog = useMemo(() => selectedBlog, [
+    selectedBlog?.id,
+    selectedBlog?.title,
+    selectedBlog?.content,
+    selectedBlog?.date,
+    selectedBlog?.category,
+  ]);
+
+  return useMemo(
+    () => ({
+      categories,
+      selectedBlog: stableSelectedBlog,
+      loading,
+      contentLoading,
+      toggleCategory,
+      handleBlogClick,
+    }),
+    [categories, stableSelectedBlog, loading, contentLoading, toggleCategory, handleBlogClick]
+  );
 }

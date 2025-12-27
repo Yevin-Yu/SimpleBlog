@@ -143,6 +143,20 @@
   }
 }
 
+.blog-tree-footer-wrapper {
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.blog-tree-footer-wrapper.footer-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.blog-tree-footer-wrapper.footer-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 @media (max-width: 1200px) {
   .blog-tree-content {
     margin-right: 0;

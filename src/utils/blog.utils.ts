@@ -60,6 +60,9 @@ const hasContent = (category: BlogCategory): boolean => {
   return category.blogs.length > 0 || (category.children?.length ?? 0) > 0;
 };
 
+/**
+ * 分类排序函数
+ */
 const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   const aHasContent = hasContent(a);
   const bHasContent = hasContent(b);
@@ -68,6 +71,9 @@ const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   return a.name.localeCompare(b.name, 'zh-CN');
 };
 
+/**
+ * 按日期倒序排序博客
+ */
 const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
   return new Date(b.date).getTime() - new Date(a.date).getTime();
 };

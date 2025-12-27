@@ -84,19 +84,16 @@ function CategoryItem({
         <div
           className={`blog-tree-category-content ${isExpanded ? 'expanded' : 'collapsed'}`}
         >
-        {category.blogs.map((blog) => {
-          const handleClick = () => onBlogClick(blog.id);
-          return (
-            <div
-              key={blog.id}
-              className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
-              onClick={handleClick}
-              style={{ paddingLeft: `${ITEM_INDENT_BASE + level * INDENT_STEP}px` }}
-            >
-              <span className="blog-tree-item-title">{blog.title}</span>
-            </div>
-          );
-        })}
+        {category.blogs.map((blog) => (
+          <div
+            key={blog.id}
+            className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
+            onClick={() => onBlogClick(blog.id)}
+            style={{ paddingLeft: `${ITEM_INDENT_BASE + level * INDENT_STEP}px` }}
+          >
+            <span className="blog-tree-item-title">{blog.title}</span>
+          </div>
+        ))}
         {hasChildren && category.children?.map((child) => (
           <CategoryItem
             key={child.name}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { MarkdownRenderer } from '../MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines';
 import { Footer } from '../Footer';
@@ -27,7 +27,7 @@ const LoadingOverlay = () => (
   </div>
 );
 
-export function BlogTreeContent({
+function BlogTreeContentComponent({
   selectedBlog,
   loading,
 }: BlogTreeContentProps) {
@@ -38,13 +38,19 @@ export function BlogTreeContent({
   const [isVisible, setIsVisible] = useState(true);
   const isInitialMount = useRef(true);
   const prevBlogIdRef = useRef<string | null>(selectedBlog?.id || null);
+  const prevSelectedBlogRef = useRef<SelectedBlog | null>(selectedBlog);
 
   useEffect(() => {
+    const currentBlogId = selectedBlog?.id ?? null;
+    const prevBlogId = prevBlogIdRef.current;
+    const prevBlog = prevSelectedBlogRef.current;
+
     if (isInitialMount.current) {
       isInitialMount.current = false;
       if (selectedBlog) {
         setDisplayBlog(selectedBlog);
-        prevBlogIdRef.current = selectedBlog.id;
+        prevBlogIdRef.current = currentBlogId;
+        prevSelectedBlogRef.current = selectedBlog;
       }
       return;
     }
@@ -53,8 +59,18 @@ export function BlogTreeContent({
       return;
     }
 
-    const currentBlogId = selectedBlog?.id ?? null;
-    const prevBlogId = prevBlogIdRef.current;
+    const isSameBlog = 
+      currentBlogId === prevBlogId &&
+      currentBlogId !== null &&
+      prevBlog !== null &&
+      selectedBlog !== null &&
+      selectedBlog.id === prevBlog.id &&
+      selectedBlog.title === prevBlog.title &&
+      selectedBlog.content === prevBlog.content;
+
+    if (isSameBlog || selectedBlog === prevBlog) {
+      return;
+    }
 
     if (selectedBlog) {
       if (currentBlogId !== prevBlogId) {
@@ -62,6 +78,7 @@ export function BlogTreeContent({
         setTimeout(() => {
           setDisplayBlog(selectedBlog);
           prevBlogIdRef.current = currentBlogId;
+          prevSelectedBlogRef.current = selectedBlog;
           containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
           requestAnimationFrame(() => {
             setIsVisible(true);
@@ -69,11 +86,13 @@ export function BlogTreeContent({
         }, FADE_TRANSITION_DELAY_MS);
       } else {
         setDisplayBlog(selectedBlog);
+        prevSelectedBlogRef.current = selectedBlog;
         setIsVisible(true);
       }
     } else {
       setIsVisible(false);
       prevBlogIdRef.current = null;
+      prevSelectedBlogRef.current = null;
       setTimeout(() => {
         setDisplayBlog(null);
       }, FADE_TRANSITION_DELAY_MS);
@@ -119,8 +138,40 @@ export function BlogTreeContent({
             )}
           </div>
         </article>
-        <Footer />
+        <div className={`blog-tree-footer-wrapper ${loading ? 'footer-hidden' : 'footer-visible'}`}>
+          <Footer />
+        </div>
       </div>
     </main>
   );
 }
+
+export const BlogTreeContent = memo(BlogTreeContentComponent, (prevProps, nextProps) => {
+  const prevId = prevProps.selectedBlog?.id ?? null;
+  const nextId = nextProps.selectedBlog?.id ?? null;
+  const prevLoading = prevProps.loading;
+  const nextLoading = nextProps.loading;
+  
+  if (prevId !== nextId) {
+    return false;
+  }
+  
+  if (prevLoading !== nextLoading) {
+    return false;
+  }
+  
+  if (prevId === null && nextId === null) {
+    return true;
+  }
+  
+  if (prevProps.selectedBlog && nextProps.selectedBlog) {
+    return (
+      prevProps.selectedBlog.title === nextProps.selectedBlog.title &&
+      prevProps.selectedBlog.content === nextProps.selectedBlog.content &&
+      prevProps.selectedBlog.date === nextProps.selectedBlog.date &&
+      prevProps.selectedBlog.category === nextProps.selectedBlog.category
+    );
+  }
+  
+  return true;
+});

@@ -3,8 +3,8 @@ title: Vue3 Composition API 深入理解
 date: 2025-01-17
 category: 技术/前端/Vue
 description: 深入理解 Vue3 Composition API 的设计理念和使用方法
+id: gxzi0ldn
 ---
-
 # Vue3 Composition API 深入理解
 
 ## 什么是 Composition API
