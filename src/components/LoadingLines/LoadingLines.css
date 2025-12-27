@@ -1,0 +1,35 @@
+.blog-tree-loading-lines {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-line {
+  width: 12px;
+  height: 1.5px;
+  background: var(--color-text);
+  border-radius: 0.75px;
+  opacity: 0.3;
+  animation: loading-line-sweep 1.8s ease-in-out infinite;
+}
+
+.loading-line:nth-child(1) { animation-delay: 0s; }
+.loading-line:nth-child(2) { animation-delay: 0.08s; }
+.loading-line:nth-child(3) { animation-delay: 0.16s; }
+.loading-line:nth-child(4) { animation-delay: 0.24s; }
+.loading-line:nth-child(5) { animation-delay: 0.32s; }
+.loading-line:nth-child(6) { animation-delay: 0.4s; }
+
+@keyframes loading-line-sweep {
+  0% { opacity: 0.3; transform: scaleX(0.6); }
+  15% { opacity: 1; transform: scaleX(1); }
+  30% { opacity: 0.3; transform: scaleX(0.6); }
+  50% { opacity: 0.3; transform: scaleX(0.6); }
+  65% { opacity: 0.3; transform: scaleX(0.6); }
+  80% { opacity: 1; transform: scaleX(1); }
+  95% { opacity: 0.3; transform: scaleX(0.6); }
+  100% { opacity: 0.3; transform: scaleX(0.6); }
+}
+

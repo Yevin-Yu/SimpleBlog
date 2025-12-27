@@ -1,0 +1,121 @@
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-page);
+  padding: var(--spacing-xl);
+  padding-bottom: calc(var(--spacing-xl) + 60px);
+  position: relative;
+}
+
+.home > .site-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+  z-index: 2;
+}
+
+.home-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-container {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.home-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.home-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 300;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 0;
+}
+
+.home-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-light);
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+.home-nav {
+  display: flex;
+  justify-content: center;
+}
+
+.home-nav-button {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 300;
+  letter-spacing: 0;
+  border-radius: 0;
+  position: relative;
+  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease;
+}
+
+.home-nav-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: var(--color-text);
+  transition: width 0.3s ease;
+}
+
+.home-nav-button:hover {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.home-nav-button:hover::after {
+  width: 100%;
+}
+
+.home-nav-button:active {
+  opacity: 0.6;
+}
+
+.home-nav-button:active::after {
+  width: 80%;
+}
+
+@media (max-width: 768px) {
+  .home-title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .home-subtitle {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -1,0 +1,35 @@
+:root {
+  /* 极简配色 */
+  --color-text: #1a1a1a;
+  --color-text-light: #666666;
+  --color-text-lighter: #999999;
+  --color-border: #e5e5e5;
+  --color-bg: #ffffff;
+  --color-bg-page: #fafafa;
+  --color-accent: #1a1a1a;
+
+  /* 间距 */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* 字体 */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+
+  /* 布局 */
+  --sidebar-width: 240px;
+  --content-max-width: 700px;
+
+  /* 过渡动画 */
+  --transition-fast: 0.15s;
+  --transition-base: 0.3s;
+}
