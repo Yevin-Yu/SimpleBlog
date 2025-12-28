@@ -1,5 +1,6 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { LoadingLines } from '../LoadingLines';
+import { BlogSearchModal } from '../BlogSearchModal';
 import type { BlogCategory } from '../../types';
 import './BlogTreeSidebar.css';
 
@@ -55,11 +56,8 @@ function CategoryItem({
     onToggleCategory(currentPath);
   }, [onToggleCategory, currentPath]);
 
-  /** 缩进基础值 */
   const INDENT_BASE = 16;
-  /** 每级缩进增量 */
   const INDENT_STEP = 16;
-  /** 博客项缩进基础值 */
   const ITEM_INDENT_BASE = 32;
 
   return (
@@ -119,28 +117,67 @@ export function BlogTreeSidebar({
   onBlogClick,
   visible = true,
 }: BlogTreeSidebarProps) {
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
   return (
-    <aside className={`blog-tree-sidebar ${visible ? 'sidebar-visible' : 'sidebar-hidden'}`}>
-      <div className="blog-tree-header">
-        <h2 className="blog-tree-title">文章列表</h2>
-      </div>
-      {loading ? (
-        <div className="blog-tree-loading">
-          <LoadingLines />
+    <>
+      <aside className={`blog-tree-sidebar ${visible ? 'sidebar-visible' : 'sidebar-hidden'}`}>
+        <div className="blog-tree-header">
+          <div className="blog-tree-header-top">
+            <h2 className="blog-tree-title">文章列表</h2>
+            <button
+              className="blog-tree-search-button"
+              onClick={() => setIsSearchModalOpen(true)}
+              aria-label="搜索文章"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M14 14L10.5 10.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-      ) : (
-        <nav className="blog-tree-nav">
-          {categories.map((category) => (
-            <CategoryItem
-              key={category.name}
-              category={category}
-              selectedBlogId={selectedBlogId}
-              onToggleCategory={onToggleCategory}
-              onBlogClick={onBlogClick}
-            />
-          ))}
-        </nav>
-      )}
-    </aside>
+        {loading ? (
+          <div className="blog-tree-loading">
+            <LoadingLines />
+          </div>
+        ) : (
+          <nav className="blog-tree-nav">
+            {categories.map((category) => (
+              <CategoryItem
+                key={category.name}
+                category={category}
+                selectedBlogId={selectedBlogId}
+                onToggleCategory={onToggleCategory}
+                onBlogClick={onBlogClick}
+              />
+            ))}
+          </nav>
+        )}
+      </aside>
+      <BlogSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onBlogClick={onBlogClick}
+      />
+    </>
   );
 }

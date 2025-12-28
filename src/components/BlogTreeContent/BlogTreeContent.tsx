@@ -10,7 +10,6 @@ interface BlogTreeContentProps {
   loading: boolean;
 }
 
-/** 淡入淡出动画延迟时间（毫秒） */
 const FADE_TRANSITION_DELAY_MS = 150;
 
 const SkeletonLoader = () => (
@@ -72,10 +71,12 @@ function BlogTreeContentComponent({
       return;
     }
 
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
     if (selectedBlog) {
       if (currentBlogId !== prevBlogId) {
         setIsVisible(false);
-        setTimeout(() => {
+        timer = setTimeout(() => {
           setDisplayBlog(selectedBlog);
           prevBlogIdRef.current = currentBlogId;
           prevSelectedBlogRef.current = selectedBlog;
@@ -93,10 +94,16 @@ function BlogTreeContentComponent({
       setIsVisible(false);
       prevBlogIdRef.current = null;
       prevSelectedBlogRef.current = null;
-      setTimeout(() => {
+      timer = setTimeout(() => {
         setDisplayBlog(null);
       }, FADE_TRANSITION_DELAY_MS);
     }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
   }, [selectedBlog, loading]);
 
   if (!displayBlog) {

@@ -19,9 +19,6 @@ const extractCategoryFromPath = (filePath: string): string => {
   return pathParts.slice(blogsIndex + 1, -1).join('/');
 };
 
-/**
- * 规范化 ID，确保符合 URL 安全格式
- */
 const sanitizeId = (id: string): string => {
   return id
     .trim()
@@ -122,8 +119,24 @@ export async function getBlogList(): Promise<BlogItem[]> {
 export async function getBlogContent(id: string): Promise<BlogContent> {
   const content = blogContents[id];
   if (!content) {
-    throw new Error(`博客内容不存在: ${id}`);
+    const error = new Error(`博客内容不存在: ${id}`);
+    logger.error('获取博客内容失败', error);
+    throw error;
   }
   return content;
+}
+
+export interface BlogSearchItem extends BlogItem {
+  description?: string;
+}
+
+export async function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
+  return blogList.map((blog) => {
+    const content = blogContents[blog.id];
+    return {
+      ...blog,
+      description: content?.description,
+    };
+  });
 }
 

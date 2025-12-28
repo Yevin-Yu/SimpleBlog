@@ -141,23 +141,15 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, [id, categories, navigate, loadBlogContent]);
 
-  const stableSelectedBlog = useMemo(() => selectedBlog, [
-    selectedBlog?.id,
-    selectedBlog?.title,
-    selectedBlog?.content,
-    selectedBlog?.date,
-    selectedBlog?.category,
-  ]);
-
   return useMemo(
     () => ({
       categories,
-      selectedBlog: stableSelectedBlog,
+      selectedBlog,
       loading,
       contentLoading,
       toggleCategory,
       handleBlogClick,
     }),
-    [categories, stableSelectedBlog, loading, contentLoading, toggleCategory, handleBlogClick]
+    [categories, selectedBlog, loading, contentLoading, toggleCategory, handleBlogClick]
   );
 }

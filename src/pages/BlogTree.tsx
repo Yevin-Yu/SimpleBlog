@@ -26,7 +26,6 @@ function BlogTree() {
     setSidebarVisible(false);
   };
 
-
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
