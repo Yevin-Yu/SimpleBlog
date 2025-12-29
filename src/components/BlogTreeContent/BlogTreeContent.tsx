@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, memo } from 'react';
 import { MarkdownRenderer } from '../MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines';
 import { Footer } from '../Footer';
+import { fixElementsWidth, restoreElementsWidth } from '../../utils/dom.utils';
 import type { SelectedBlog } from '../../types';
 import './BlogTreeContent.css';
 
@@ -10,7 +11,10 @@ interface BlogTreeContentProps {
   loading: boolean;
 }
 
-const FADE_TRANSITION_DELAY_MS = 150;
+const TRANSITION_DELAY = {
+  FADE: 150,
+  WIDTH_RESTORE: 200,
+} as const;
 
 const SkeletonLoader = () => (
   <div className="blog-tree-article-skeleton">
@@ -58,7 +62,7 @@ function BlogTreeContentComponent({
       return;
     }
 
-    const isSameBlog = 
+    const isSameBlog =
       currentBlogId === prevBlogId &&
       currentBlogId !== null &&
       prevBlog !== null &&
@@ -75,16 +79,39 @@ function BlogTreeContentComponent({
 
     if (selectedBlog) {
       if (currentBlogId !== prevBlogId) {
+        const container = containerRef.current;
+        const page = document.querySelector('.blog-tree-page') as HTMLElement;
+        const elements = [container, page, document.body];
+        
+        if (container) {
+          container.scrollTop = 0;
+        }
+        
+        const fixedWidths = fixElementsWidth(elements);
         setIsVisible(false);
+        
         timer = setTimeout(() => {
+          if (container) {
+            container.scrollTop = 0;
+          }
+          
           setDisplayBlog(selectedBlog);
           prevBlogIdRef.current = currentBlogId;
           prevSelectedBlogRef.current = selectedBlog;
-          containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+          
           requestAnimationFrame(() => {
-            setIsVisible(true);
+            requestAnimationFrame(() => {
+              if (container) {
+                container.scrollTop = 0;
+              }
+              setIsVisible(true);
+              
+              setTimeout(() => {
+                restoreElementsWidth(elements);
+              }, TRANSITION_DELAY.WIDTH_RESTORE);
+            });
           });
-        }, FADE_TRANSITION_DELAY_MS);
+        }, TRANSITION_DELAY.FADE);
       } else {
         setDisplayBlog(selectedBlog);
         prevSelectedBlogRef.current = selectedBlog;
@@ -96,7 +123,7 @@ function BlogTreeContentComponent({
       prevSelectedBlogRef.current = null;
       timer = setTimeout(() => {
         setDisplayBlog(null);
-      }, FADE_TRANSITION_DELAY_MS);
+      }, TRANSITION_DELAY.FADE);
     }
 
     return () => {
@@ -153,32 +180,28 @@ function BlogTreeContentComponent({
   );
 }
 
-export const BlogTreeContent = memo(BlogTreeContentComponent, (prevProps, nextProps) => {
+const arePropsEqual = (
+  prevProps: BlogTreeContentProps,
+  nextProps: BlogTreeContentProps
+): boolean => {
   const prevId = prevProps.selectedBlog?.id ?? null;
   const nextId = nextProps.selectedBlog?.id ?? null;
-  const prevLoading = prevProps.loading;
-  const nextLoading = nextProps.loading;
-  
-  if (prevId !== nextId) {
-    return false;
-  }
-  
-  if (prevLoading !== nextLoading) {
-    return false;
-  }
-  
-  if (prevId === null && nextId === null) {
-    return true;
-  }
-  
-  if (prevProps.selectedBlog && nextProps.selectedBlog) {
-    return (
-      prevProps.selectedBlog.title === nextProps.selectedBlog.title &&
-      prevProps.selectedBlog.content === nextProps.selectedBlog.content &&
-      prevProps.selectedBlog.date === nextProps.selectedBlog.date &&
-      prevProps.selectedBlog.category === nextProps.selectedBlog.category
-    );
-  }
-  
-  return true;
-});
+
+  if (prevId !== nextId) return false;
+  if (prevProps.loading !== nextProps.loading) return false;
+  if (prevId === null && nextId === null) return true;
+
+  const prevBlog = prevProps.selectedBlog;
+  const nextBlog = nextProps.selectedBlog;
+
+  if (!prevBlog || !nextBlog) return true;
+
+  return (
+    prevBlog.title === nextBlog.title &&
+    prevBlog.content === nextBlog.content &&
+    prevBlog.date === nextBlog.date &&
+    prevBlog.category === nextBlog.category
+  );
+};
+
+export const BlogTreeContent = memo(BlogTreeContentComponent, arePropsEqual);

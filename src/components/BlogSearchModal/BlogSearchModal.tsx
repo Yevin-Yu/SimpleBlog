@@ -9,7 +9,9 @@ interface BlogSearchModalProps {
   onBlogClick: (id: string) => void;
 }
 
-const FOCUS_DELAY_MS = 100;
+const DELAY = {
+  FOCUS: 100,
+} as const;
 
 export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,16 +34,14 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
       
       setTimeout(() => {
         inputRef.current?.focus();
-      }, FOCUS_DELAY_MS);
+      }, DELAY.FOCUS);
     } else {
       setSearchQuery('');
     }
   }, [isOpen]);
 
   const filteredBlogs = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return [];
-    }
+    if (!searchQuery.trim()) return [];
 
     const query = searchQuery.trim().toLowerCase();
     return allBlogs.filter((blog) => {

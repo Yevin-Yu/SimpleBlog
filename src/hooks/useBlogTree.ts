@@ -61,19 +61,17 @@ export function useBlogTree(): UseBlogTreeReturn {
       };
 
       const prevBlog = selectedBlogRef.current;
-      const isSameBlog = 
+      const isSameBlog =
         prevBlog?.id === newBlog.id &&
         prevBlog?.title === newBlog.title &&
-        prevBlog?.content === newBlog.content &&
-        prevBlog?.date === newBlog.date &&
-        prevBlog?.category === newBlog.category;
+        prevBlog?.content === newBlog.content;
 
       if (!isSameBlog) {
         await new Promise((resolve) => setTimeout(resolve, 200));
         setSelectedBlog(newBlog);
         selectedBlogRef.current = newBlog;
       }
-      
+
       requestAnimationFrame(() => {
         setContentLoading(false);
         loadingRef.current = false;
@@ -85,9 +83,6 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, []);
 
-  /**
-   * 递归切换分类展开状态
-   */
   const toggleCategoryByPath = (
     categories: BlogCategory[],
     path: string,
@@ -100,7 +95,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         return { ...cat, expanded: !cat.expanded };
       }
       
-      if (cat.children && cat.children.length > 0) {
+      if (cat.children?.length) {
         const nextPath = `${currentPath}/`;
         if (path.startsWith(nextPath) || path === currentPath) {
           return {
@@ -120,6 +115,10 @@ export function useBlogTree(): UseBlogTreeReturn {
 
   const handleBlogClick = useCallback(
     (blogId: string) => {
+      // 如果点击的是当前已选中的文章，不重新加载
+      if (selectedBlogRef.current?.id === blogId) {
+        return;
+      }
       navigate(ROUTES.BLOG_DETAIL(blogId));
       loadBlogContent(blogId);
     },

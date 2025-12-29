@@ -1,20 +1,23 @@
 import './Footer.css';
 
-const CURRENT_YEAR = new Date().getFullYear();
+const ICP_BEIAN = '陕ICP备2024040821号-1';
+const BEIAN_URL = 'https://beian.miit.gov.cn/';
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="site-footer">
       <div className="site-footer-content">
         <p className="site-footer-copyright">
-          Copyright © {CURRENT_YEAR} |{' '}
+          Copyright © {currentYear} |{' '}
           <a
-            href="https://beian.miit.gov.cn/"
+            href={BEIAN_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="site-footer-link"
           >
-            ICP备案号：陕ICP备2024040821号-1
+            ICP备案号：{ICP_BEIAN}
           </a>
         </p>
       </div>

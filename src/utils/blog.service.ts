@@ -33,7 +33,8 @@ const generateIdFromPath = (filePath: string): string => {
   const blogsIndex = pathParts.indexOf('blogs');
   
   if (blogsIndex === -1) {
-    return generateIdFromFilename(pathParts[pathParts.length - 1] ?? '');
+    const filename = pathParts[pathParts.length - 1] ?? '';
+    return generateIdFromFilename(filename);
   }
   
   return pathParts
@@ -56,12 +57,17 @@ const loadBlogsFromFiles = (): {
   const usedIds = new Set<string>();
 
   const generateUniqueId = (baseId: string): string => {
-    let id = baseId;
+    if (!usedIds.has(baseId)) {
+      usedIds.add(baseId);
+      return baseId;
+    }
+    
     let counter = 1;
+    let id = `${baseId}-${counter}`;
     
     while (usedIds.has(id)) {
-      id = `${baseId}-${counter}`;
       counter++;
+      id = `${baseId}-${counter}`;
     }
     
     usedIds.add(id);

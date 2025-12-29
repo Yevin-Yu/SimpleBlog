@@ -3,6 +3,7 @@ import { useBlogTree } from '../hooks/useBlogTree';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { BlogTreeSidebar } from '../components/BlogTreeSidebar';
 import { BlogTreeContent } from '../components/BlogTreeContent';
+import { LoadingLines } from '../components/LoadingLines';
 import { SEO } from '../components/SEO';
 import { SITE_CONFIG, ROUTES } from '../config';
 import { Link } from 'react-router-dom';
@@ -44,6 +45,11 @@ function BlogTree() {
         structuredData={structuredData}
       />
       <div className="blog-tree-page">
+        {loading && (
+          <div className="blog-tree-page-loading">
+            <LoadingLines />
+          </div>
+        )}
         <div className="blog-tree-mobile-header">
           <button
             className="blog-tree-mobile-menu-button"
@@ -83,4 +89,4 @@ function BlogTree() {
   );
 };
 
-export default BlogTree;
+export { BlogTree };

@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import BlogTree from './pages/BlogTree';
+import { Home } from './pages/Home';
+import { BlogTree } from './pages/BlogTree';
 import { ROUTES } from './constants/routes';
 
-function App() {
+export function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -14,5 +14,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

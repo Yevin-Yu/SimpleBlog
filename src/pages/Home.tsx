@@ -1,31 +1,42 @@
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '../components/SEO';
 import { Footer } from '../components/Footer';
+import { InkBackground } from '../components/InkBackground';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES } from '../config';
 import './Home.css';
 
-function Home() {
+const STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite' as const,
+  potentialAction: {
+    '@type': 'SearchAction' as const,
+    target: {
+      '@type': 'EntryPoint' as const,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+export function Home() {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
-  
+
   const handleNavigateToBlog = () => {
     navigate(ROUTES.BLOG);
   };
 
   const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
+    ...STRUCTURED_DATA,
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: siteUrl,
     potentialAction: {
-      '@type': 'SearchAction',
+      ...STRUCTURED_DATA.potentialAction,
       target: {
-        '@type': 'EntryPoint',
+        ...STRUCTURED_DATA.potentialAction.target,
         urlTemplate: `${siteUrl}${ROUTES.BLOG}?search={search_term_string}`,
       },
-      'query-input': 'required name=search_term_string',
     },
   };
 
@@ -39,6 +50,7 @@ function Home() {
         structuredData={structuredData}
       />
       <div className="home">
+        <InkBackground />
         <div className="home-grid" />
         <div className="home-container">
           <header className="home-header">
@@ -46,10 +58,7 @@ function Home() {
             <p className="home-subtitle">记录思考，分享知识</p>
           </header>
           <nav className="home-nav">
-            <button
-              className="home-nav-button"
-              onClick={handleNavigateToBlog}
-            >
+            <button className="home-nav-button" onClick={handleNavigateToBlog}>
               查看文章
             </button>
           </nav>
@@ -59,5 +68,3 @@ function Home() {
     </>
   );
 }
-
-export default Home;

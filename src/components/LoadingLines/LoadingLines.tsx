@@ -5,8 +5,7 @@ interface LoadingLinesProps {
   className?: string;
 }
 
-/** 默认加载线条数量 */
-const DEFAULT_COUNT = 6;
+const DEFAULT_COUNT = 5;
 
 export function LoadingLines({ count = DEFAULT_COUNT, className = '' }: LoadingLinesProps) {
   return (

@@ -56,9 +56,11 @@ function CategoryItem({
     onToggleCategory(currentPath);
   }, [onToggleCategory, currentPath]);
 
-  const INDENT_BASE = 16;
-  const INDENT_STEP = 16;
-  const ITEM_INDENT_BASE = 32;
+  const INDENT = {
+    BASE: 16,
+    STEP: 16,
+    ITEM_BASE: 32,
+  } as const;
 
   return (
     <div className={`blog-tree-category blog-tree-category-level-${level}`}>
@@ -67,7 +69,7 @@ function CategoryItem({
           className="blog-tree-category-header"
           onClick={handleToggle}
           aria-expanded={isExpanded}
-          style={{ paddingLeft: `${INDENT_BASE + level * INDENT_STEP}px` }}
+          style={{ paddingLeft: `${INDENT.BASE + level * INDENT.STEP}px` }}
         >
           <span className="blog-tree-category-icon">
             ▶
@@ -87,7 +89,7 @@ function CategoryItem({
             key={blog.id}
             className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
             onClick={() => onBlogClick(blog.id)}
-            style={{ paddingLeft: `${ITEM_INDENT_BASE + level * INDENT_STEP}px` }}
+            style={{ paddingLeft: `${INDENT.ITEM_BASE + level * INDENT.STEP}px` }}
           >
             <span className="blog-tree-item-title">{blog.title}</span>
           </div>
