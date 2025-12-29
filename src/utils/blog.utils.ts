@@ -132,8 +132,8 @@ const convertNodeToCategory = (
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
   
-  // 查找包含"关于我"文章（ID: yevin）的分类路径
-  const defaultBlogPath = findCategoryPathForBlog(root, 'yevin');
+  // 查找包含"关于我"文章（ID: aboutme）的分类路径
+  const defaultBlogPath = findCategoryPathForBlog(root, 'aboutme');
   const expandedPaths = new Set<string>();
   
   if (defaultBlogPath) {
@@ -148,7 +148,7 @@ export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const categories: BlogCategory[] = [];
   
   if (root.blogs.length > 0) {
-    const hasDefaultBlog = root.blogs.some((blog) => blog.id === 'yevin');
+    const hasDefaultBlog = root.blogs.some((blog) => blog.id === 'aboutme');
     categories.push({
       name: BLOG_CONFIG.defaultCategory,
       blogs: root.blogs.sort(sortBlogsByDate),

@@ -132,7 +132,7 @@ export function useBlogTree(): UseBlogTreeReturn {
     if (id) {
       loadBlogContent(id);
     } else if (categories.length > 0) {
-      // 默认导航到"关于我"文章（ID: yevin）
+      // 默认导航到"关于我"文章（ID: aboutme）
       const findBlogById = (cats: typeof categories, targetId: string): BlogItem | null => {
         for (const cat of cats) {
           const blog = cat.blogs.find((b) => b.id === targetId);
@@ -145,7 +145,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         return null;
       };
       
-      const defaultBlog = findBlogById(categories, 'yevin');
+      const defaultBlog = findBlogById(categories, 'aboutme');
       if (defaultBlog) {
         navigate(ROUTES.BLOG_DETAIL(defaultBlog.id), { replace: true });
       } else {

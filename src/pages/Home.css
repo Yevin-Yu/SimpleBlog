@@ -14,6 +14,35 @@
   position: relative;
 }
 
+.home-search-button {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: transparent;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  z-index: 10;
+}
+
+.home-search-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.home-search-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--color-text);
+}
+
 .home > .contribution-graph {
   position: absolute;
   bottom: var(--spacing-md);
@@ -116,6 +145,11 @@
 }
 
 @media (max-width: 768px) {
+  .home-search-button {
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+  }
+
   .home-title {
     font-size: var(--font-size-2xl);
   }

@@ -37,13 +37,8 @@ function CategoryItem({
   const hasChildren = category.children && category.children.length > 0;
   const shouldShowToggle = hasChildren || category.blogs.length > 0;
 
-  /** 判断是否展开：根级别且无子分类时默认展开 */
-  const isExpanded = useMemo(() => {
-    if (level === 0 && !hasChildren && category.blogs.length > 0) {
-      return true;
-    }
-    return category.expanded;
-  }, [level, hasChildren, category.blogs.length, category.expanded]);
+  /** 判断是否展开 */
+  const isExpanded = category.expanded ?? false;
 
   /** 计算分类下的总文章数（包括子分类） */
   const totalCount = useMemo(() => {
