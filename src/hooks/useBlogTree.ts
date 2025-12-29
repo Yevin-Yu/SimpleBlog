@@ -4,7 +4,7 @@ import { getBlogList, getBlogContent } from '../utils/blog.service';
 import { groupBlogsByCategory } from '../utils/blog.utils';
 import { logger } from '../utils/logger';
 import { ROUTES } from '../constants/routes';
-import type { BlogCategory, SelectedBlog } from '../types';
+import type { BlogCategory, SelectedBlog, BlogItem } from '../types';
 
 interface UseBlogTreeReturn {
   categories: BlogCategory[];
@@ -132,9 +132,28 @@ export function useBlogTree(): UseBlogTreeReturn {
     if (id) {
       loadBlogContent(id);
     } else if (categories.length > 0) {
-      const firstBlog = categories[0]?.blogs[0];
-      if (firstBlog) {
-        navigate(ROUTES.BLOG_DETAIL(firstBlog.id), { replace: true });
+      // 默认导航到"关于我"文章（ID: yevin）
+      const findBlogById = (cats: typeof categories, targetId: string): BlogItem | null => {
+        for (const cat of cats) {
+          const blog = cat.blogs.find((b) => b.id === targetId);
+          if (blog) return blog;
+          if (cat.children) {
+            const found = findBlogById(cat.children, targetId);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      
+      const defaultBlog = findBlogById(categories, 'yevin');
+      if (defaultBlog) {
+        navigate(ROUTES.BLOG_DETAIL(defaultBlog.id), { replace: true });
+      } else {
+        // 如果找不到，则回退到第一个博客
+        const firstBlog = categories[0]?.blogs[0];
+        if (firstBlog) {
+          navigate(ROUTES.BLOG_DETAIL(firstBlog.id), { replace: true });
+        }
       }
     }
   }, [id, categories, navigate, loadBlogContent]);

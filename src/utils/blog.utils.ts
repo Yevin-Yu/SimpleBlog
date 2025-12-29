@@ -73,17 +73,50 @@ const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
 };
 
 /**
+ * 查找包含特定博客ID的分类路径
+ */
+const findCategoryPathForBlog = (
+  node: CategoryNode,
+  targetBlogId: string,
+  currentPath: string[] = []
+): string[] | null => {
+  // 检查当前节点的博客
+  if (node.blogs.some((blog) => blog.id === targetBlogId)) {
+    return currentPath;
+  }
+
+  // 递归检查子节点
+  for (const [name, childNode] of node.children.entries()) {
+    const path = findCategoryPathForBlog(childNode, targetBlogId, [...currentPath, name]);
+    if (path) {
+      return path;
+    }
+  }
+
+  return null;
+};
+
+/**
  * 将节点转换为分类对象
  */
-const convertNodeToCategory = (node: CategoryNode, defaultExpanded = false): BlogCategory => {
-  const children: BlogCategory[] = Array.from(node.children.values())
-    .map((child) => convertNodeToCategory(child, false))
+const convertNodeToCategory = (
+  node: CategoryNode,
+  expandedPaths: Set<string>,
+  currentPath: string = ''
+): BlogCategory => {
+  const shouldExpand = expandedPaths.has(currentPath);
+  
+  const children: BlogCategory[] = Array.from(node.children.entries())
+    .map(([name, childNode]) => {
+      const childPath = currentPath ? `${currentPath}/${name}` : name;
+      return convertNodeToCategory(childNode, expandedPaths, childPath);
+    })
     .sort(sortCategories);
 
   const category: BlogCategory = {
     name: node.name,
     blogs: node.blogs.sort(sortBlogsByDate),
-    expanded: defaultExpanded,
+    expanded: shouldExpand,
   };
 
   if (children.length > 0) {
@@ -99,18 +132,32 @@ const convertNodeToCategory = (node: CategoryNode, defaultExpanded = false): Blo
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
   
+  // 查找包含"关于我"文章（ID: yevin）的分类路径
+  const defaultBlogPath = findCategoryPathForBlog(root, 'yevin');
+  const expandedPaths = new Set<string>();
+  
+  if (defaultBlogPath) {
+    // 将路径及其所有父路径添加到展开集合
+    let path = '';
+    for (const part of defaultBlogPath) {
+      path = path ? `${path}/${part}` : part;
+      expandedPaths.add(path);
+    }
+  }
+  
   const categories: BlogCategory[] = [];
   
   if (root.blogs.length > 0) {
+    const hasDefaultBlog = root.blogs.some((blog) => blog.id === 'yevin');
     categories.push({
       name: BLOG_CONFIG.defaultCategory,
       blogs: root.blogs.sort(sortBlogsByDate),
-      expanded: true,
+      expanded: hasDefaultBlog,
     });
   }
 
-  const childCategories = Array.from(root.children.values())
-    .map((child) => convertNodeToCategory(child, categories.length === 0))
+  const childCategories = Array.from(root.children.entries())
+    .map(([name, childNode]) => convertNodeToCategory(childNode, expandedPaths, name))
     .sort(sortCategories);
 
   categories.push(...childCategories);

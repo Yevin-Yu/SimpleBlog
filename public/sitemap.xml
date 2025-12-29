@@ -61,6 +61,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://yuwb.cn/b/blog/aboutme</loc>
+    <lastmod>2025-12-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://yuwb.cn/b/blog/site-recommendations</loc>
+    <lastmod>2025-01-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://yuwb.cn/b/blog/i0gputwh</loc>
     <lastmod>2024-01-01</lastmod>
     <changefreq>weekly</changefreq>
