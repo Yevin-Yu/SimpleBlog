@@ -1,15 +1,24 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { BlogTree } from './pages/BlogTree';
-import { ROUTES } from './constants/routes';
+import { BASE_PATH } from './config';
 
+/**
+ * 应用根组件
+ */
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      basename={BASE_PATH}
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
-        <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.BLOG} element={<BlogTree />} />
-        <Route path={`${ROUTES.BLOG}/:id`} element={<BlogTree />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/blog" element={<BlogTree />} />
+        <Route path="/blog/:id" element={<BlogTree />} />
       </Routes>
     </BrowserRouter>
   );

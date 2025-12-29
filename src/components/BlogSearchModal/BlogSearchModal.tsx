@@ -9,9 +9,7 @@ interface BlogSearchModalProps {
   onBlogClick: (id: string) => void;
 }
 
-const DELAY = {
-  FOCUS: 100,
-} as const;
+const FOCUS_DELAY = 100;
 
 export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +32,7 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
       
       setTimeout(() => {
         inputRef.current?.focus();
-      }, DELAY.FOCUS);
+      }, FOCUS_DELAY);
     } else {
       setSearchQuery('');
     }

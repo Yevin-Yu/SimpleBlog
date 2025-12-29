@@ -8,8 +8,14 @@ export interface Frontmatter {
 }
 
 const FRONTMATTER_REGEX = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
-const DEFAULT_DATE = new Date().toISOString().split('T')[0] as string;
 
+const getDefaultDate = (): string => {
+  return new Date().toISOString().split('T')[0];
+};
+
+/**
+ * 解析 Markdown 文件的 Frontmatter
+ */
 export function parseFrontmatter(markdown: string): {
   frontmatter: Frontmatter;
   content: string;
@@ -20,7 +26,7 @@ export function parseFrontmatter(markdown: string): {
     return {
       frontmatter: {
         title: 'Untitled',
-        date: DEFAULT_DATE,
+        date: getDefaultDate(),
       },
       content: markdown,
     };
@@ -29,7 +35,7 @@ export function parseFrontmatter(markdown: string): {
   const [, frontmatterText, content] = match;
   const frontmatter: Frontmatter = {
     title: 'Untitled',
-    date: DEFAULT_DATE,
+    date: getDefaultDate(),
   };
 
   for (const line of frontmatterText.split('\n')) {
@@ -46,6 +52,9 @@ export function parseFrontmatter(markdown: string): {
   return { frontmatter, content };
 }
 
+/**
+ * 从文件名生成唯一 ID
+ */
 export function generateIdFromFilename(filename: string): string {
   return filename
     .replace(/\.md$/, '')

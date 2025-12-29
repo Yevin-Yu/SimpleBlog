@@ -1,8 +1,8 @@
 User-agent: *
-Allow: /
+Allow: /b/
 
 # Sitemap
-Sitemap: https://your-blog-domain.com/sitemap.xml
+Sitemap: https://yuwb.cn/b/sitemap.xml
 
 # 禁止爬取的路径（如果有）
 # Disallow: /admin/

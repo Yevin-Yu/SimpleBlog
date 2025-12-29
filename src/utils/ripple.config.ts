@@ -1,7 +1,3 @@
-/**
- * 水墨涟漪效果配置
- */
-
 export const RIPPLE_CONFIG = {
   /** 随机涟漪生成间隔（毫秒） */
   GENERATION_INTERVAL: { min: 400, max: 1000 },

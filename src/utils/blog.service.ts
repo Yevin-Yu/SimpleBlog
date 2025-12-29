@@ -8,6 +8,9 @@ const blogModules = import.meta.glob('../../blogs/**/*.md', {
   eager: true,
 });
 
+/**
+ * 从文件路径提取分类
+ */
 const extractCategoryFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
@@ -19,6 +22,9 @@ const extractCategoryFromPath = (filePath: string): string => {
   return pathParts.slice(blogsIndex + 1, -1).join('/');
 };
 
+/**
+ * 清理并规范化 ID
+ */
 const sanitizeId = (id: string): string => {
   return id
     .trim()
@@ -28,6 +34,9 @@ const sanitizeId = (id: string): string => {
     .replace(/^-|-$/g, '');
 };
 
+/**
+ * 从文件路径生成 ID
+ */
 const generateIdFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
@@ -48,6 +57,9 @@ const generateIdFromPath = (filePath: string): string => {
     .replace(/\//g, '-');
 };
 
+/**
+ * 从文件系统加载所有博客
+ */
 const loadBlogsFromFiles = (): {
   blogList: BlogItem[];
   blogContents: Record<string, BlogContent>;
@@ -118,31 +130,40 @@ const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
   return new Date(b.date).getTime() - new Date(a.date).getTime();
 };
 
-export async function getBlogList(): Promise<BlogItem[]> {
-  return [...blogList].sort(sortBlogsByDate);
+/**
+ * 获取博客列表（按日期倒序）
+ */
+export function getBlogList(): Promise<BlogItem[]> {
+  return Promise.resolve([...blogList].sort(sortBlogsByDate));
 }
 
-export async function getBlogContent(id: string): Promise<BlogContent> {
+/**
+ * 获取指定博客的内容
+ */
+export function getBlogContent(id: string): Promise<BlogContent> {
   const content = blogContents[id];
   if (!content) {
     const error = new Error(`博客内容不存在: ${id}`);
     logger.error('获取博客内容失败', error);
-    throw error;
+    return Promise.reject(error);
   }
-  return content;
+  return Promise.resolve(content);
 }
 
-export interface BlogSearchItem extends BlogItem {
-  description?: string;
-}
+import type { BlogSearchItem } from '../types';
 
-export async function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
-  return blogList.map((blog) => {
-    const content = blogContents[blog.id];
-    return {
-      ...blog,
-      description: content?.description,
-    };
-  });
+/**
+ * 获取所有博客用于搜索（包含描述）
+ */
+export function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
+  return Promise.resolve(
+    blogList.map((blog) => {
+      const content = blogContents[blog.id];
+      return {
+        ...blog,
+        description: content?.description,
+      };
+    })
+  );
 }
 

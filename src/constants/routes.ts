@@ -1,3 +1,6 @@
+/**
+ * 应用路由配置
+ */
 export const ROUTES = {
   HOME: '/',
   BLOG: '/blog',

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, memo } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { MarkdownRenderer } from '../MarkdownRenderer/MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { Footer } from '../Footer/Footer';
@@ -11,11 +11,21 @@ interface BlogTreeContentProps {
   loading: boolean;
 }
 
+/** 过渡动画延迟配置 */
 const TRANSITION_DELAY = {
   FADE: 150,
   WIDTH_RESTORE: 200,
 } as const;
 
+/** 标题骨架屏组件 */
+const TitleSkeleton = () => (
+  <div className="blog-tree-article-header-skeleton">
+    <div className="skeleton-title-line" />
+    <div className="skeleton-meta-line" />
+  </div>
+);
+
+/** 骨架屏加载组件 */
 const SkeletonLoader = () => (
   <div className="blog-tree-article-skeleton">
     <div className="skeleton-line" />
@@ -24,6 +34,7 @@ const SkeletonLoader = () => (
   </div>
 );
 
+/** 加载遮罩组件 */
 const LoadingOverlay = () => (
   <div className="blog-tree-loading-overlay">
     <LoadingLines />
@@ -58,9 +69,7 @@ function BlogTreeContentComponent({
       return;
     }
 
-    if (loading) {
-      return;
-    }
+    if (loading) return;
 
     const isSameBlog =
       currentBlogId === prevBlogId &&
@@ -71,9 +80,7 @@ function BlogTreeContentComponent({
       selectedBlog.title === prevBlog.title &&
       selectedBlog.content === prevBlog.content;
 
-    if (isSameBlog || selectedBlog === prevBlog) {
-      return;
-    }
+    if (isSameBlog || selectedBlog === prevBlog) return;
 
     let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -154,15 +161,21 @@ function BlogTreeContentComponent({
           key={displayBlog.id}
         >
           <header className="blog-tree-article-header">
-            <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
-            <div className="blog-tree-article-meta">
-              {displayBlog.category && (
-                <span className="blog-tree-article-category">
-                  {displayBlog.category}
-                </span>
-              )}
-              <time className="blog-tree-article-date">{displayBlog.date}</time>
-            </div>
+            {loading ? (
+              <TitleSkeleton />
+            ) : (
+              <>
+                <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
+                <div className="blog-tree-article-meta">
+                  {displayBlog.category && (
+                    <span className="blog-tree-article-category">
+                      {displayBlog.category}
+                    </span>
+                  )}
+                  <time className="blog-tree-article-date">{displayBlog.date}</time>
+                </div>
+              </>
+            )}
           </header>
           <div className="blog-tree-article-body">
             {loading ? (

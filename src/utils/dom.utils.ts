@@ -1,9 +1,5 @@
 /**
- * DOM 工具函数
- */
-
-/**
- * 计算滚动条宽度
+ * 获取浏览器滚动条宽度
  */
 export function getScrollbarWidth(): number {
   const outer = document.createElement('div');
@@ -22,7 +18,7 @@ export function getScrollbarWidth(): number {
 }
 
 /**
- * 固定元素宽度，防止布局闪烁
+ * 固定元素宽度，防止布局抖动
  */
 export function fixElementWidth(element: HTMLElement | null): string | null {
   if (!element) return null;

@@ -1,5 +1,8 @@
 const isDevelopment = import.meta.env.DEV;
 
+/**
+ * 日志工具
+ */
 export const logger = {
   error: (message: string, error?: unknown): void => {
     if (isDevelopment) {

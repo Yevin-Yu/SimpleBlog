@@ -5,7 +5,9 @@ import { loadAllBlogs } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const SITE_URL = process.env.SITE_URL || 'https://your-blog-domain.com';
+const BASE_PATH = '/b';
+const SITE_URL = process.env.SITE_URL || 'https://yuwb.cn';
+const BASE_URL = `${SITE_URL}${BASE_PATH}`;
 const TODAY = new Date().toISOString().split('T')[0];
 
 function generateSitemap() {
@@ -15,7 +17,7 @@ function generateSitemap() {
   const blogUrls = blogs
     .map(
       (blog) => `  <url>
-    <loc>${SITE_URL}/blog/${blog.id}</loc>
+    <loc>${BASE_URL}/blog/${blog.id}</loc>
     <lastmod>${blog.modifiedTime || blog.date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -26,13 +28,13 @@ function generateSitemap() {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${SITE_URL}/</loc>
+    <loc>${BASE_URL}/</loc>
     <lastmod>${TODAY}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${SITE_URL}/blog</loc>
+    <loc>${BASE_URL}/blog</loc>
     <lastmod>${TODAY}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>

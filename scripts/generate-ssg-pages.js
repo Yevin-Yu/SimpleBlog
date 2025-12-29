@@ -7,11 +7,13 @@ import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
+const BASE_PATH = '/b';
 const SITE_CONFIG = {
   name: '耶温博客',
-  url: process.env.SITE_URL || 'https://your-blog-domain.com',
+  url: process.env.SITE_URL || 'https://yuwb.cn',
   locale: 'zh_CN',
 };
+const BASE_URL = `${SITE_CONFIG.url}${BASE_PATH}`;
 
 const SEO_CONFIG = {
   defaultImage: '/og-image.jpg',
@@ -92,10 +94,10 @@ function renderBlogContent(blog, blogContent) {
  * 生成结构化数据（Schema.org JSON-LD）
  */
 function generateStructuredData(blog) {
-  const blogUrl = `${SITE_CONFIG.url}/blog/${blog.id}`;
+  const blogUrl = `${BASE_URL}/blog/${blog.id}`;
   const imageUrl = blog.image 
-    ? (blog.image.startsWith('http') ? blog.image : `${SITE_CONFIG.url}${blog.image}`)
-    : `${SITE_CONFIG.url}${SEO_CONFIG.defaultImage}`;
+    ? (blog.image.startsWith('http') ? blog.image : `${BASE_URL}${blog.image}`)
+    : `${BASE_URL}${SEO_CONFIG.defaultImage}`;
 
   return {
     '@context': 'https://schema.org',
@@ -131,10 +133,10 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const title = blog.title || 'Untitled';
   const description = blog.description || blog.title || '耶温博客文章';
   const category = blog.category || '';
-  const blogUrl = `${SITE_CONFIG.url}/blog/${blog.id}`;
+  const blogUrl = `${BASE_URL}/blog/${blog.id}`;
   const imageUrl = blog.image 
-    ? (blog.image.startsWith('http') ? blog.image : `${SITE_CONFIG.url}${blog.image}`)
-    : `${SITE_CONFIG.url}${SEO_CONFIG.defaultImage}`;
+    ? (blog.image.startsWith('http') ? blog.image : `${BASE_URL}${blog.image}`)
+    : `${BASE_URL}${SEO_CONFIG.defaultImage}`;
   
   const keywords = category 
     ? `耶温博客,${escapeHtml(category)},${escapeHtml(title)}`
@@ -193,16 +195,19 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
 
 /**
  * 调整资源路径为相对路径
+ * 从 /b/assets/... 转换为 ../../assets/...
  */
 function adjustAssetPaths(html, assetPaths) {
   if (assetPaths.script) {
-    const scriptPath = assetPaths.script.replace(/^\//, '');
+    // 去掉 /b/ 前缀，只保留 assets/... 部分
+    const scriptPath = assetPaths.script.replace(/^\/b\//, '');
     const relativeScriptPath = `../../${scriptPath}`;
     html = html.replace(assetPaths.script, relativeScriptPath);
   }
 
   if (assetPaths.stylesheet) {
-    const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
+    // 去掉 /b/ 前缀，只保留 assets/... 部分
+    const stylesheetPath = assetPaths.stylesheet.replace(/^\/b\//, '');
     const relativeStylesheetPath = `../../${stylesheetPath}`;
     html = html.replace(assetPaths.stylesheet, relativeStylesheetPath);
   }
@@ -248,7 +253,7 @@ async function generateSSGPages() {
       const blogHtml = generateBlogHTML(blog, blog.content, indexHtmlContent, assetPaths);
       const indexPath = resolve(blogDir, 'index.html');
       writeFileSync(indexPath, blogHtml, 'utf-8');
-      console.log(`Generated SSG page: /blog/${blog.id}/index.html`);
+      console.log(`Generated SSG page: ${BASE_PATH}/blog/${blog.id}/index.html`);
     }
 
     console.log(`Successfully generated ${blogs.length} SSG pages`);

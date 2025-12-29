@@ -1,8 +1,12 @@
+import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useSiteUrl } from '../../hooks/useSiteUrl';
 import { SITE_CONFIG, SEO_CONFIG } from '../../config';
 
-interface SEOProps {
+/**
+ * SEO 组件属性
+ */
+export interface SEOProps {
   title?: string;
   description?: string;
   keywords?: string;
@@ -15,6 +19,9 @@ interface SEOProps {
   structuredData?: Record<string, unknown>;
 }
 
+/**
+ * SEO 组件 - 管理页面 SEO 元数据
+ */
 export function SEO({
   title = SEO_CONFIG.defaultTitle,
   description = SEO_CONFIG.defaultDescription,
@@ -28,8 +35,11 @@ export function SEO({
   structuredData,
 }: SEOProps) {
   const siteUrl = useSiteUrl();
-  const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
-  const fullImage = image.startsWith('http') ? image : `${siteUrl}${image}`;
+  const fullUrl = url ? `${siteUrl}${url.startsWith('/') ? url : `/${url}`}` : siteUrl;
+  const fullImage = useMemo(
+    () => (image.startsWith('http') ? image : `${siteUrl}${image}`),
+    [image, siteUrl]
+  );
 
   return (
     <Helmet>

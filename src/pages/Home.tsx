@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { SEO } from '../components/SEO/SEO';
 import { InkBackground } from '../components/InkBackground/InkBackground';
 import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
@@ -6,7 +7,10 @@ import { useSiteUrl } from '../hooks/useSiteUrl';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES } from '../config';
 import './Home.css';
 
-const STRUCTURED_DATA = {
+/**
+ * 结构化数据模板
+ */
+const STRUCTURED_DATA_TEMPLATE = {
   '@context': 'https://schema.org',
   '@type': 'WebSite' as const,
   potentialAction: {
@@ -16,7 +20,7 @@ const STRUCTURED_DATA = {
     },
     'query-input': 'required name=search_term_string',
   },
-};
+} as const;
 
 export function Home() {
   const navigate = useNavigate();
@@ -26,19 +30,19 @@ export function Home() {
     navigate(ROUTES.BLOG);
   };
 
-  const structuredData = {
-    ...STRUCTURED_DATA,
+  const structuredData = useMemo(() => ({
+    ...STRUCTURED_DATA_TEMPLATE,
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: siteUrl,
     potentialAction: {
-      ...STRUCTURED_DATA.potentialAction,
+      ...STRUCTURED_DATA_TEMPLATE.potentialAction,
       target: {
-        ...STRUCTURED_DATA.potentialAction.target,
-        urlTemplate: `${siteUrl}${ROUTES.BLOG}?search={search_term_string}`,
+        ...STRUCTURED_DATA_TEMPLATE.potentialAction.target,
+        urlTemplate: `${siteUrl}/blog?search={search_term_string}`,
       },
     },
-  };
+  }), [siteUrl]);
 
   return (
     <>

@@ -22,6 +22,9 @@ interface CategoryItemProps {
   path?: string;
 }
 
+/**
+ * 分类项组件
+ */
 function CategoryItem({
   category,
   selectedBlogId,
@@ -34,6 +37,7 @@ function CategoryItem({
   const hasChildren = category.children && category.children.length > 0;
   const shouldShowToggle = hasChildren || category.blogs.length > 0;
 
+  /** 判断是否展开：根级别且无子分类时默认展开 */
   const isExpanded = useMemo(() => {
     if (level === 0 && !hasChildren && category.blogs.length > 0) {
       return true;
@@ -41,6 +45,7 @@ function CategoryItem({
     return category.expanded;
   }, [level, hasChildren, category.blogs.length, category.expanded]);
 
+  /** 计算分类下的总文章数（包括子分类） */
   const totalCount = useMemo(() => {
     const getTotalCount = (cat: BlogCategory): number => {
       let count = cat.blogs.length;
@@ -56,11 +61,7 @@ function CategoryItem({
     onToggleCategory(currentPath);
   }, [onToggleCategory, currentPath]);
 
-  const INDENT = {
-    BASE: 16,
-    STEP: 16,
-    ITEM_BASE: 32,
-  } as const;
+  const INDENT = { BASE: 16, STEP: 16, ITEM_BASE: 32 } as const;
 
   return (
     <div className={`blog-tree-category blog-tree-category-level-${level}`}>

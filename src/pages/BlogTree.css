@@ -73,8 +73,8 @@
 
 .blog-tree-desktop-nav {
   position: absolute;
-  top: var(--spacing-xl);
-  right: var(--spacing-xl);
+  top: var(--spacing-md);
+  right: var(--spacing-sm);
   z-index: 100;
 }
 

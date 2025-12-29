@@ -1,6 +1,9 @@
 import type { BlogItem, BlogCategory } from '../types';
 import { BLOG_CONFIG } from '../config';
 
+/**
+ * 分类树节点（内部使用）
+ */
 interface CategoryNode {
   name: string;
   blogs: BlogItem[];
@@ -53,16 +56,10 @@ const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
   return root;
 };
 
-/**
- * 判断分类是否有内容（博客或子分类）
- */
 const hasContent = (category: BlogCategory): boolean => {
   return category.blogs.length > 0 || (category.children?.length ?? 0) > 0;
 };
 
-/**
- * 分类排序函数
- */
 const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   const aHasContent = hasContent(a);
   const bHasContent = hasContent(b);
@@ -71,17 +68,14 @@ const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   return a.name.localeCompare(b.name, 'zh-CN');
 };
 
-/**
- * 按日期倒序排序博客
- */
 const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
   return new Date(b.date).getTime() - new Date(a.date).getTime();
 };
 
 /**
- * 将内部节点结构转换为分类结构
+ * 将节点转换为分类对象
  */
-function convertNodeToCategory(node: CategoryNode, defaultExpanded = false): BlogCategory {
+const convertNodeToCategory = (node: CategoryNode, defaultExpanded = false): BlogCategory => {
   const children: BlogCategory[] = Array.from(node.children.values())
     .map((child) => convertNodeToCategory(child, false))
     .sort(sortCategories);
@@ -99,6 +93,9 @@ function convertNodeToCategory(node: CategoryNode, defaultExpanded = false): Blo
   return category;
 }
 
+/**
+ * 将博客列表按分类分组
+ */
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
   

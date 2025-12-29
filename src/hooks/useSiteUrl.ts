@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
-import { SITE_CONFIG } from '../config';
+import { SITE_CONFIG, BASE_PATH } from '../config';
 
+/**
+ * 获取站点完整 URL 的 Hook
+ */
 export function useSiteUrl(): string {
-  return useMemo(() => {
-    if (typeof window === 'undefined') {
-      return SITE_CONFIG.url;
-    }
-    return window.location.origin;
-  }, []);
+  if (typeof window === 'undefined') {
+    return `${SITE_CONFIG.url}${BASE_PATH}`;
+  }
+  return `${window.location.origin}${BASE_PATH}`;
 }

@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { BASE_PATH } from '../../config';
+import { logger } from '../../utils/logger';
 import './ContributionGraph.css';
 
 interface ContributionData {
@@ -38,32 +40,6 @@ export function ContributionGraph() {
     count: 0,
   });
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetch('/contributions.json')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((json: ContributionData) => {
-        setData(json);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Failed to load contributions data:', error);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="contribution-graph">
-        <div className="contribution-graph-loading">加载中...</div>
-      </div>
-    );
-  }
 
   const getLevel = useCallback((count: number): number => {
     if (count === 0) return 0;
@@ -120,10 +96,6 @@ export function ContributionGraph() {
     return `${weekday}, ${year}年${month}${day}日`;
   }, []);
 
-  if (!data) {
-    return null;
-  }
-
   const updateTooltipPosition = useCallback((e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -164,6 +136,36 @@ export function ContributionGraph() {
     }));
   }, [tooltip.visible, updateTooltipPosition]);
 
+  useEffect(() => {
+    fetch(`${BASE_PATH}/contributions.json`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((json: ContributionData) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((error) => {
+        logger.error('加载贡献数据失败', error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="contribution-graph">
+        <div className="contribution-graph-loading">加载中...</div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <div
       ref={containerRef}
@@ -175,7 +177,7 @@ export function ContributionGraph() {
         <div className="contribution-graph-grid">
           {days.map((day, index) => (
             <div
-              key={index}
+              key={day.date || `empty-${index}`}
               className={`contribution-graph-day level-${day.level}`}
               data-date={day.date}
               data-count={day.count}

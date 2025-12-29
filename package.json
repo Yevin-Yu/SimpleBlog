@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run generate:contributions && vite",
     "build": "tsc && npm run generate:contributions && vite build && npm run generate:sitemap && npm run generate:ssg",
     "preview": "vite preview",
     "generate:contributions": "node scripts/generate-contributions.js",

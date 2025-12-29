@@ -51,7 +51,6 @@ export function useBlogTree(): UseBlogTreeReturn {
 
       const blogMeta = blogList.find((b) => b.id === blogId);
       if (!blogMeta) {
-        logger.error(`博客元数据不存在: ${blogId}`);
         throw new Error(`博客元数据不存在: ${blogId}`);
       }
 
@@ -83,7 +82,10 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, []);
 
-  const toggleCategoryByPath = (
+  /**
+   * 递归切换分类展开状态
+   */
+  const toggleCategoryByPath = useCallback((
     categories: BlogCategory[],
     path: string,
     parentPath = ''
@@ -107,7 +109,7 @@ export function useBlogTree(): UseBlogTreeReturn {
       
       return cat;
     });
-  };
+  }, []);
 
   const toggleCategory = useCallback((path: string) => {
     setCategories((prev) => toggleCategoryByPath(prev, path));
@@ -115,10 +117,7 @@ export function useBlogTree(): UseBlogTreeReturn {
 
   const handleBlogClick = useCallback(
     (blogId: string) => {
-      // 如果点击的是当前已选中的文章，不重新加载
-      if (selectedBlogRef.current?.id === blogId) {
-        return;
-      }
+      if (selectedBlogRef.current?.id === blogId) return;
       navigate(ROUTES.BLOG_DETAIL(blogId));
       loadBlogContent(blogId);
     },
