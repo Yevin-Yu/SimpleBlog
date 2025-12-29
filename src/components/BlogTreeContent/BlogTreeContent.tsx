@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, memo } from 'react';
-import { MarkdownRenderer } from '../MarkdownRenderer';
-import { LoadingLines } from '../LoadingLines';
-import { Footer } from '../Footer';
+import { MarkdownRenderer } from '../MarkdownRenderer/MarkdownRenderer';
+import { LoadingLines } from '../LoadingLines/LoadingLines';
+import { Footer } from '../Footer/Footer';
 import { fixElementsWidth, restoreElementsWidth } from '../../utils/dom.utils';
 import type { SelectedBlog } from '../../types';
 import './BlogTreeContent.css';
@@ -87,7 +87,7 @@ function BlogTreeContentComponent({
           container.scrollTop = 0;
         }
         
-        const fixedWidths = fixElementsWidth(elements);
+        fixElementsWidth(elements);
         setIsVisible(false);
         
         timer = setTimeout(() => {

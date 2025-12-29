@@ -1,6 +1,6 @@
 import { useMemo, useCallback, useState } from 'react';
-import { LoadingLines } from '../LoadingLines';
-import { BlogSearchModal } from '../BlogSearchModal';
+import { LoadingLines } from '../LoadingLines/LoadingLines';
+import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
 import type { BlogCategory } from '../../types';
 import './BlogTreeSidebar.css';
 

@@ -10,16 +10,15 @@
     linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
   background-size: 40px 40px;
   padding: var(--spacing-xl);
-  padding-bottom: calc(var(--spacing-xl) + 60px);
+  padding-bottom: calc(var(--spacing-xl) + 40px);
   position: relative;
 }
 
-.home > .site-footer {
+.home > .contribution-graph {
   position: absolute;
-  bottom: 0;
+  bottom: var(--spacing-md);
   left: 0;
   right: 0;
-  margin-top: 0;
   z-index: 2;
 }
 
@@ -46,6 +45,7 @@
   z-index: 2;
   margin: 0 auto;
   flex-shrink: 0;
+  margin-bottom: var(--spacing-2xl);
 }
 
 .home-header {

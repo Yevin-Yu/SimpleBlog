@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useBlogTree } from '../hooks/useBlogTree';
 import { useSiteUrl } from '../hooks/useSiteUrl';
-import { BlogTreeSidebar } from '../components/BlogTreeSidebar';
-import { BlogTreeContent } from '../components/BlogTreeContent';
-import { LoadingLines } from '../components/LoadingLines';
-import { SEO } from '../components/SEO';
+import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
+import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
+import { LoadingLines } from '../components/LoadingLines/LoadingLines';
+import { SEO } from '../components/SEO/SEO';
 import { SITE_CONFIG, ROUTES } from '../config';
 import { Link } from 'react-router-dom';
 import './BlogTree.css';

@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && npm run generate:sitemap && npm run generate:ssg",
+    "build": "tsc && npm run generate:contributions && vite build && npm run generate:sitemap && npm run generate:ssg",
     "preview": "vite preview",
+    "generate:contributions": "node scripts/generate-contributions.js",
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "generate:ssg": "node scripts/generate-ssg-pages.js"
   },

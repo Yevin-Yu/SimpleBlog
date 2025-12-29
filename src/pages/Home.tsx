@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { SEO } from '../components/SEO';
-import { Footer } from '../components/Footer';
-import { InkBackground } from '../components/InkBackground';
+import { SEO } from '../components/SEO/SEO';
+import { InkBackground } from '../components/InkBackground/InkBackground';
+import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES } from '../config';
 import './Home.css';
@@ -63,7 +63,7 @@ export function Home() {
             </button>
           </nav>
         </div>
-        <Footer />
+        <ContributionGraph />
       </div>
     </>
   );
