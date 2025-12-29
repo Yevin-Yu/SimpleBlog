@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, memo, useCallback } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { MarkdownRenderer } from '../MarkdownRenderer/MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { Footer } from '../Footer/Footer';

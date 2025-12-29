@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { getAllBlogsForSearch, type BlogSearchItem } from '../../utils/blog.service';
+import { getAllBlogsForSearch } from '../../utils/blog.service';
+import type { BlogSearchItem } from '../../types';
 import { logger } from '../../utils/logger';
 import './BlogSearchModal.css';
 

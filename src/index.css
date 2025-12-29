@@ -7,7 +7,6 @@
 }
 
 html {
-  scrollbar-gutter: stable;
   overflow-x: hidden;
 }
 
@@ -23,7 +22,6 @@ body {
   background-size: 40px 40px;
   color: var(--color-text);
   overflow-x: hidden;
-  scrollbar-gutter: stable;
   line-height: 1.6;
 }
 
@@ -47,4 +45,11 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-lighter);
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    scrollbar-gutter: auto;
+  }
 }
