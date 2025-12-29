@@ -60,7 +60,7 @@ export function useBlogTree(): UseBlogTreeReturn {
       };
 
       const prevBlog = selectedBlogRef.current;
-      const isSameBlog =
+      const isSameBlog = 
         prevBlog?.id === newBlog.id &&
         prevBlog?.title === newBlog.title &&
         prevBlog?.content === newBlog.content;
@@ -70,7 +70,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         setSelectedBlog(newBlog);
         selectedBlogRef.current = newBlog;
       }
-
+      
       requestAnimationFrame(() => {
         setContentLoading(false);
         loadingRef.current = false;

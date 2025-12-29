@@ -33,7 +33,7 @@ const suppressHighlightWarnings = (): void => {
       (filter) => message.includes(filter) || fullMessage.includes(filter)
     );
     if (!shouldSuppress) {
-      originalConsoleWarn.apply(console, args);
+    originalConsoleWarn.apply(console, args);
     }
   };
 };

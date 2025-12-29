@@ -158,11 +158,11 @@ import type { BlogSearchItem } from '../types';
 export function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
   return Promise.resolve(
     blogList.map((blog) => {
-      const content = blogContents[blog.id];
-      return {
-        ...blog,
-        description: content?.description,
-      };
+    const content = blogContents[blog.id];
+    return {
+      ...blog,
+      description: content?.description,
+    };
     })
   );
 }

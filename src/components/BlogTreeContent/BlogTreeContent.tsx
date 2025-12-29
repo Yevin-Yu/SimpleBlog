@@ -71,7 +71,7 @@ function BlogTreeContentComponent({
 
     if (loading) return;
 
-    const isSameBlog =
+    const isSameBlog = 
       currentBlogId === prevBlogId &&
       currentBlogId !== null &&
       prevBlog !== null &&
@@ -107,11 +107,11 @@ function BlogTreeContentComponent({
           prevSelectedBlogRef.current = selectedBlog;
           
           requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
               if (container) {
                 container.scrollTop = 0;
               }
-              setIsVisible(true);
+            setIsVisible(true);
               
               setTimeout(() => {
                 restoreElementsWidth(elements);
@@ -165,15 +165,15 @@ function BlogTreeContentComponent({
               <TitleSkeleton />
             ) : (
               <>
-                <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
-                <div className="blog-tree-article-meta">
-                  {displayBlog.category && (
-                    <span className="blog-tree-article-category">
-                      {displayBlog.category}
-                    </span>
-                  )}
-                  <time className="blog-tree-article-date">{displayBlog.date}</time>
-                </div>
+            <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
+            <div className="blog-tree-article-meta">
+              {displayBlog.category && (
+                <span className="blog-tree-article-category">
+                  {displayBlog.category}
+                </span>
+              )}
+              <time className="blog-tree-article-date">{displayBlog.date}</time>
+            </div>
               </>
             )}
           </header>
@@ -199,7 +199,7 @@ const arePropsEqual = (
 ): boolean => {
   const prevId = prevProps.selectedBlog?.id ?? null;
   const nextId = nextProps.selectedBlog?.id ?? null;
-
+  
   if (prevId !== nextId) return false;
   if (prevProps.loading !== nextProps.loading) return false;
   if (prevId === null && nextId === null) return true;
@@ -209,12 +209,12 @@ const arePropsEqual = (
 
   if (!prevBlog || !nextBlog) return true;
 
-  return (
+    return (
     prevBlog.title === nextBlog.title &&
     prevBlog.content === nextBlog.content &&
     prevBlog.date === nextBlog.date &&
     prevBlog.category === nextBlog.category
-  );
+    );
 };
 
 export const BlogTreeContent = memo(BlogTreeContentComponent, arePropsEqual);

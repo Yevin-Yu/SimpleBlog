@@ -25,7 +25,7 @@ const STRUCTURED_DATA_TEMPLATE = {
 export function Home() {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
-
+  
   const handleNavigateToBlog = () => {
     navigate(ROUTES.BLOG);
   };
