@@ -40,7 +40,9 @@
   overflow: hidden;
 }
 
-@media (max-width: 1024px) {
+/* 移动端导航栏默认隐藏，在空间不足时显示 */
+
+@media (max-width: 1023px) {
   .blog-tree-page {
     overflow: hidden;
   }
@@ -55,10 +57,6 @@
   .blog-tree-desktop-nav {
     display: none;
   }
-}
-
-.blog-tree-mobile-header {
-  display: none;
 }
 
 .blog-tree-mobile-menu-button,
@@ -126,7 +124,25 @@
 }
 
 
-@media (max-width: 768px) {
+/* 当空间不足时，显示顶部导航栏和弹出式侧边栏 */
+.blog-tree-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1000;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1023px) {
   .blog-tree-page {
     background-size: 20px 20px;
     scrollbar-gutter: auto;
@@ -134,23 +150,6 @@
 
   .blog-tree-container {
     max-width: 100%;
-  }
-
-  .blog-tree-mobile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 1000;
-    min-height: 48px;
   }
 
   .blog-tree-mobile-menu-button {
@@ -193,24 +192,26 @@
     background-color: rgba(0, 0, 0, 0.05);
   }
 
-  .blog-tree-mobile-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 999;
-    animation: fadeInOverlay 0.2s ease-in-out;
-  }
+}
 
-  @keyframes fadeInOverlay {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+/* 移动端遮罩层 */
+.blog-tree-mobile-overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  animation: fadeInOverlay 0.2s ease-in-out;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

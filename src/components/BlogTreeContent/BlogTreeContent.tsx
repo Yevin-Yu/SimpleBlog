@@ -11,13 +11,11 @@ interface BlogTreeContentProps {
   loading: boolean;
 }
 
-/** 过渡动画延迟配置 */
 const TRANSITION_DELAY = {
   FADE: 150,
   WIDTH_RESTORE: 200,
 } as const;
 
-/** 标题骨架屏组件 */
 const TitleSkeleton = () => (
   <div className="blog-tree-article-header-skeleton">
     <div className="skeleton-title-line" />
@@ -25,7 +23,6 @@ const TitleSkeleton = () => (
   </div>
 );
 
-/** 骨架屏加载组件 */
 const SkeletonLoader = () => (
   <div className="blog-tree-article-skeleton">
     <div className="skeleton-line" />
@@ -34,7 +31,6 @@ const SkeletonLoader = () => (
   </div>
 );
 
-/** 加载遮罩组件 */
 const LoadingOverlay = () => (
   <div className="blog-tree-loading-overlay">
     <LoadingLines />
@@ -106,13 +102,12 @@ function BlogTreeContentComponent({
           prevBlogIdRef.current = currentBlogId;
           prevSelectedBlogRef.current = selectedBlog;
           
-          requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
               if (container) {
                 container.scrollTop = 0;
               }
-            setIsVisible(true);
-              
+              setIsVisible(true);
               setTimeout(() => {
                 restoreElementsWidth(elements);
               }, TRANSITION_DELAY.WIDTH_RESTORE);
@@ -165,15 +160,15 @@ function BlogTreeContentComponent({
               <TitleSkeleton />
             ) : (
               <>
-            <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
-            <div className="blog-tree-article-meta">
-              {displayBlog.category && (
-                <span className="blog-tree-article-category">
-                  {displayBlog.category}
-                </span>
-              )}
-              <time className="blog-tree-article-date">{displayBlog.date}</time>
-            </div>
+                <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
+                <div className="blog-tree-article-meta">
+                  {displayBlog.category && (
+                    <span className="blog-tree-article-category">
+                      {displayBlog.category}
+                    </span>
+                  )}
+                  <time className="blog-tree-article-date">{displayBlog.date}</time>
+                </div>
               </>
             )}
           </header>
@@ -209,12 +204,12 @@ const arePropsEqual = (
 
   if (!prevBlog || !nextBlog) return true;
 
-    return (
+  return (
     prevBlog.title === nextBlog.title &&
     prevBlog.content === nextBlog.content &&
     prevBlog.date === nextBlog.date &&
     prevBlog.category === nextBlog.category
-    );
+  );
 };
 
 export const BlogTreeContent = memo(BlogTreeContentComponent, arePropsEqual);

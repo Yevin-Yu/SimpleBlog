@@ -1,6 +1,8 @@
 import { useMemo, useCallback, useState } from 'react';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
+import { SearchIcon } from './icons';
+import { LAYOUT_CONSTANTS } from '../../constants/layout';
 import type { BlogCategory } from '../../types';
 import './BlogTreeSidebar.css';
 
@@ -22,9 +24,6 @@ interface CategoryItemProps {
   path?: string;
 }
 
-/**
- * 分类项组件
- */
 function CategoryItem({
   category,
   selectedBlogId,
@@ -36,11 +35,8 @@ function CategoryItem({
   const currentPath = path ? `${path}/${category.name}` : category.name;
   const hasChildren = category.children && category.children.length > 0;
   const shouldShowToggle = hasChildren || category.blogs.length > 0;
-
-  /** 判断是否展开 */
   const isExpanded = category.expanded ?? false;
 
-  /** 计算分类下的总文章数（包括子分类） */
   const totalCount = useMemo(() => {
     const getTotalCount = (cat: BlogCategory): number => {
       let count = cat.blogs.length;
@@ -56,7 +52,7 @@ function CategoryItem({
     onToggleCategory(currentPath);
   }, [onToggleCategory, currentPath]);
 
-  const INDENT = { BASE: 16, STEP: 16, ITEM_BASE: 32 } as const;
+  const { INDENT } = LAYOUT_CONSTANTS;
 
   return (
     <div className={`blog-tree-category blog-tree-category-level-${level}`}>
@@ -67,40 +63,35 @@ function CategoryItem({
           aria-expanded={isExpanded}
           style={{ paddingLeft: `${INDENT.BASE + level * INDENT.STEP}px` }}
         >
-          <span className="blog-tree-category-icon">
-            ▶
-          </span>
+          <span className="blog-tree-category-icon">▶</span>
           <span className="blog-tree-category-name">{category.name}</span>
-          <span className="blog-tree-category-count">
-            ({totalCount})
-          </span>
+          <span className="blog-tree-category-count">({totalCount})</span>
         </button>
       )}
       <div className={`blog-tree-category-wrapper ${isExpanded ? 'expanded' : ''}`}>
-        <div
-          className={`blog-tree-category-content ${isExpanded ? 'expanded' : 'collapsed'}`}
-        >
-        {category.blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
-            onClick={() => onBlogClick(blog.id)}
-            style={{ paddingLeft: `${INDENT.ITEM_BASE + level * INDENT.STEP}px` }}
-          >
-            <span className="blog-tree-item-title">{blog.title}</span>
-          </div>
-        ))}
-        {hasChildren && category.children?.map((child) => (
-          <CategoryItem
-            key={child.name}
-            category={child}
-            selectedBlogId={selectedBlogId}
-            onToggleCategory={onToggleCategory}
-            onBlogClick={onBlogClick}
-            level={level + 1}
-            path={currentPath}
-          />
-        ))}
+        <div className={`blog-tree-category-content ${isExpanded ? 'expanded' : 'collapsed'}`}>
+          {category.blogs.map((blog) => (
+            <div
+              key={blog.id}
+              className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
+              onClick={() => onBlogClick(blog.id)}
+              style={{ paddingLeft: `${INDENT.ITEM_BASE + level * INDENT.STEP}px` }}
+            >
+              <span className="blog-tree-item-title">{blog.title}</span>
+            </div>
+          ))}
+          {hasChildren &&
+            category.children?.map((child) => (
+              <CategoryItem
+                key={child.name}
+                category={child}
+                selectedBlogId={selectedBlogId}
+                onToggleCategory={onToggleCategory}
+                onBlogClick={onBlogClick}
+                level={level + 1}
+                path={currentPath}
+              />
+            ))}
         </div>
       </div>
     </div>
@@ -128,28 +119,7 @@ export function BlogTreeSidebar({
               onClick={() => setIsSearchModalOpen(true)}
               aria-label="搜索文章"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M14 14L10.5 10.5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <SearchIcon />
             </button>
           </div>
         </div>

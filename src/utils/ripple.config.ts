@@ -1,16 +1,16 @@
 export const RIPPLE_CONFIG = {
   /** 随机涟漪生成间隔（毫秒） */
-  GENERATION_INTERVAL: { min: 400, max: 1000 },
+  GENERATION_INTERVAL: { min: 600, max: 1500 },
   /** 基础最大半径（相对于画布尺寸的比例） */
-  BASE_MAX_RADIUS_RATIO: 0.15,
+  BASE_MAX_RADIUS_RATIO: 0.18,
   /** 初始半径范围 */
-  INITIAL_RADIUS: { min: 3, max: 11 },
+  INITIAL_RADIUS: { min: 2, max: 8 },
   /** 生命周期范围 */
-  LIFETIME: { min: 200, max: 350 },
+  LIFETIME: { min: 280, max: 420 },
   /** 基础速度范围 */
-  BASE_SPEED: { min: 0.5, max: 0.9 },
+  BASE_SPEED: { min: 0.4, max: 0.7 },
   /** 透明度范围 */
-  OPACITY: { min: 0.06, max: 0.14 },
+  OPACITY: { min: 0.08, max: 0.18 },
   /** 强度阈值 */
   INTENSITY_THRESHOLDS: {
     small: 0.3,
@@ -19,8 +19,21 @@ export const RIPPLE_CONFIG = {
   /** 波纹数量配置 */
   WAVE_COUNT: {
     small: 2,
-    medium: 2,
-    large: 3,
+    medium: 3,
+    large: 4,
+  },
+  /** 鼠标移动涟漪配置 */
+  MOUSE_MOVE: {
+    enabled: true,
+    minDistance: 80,
+    intensity: 0.2,
+    maxCount: 8,
+  },
+  /** 高光配置 */
+  HIGHLIGHT: {
+    enabled: true,
+    opacity: 0.12,
+    offset: 0.15,
   },
 } as const;
 

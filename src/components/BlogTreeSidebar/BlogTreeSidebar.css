@@ -14,7 +14,7 @@
 }
 
 .blog-tree-header {
-  padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
   border-bottom: 1px solid var(--color-border);
   margin-bottom: var(--spacing-xs);
 }
@@ -143,7 +143,7 @@
   align-items: center;
   gap: var(--spacing-xs);
   transition: color var(--transition-fast) ease, background-color var(--transition-fast) ease;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--color-text-light);
   font-weight: 400;
   letter-spacing: 0.5px;
@@ -242,7 +242,7 @@
 .blog-tree-item::before {
   content: '';
   position: absolute;
-  left: var(--spacing-lg);
+  left: var(--spacing-md);
   top: 50%;
   transform: translateY(-50%);
   width: 2px;
@@ -292,22 +292,8 @@
   opacity: 0.8;
 }
 
-@media (max-width: 1024px) {
-  .blog-tree-sidebar {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    position: relative;
-    max-height: none;
-    overflow-y: visible;
-  }
-
-  .blog-tree-header {
-    padding: var(--spacing-md);
-  }
-}
-
-@media (max-width: 768px) {
+/* 当空间不足时，使用弹出式侧边栏（固定定位，从左侧滑出） */
+@media (max-width: 1023px) {
   .blog-tree-sidebar {
     position: fixed;
     top: 0;
@@ -337,6 +323,7 @@
     border-bottom: 1px solid var(--color-border);
     position: sticky;
     top: 0;
+    height: 48px;
     background: var(--color-bg);
     z-index: 10;
   }
@@ -348,10 +335,14 @@
   .blog-tree-title {
     font-size: var(--font-size-base);
   }
+}
+
+/* 小屏幕优化 */
+@media (max-width: 768px) {
 
   .blog-tree-category-header {
     padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     margin: 0 var(--spacing-xs);
   }
 
@@ -366,7 +357,7 @@
   }
 
   .blog-tree-item::before {
-    left: var(--spacing-md);
+    left: var(--spacing-sm);
   }
 
   .blog-tree-item-title {
