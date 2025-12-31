@@ -47,6 +47,16 @@ body {
   background: var(--color-text-lighter);
 }
 
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active,
+a:active {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @media (max-width: 768px) {
   html,
   body {

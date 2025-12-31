@@ -172,7 +172,7 @@
   }
 
   .blog-tree-mobile-menu-button:active {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: transparent;
   }
 
   .blog-tree-mobile-home-button {
@@ -190,6 +190,10 @@
 
   .blog-tree-mobile-home-button:hover {
     background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .blog-tree-mobile-home-button:active {
+    background-color: transparent;
   }
 
 }

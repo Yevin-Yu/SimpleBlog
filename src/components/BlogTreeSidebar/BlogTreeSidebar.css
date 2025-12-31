@@ -150,6 +150,11 @@
   text-transform: uppercase;
   border-radius: 4px;
   margin: 0 var(--spacing-xs);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.blog-tree-category-header:active {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .blog-tree-category-header:hover {
@@ -237,6 +242,12 @@
   position: relative;
   border-radius: 4px;
   margin: 0 var(--spacing-xs) 2px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.blog-tree-item:active {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .blog-tree-item::before {
