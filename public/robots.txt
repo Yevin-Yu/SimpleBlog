@@ -1,9 +1,32 @@
-User-agent: *
-Allow: /b/
+# robots.txt - 耶温博客
 
-# Sitemap
+# 允许所有爬虫
+User-agent: *
+Allow: /
+
+# 爬取延迟（可选，防止服务器过载）
+Crawl-delay: 1
+
+# 禁止爬取的路径
+Disallow: /b/error
+Disallow: /b/404
+Disallow: /b/*.json$
+
+# Sitemap 位置
 Sitemap: https://yuwb.cn/b/sitemap.xml
 
-# 禁止爬取的路径（如果有）
-# Disallow: /admin/
-# Disallow: /private/
+# 针对特定爬虫的设置
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# 百度蜘蛛
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1

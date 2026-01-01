@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '../components/SEO/SEO';
-import { SITE_CONFIG, ROUTES } from '../config';
+import { ROUTES } from '../config';
+import { generateErrorSEOData } from '../utils/seo.utils';
+import { useSiteUrl } from '../hooks/useSiteUrl';
 import './ErrorPage.css';
 
 interface ErrorPageProps {
@@ -18,6 +20,9 @@ export function ErrorPage({
   message = '抱歉，页面遇到了一些问题',
 }: ErrorPageProps) {
   const navigate = useNavigate();
+  const siteUrl = useSiteUrl();
+
+  const seoData = generateErrorSEOData(statusCode, siteUrl);
 
   const handleGoHome = () => {
     navigate(ROUTES.HOME);
@@ -26,9 +31,14 @@ export function ErrorPage({
   return (
     <>
       <SEO
-        title={`错误 ${statusCode} - ${SITE_CONFIG.name}`}
-        description="页面出现错误"
-        url="/error"
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+        type={seoData.type}
+        noindex={seoData.noindex}
+        breadcrumbs={seoData.breadcrumbs}
+        structuredData={seoData.structuredData}
       />
       <div className="error-page">
         <div className="error-page-background"></div>

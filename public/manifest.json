@@ -1,0 +1,22 @@
+{
+  "name": "耶温博客",
+  "short_name": "耶温博客",
+  "description": "一个简约的个人博客网站，分享技术思考、生活感悟和知识总结",
+  "start_url": "/b/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "technology", "blog"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "scope": "/b/"
+}

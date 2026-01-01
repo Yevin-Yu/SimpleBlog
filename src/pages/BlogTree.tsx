@@ -63,6 +63,11 @@ export function BlogTree() {
         url={seoData.url}
         type={seoData.type}
         publishedTime={seoData.publishedTime}
+        modifiedTime={seoData.modifiedTime}
+        author={seoData.author}
+        readingTime={seoData.readingTime}
+        tags={seoData.tags}
+        breadcrumbs={seoData.breadcrumbs}
         structuredData={seoData.structuredData}
       />
       <div className="blog-tree-page">
