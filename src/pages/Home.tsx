@@ -4,6 +4,7 @@ import { SEO } from '../components/SEO/SEO';
 import { InkBackground } from '../components/InkBackground/InkBackground';
 import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
 import { BlogSearchModal } from '../components/BlogSearchModal/BlogSearchModal';
+import { SnowfallEffect } from '../components/SnowfallEffect/SnowfallEffect';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES } from '../config';
 import './Home.css';
@@ -27,7 +28,7 @@ export function Home() {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  
+
   const handleNavigateToBlog = () => {
     navigate(ROUTES.BLOG);
   };
@@ -60,6 +61,8 @@ export function Home() {
         structuredData={structuredData}
       />
       <div className="home">
+        {/* 雪花特效 */}
+        <SnowfallEffect />
         <InkBackground />
         <div className="home-grid" />
         <button
