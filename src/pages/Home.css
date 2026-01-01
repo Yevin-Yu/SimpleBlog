@@ -106,42 +106,24 @@
   font-size: var(--font-size-sm);
   background: transparent;
   border: none;
+  border-bottom: 1px solid transparent;
   color: var(--color-text);
   cursor: pointer;
   font-weight: 300;
   letter-spacing: 0;
   border-radius: 0;
   position: relative;
-  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease;
-}
-
-.home-nav-button::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--color-text);
-  transition: width 0.3s ease;
+  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease, border-color var(--transition-base) ease;
 }
 
 .home-nav-button:hover {
   opacity: 0.8;
   background-color: rgba(0, 0, 0, 0.05);
-}
-
-.home-nav-button:hover::after {
-  width: 100%;
+  border-bottom-color: var(--color-text);
 }
 
 .home-nav-button:active {
   opacity: 0.6;
-}
-
-.home-nav-button:active::after {
-  width: 80%;
 }
 
 @media (max-width: 768px) {

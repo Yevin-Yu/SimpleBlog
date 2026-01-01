@@ -297,6 +297,10 @@
   .blog-tree-article-wrapper {
     min-height: auto;
   }
+
+  .blog-tree-loading-overlay > * {
+    transform: translateY(15vh);
+  }
 }
 
 .blog-tree-content::-webkit-scrollbar {
@@ -306,5 +310,9 @@
 @media (max-width: 768px) {
   .blog-tree-article-title {
     font-size: var(--font-size-2xl);
+  }
+
+  .blog-tree-loading-overlay > * {
+    transform: translateY(25vh);
   }
 }
