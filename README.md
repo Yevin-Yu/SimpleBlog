@@ -85,9 +85,65 @@ export const BASE_PATH = '/b'; // 基础路径
 
 ## 📦 部署
 
+### 基础部署
+
 1. 更新 `src/config/index.ts` 中的域名配置
 2. 运行 `npm run build`
 3. 将 `dist` 目录复制到 Web 服务器
+
+### SPA 路由配置
+
+由于项目使用 React Router，需要配置服务器将所有请求重定向到 `index.html`：
+
+#### Nginx 配置
+
+```nginx
+location /b {
+    try_files $uri $uri/ /b/index.html;
+}
+```
+
+#### Apache 配置
+
+在 `dist/.htaccess` 添加：
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /b/
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /b/index.html [L]
+</IfModule>
+```
+
+#### Netlify 配置
+
+创建 `netlify.toml`：
+
+```toml
+[[redirects]]
+  from = "/b/*"
+  to = "/b/index.html"
+  status = 200
+```
+
+#### Vercel 配置
+
+创建 `vercel.json`：
+
+```json
+{
+  "rewrites": [
+    { "source": "/b/:match*", "destination": "/b/index.html" }
+  ]
+}
+```
+
+### 404 页面
+
+项目已自动生成 `/b/error/` 和 `/b/404/` 错误页面。对于直接访问不存在的 URL，请确保服务器配置正确重定向到 `index.html`，让 React Router 处理路由。
 
 ## 🛠️ 技术栈
 

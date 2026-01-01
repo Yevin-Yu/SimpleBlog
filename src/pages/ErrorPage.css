@@ -1,0 +1,101 @@
+.error-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.error-page-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.error-page-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+  transform: translateY(-8vh);
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: 200;
+  color: var(--color-text);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  opacity: 0.15;
+}
+
+.error-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 300;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.error-message {
+  font-size: var(--font-size-base);
+  font-weight: 300;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.error-home-button {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 300;
+  letter-spacing: 0;
+  border-radius: 0;
+  position: relative;
+  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease, border-color var(--transition-base) ease;
+}
+
+.error-home-button:hover {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-bottom-color: var(--color-text);
+}
+
+.error-home-button:active {
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 6rem;
+  }
+
+  .error-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .error-message {
+    font-size: var(--font-size-sm);
+  }
+
+  .error-page-content {
+    transform: translateY(-5vh);
+  }
+}

@@ -222,6 +222,70 @@ function adjustAssetPaths(html, assetPaths) {
 }
 
 /**
+ * 生成错误页面的 HTML
+ */
+function generateErrorHTML(indexHtmlContent, assetPaths, statusCode = 500, title = '出错了', message = '抱歉，页面遇到了一些问题') {
+  const pageTitle = `错误 ${statusCode} - ${SITE_CONFIG.name}`;
+  const errorPageUrl = `${BASE_URL}/error`;
+
+  const errorPageContent = `
+    <div class="error-page">
+      <div class="error-page-background"></div>
+      <div class="error-page-content">
+        <div class="error-code">${statusCode}</div>
+        <h1 class="error-title">${title}</h1>
+        <p class="error-message">${message}</p>
+        <button class="error-home-button" onclick="window.location.href='${BASE_PATH}/'">
+          返回首页
+        </button>
+      </div>
+    </div>`;
+
+  let html = indexHtmlContent
+    .replace(/<title>.*?<\/title>/, `<title>${pageTitle}</title>`)
+    .replace(
+      /<meta name="description" content="[^"]*" \/>/,
+      `<meta name="description" content="页面出现错误" />`
+    )
+    .replace(
+      /<link rel="canonical" href="[^"]*" \/>/,
+      `<link rel="canonical" href="${errorPageUrl}" />`
+    )
+    .replace(
+      /<\/head>/,
+      `    <!-- Favicon -->
+    <link rel="icon" href="${BASE_URL}${SEO_CONFIG.favicon}" />
+    <link rel="shortcut icon" href="${BASE_URL}${SEO_CONFIG.favicon}" />
+  </head>`
+    )
+    .replace(
+      /<div id="root"><\/div>/,
+      `<div id="root">${errorPageContent}</div>`
+    );
+
+  return adjustAssetPathsForError(html, assetPaths);
+}
+
+/**
+ * 调整错误页面的资源路径
+ */
+function adjustAssetPathsForError(html, assetPaths) {
+  if (assetPaths.script) {
+    const scriptPath = assetPaths.script.replace(/^\/b\//, '');
+    const relativeScriptPath = `../${scriptPath}`;
+    html = html.replace(assetPaths.script, relativeScriptPath);
+  }
+
+  if (assetPaths.stylesheet) {
+    const stylesheetPath = assetPaths.stylesheet.replace(/^\/b\//, '');
+    const relativeStylesheetPath = `../${stylesheetPath}`;
+    html = html.replace(assetPaths.stylesheet, relativeStylesheetPath);
+  }
+
+  return html;
+}
+
+/**
  * 生成静态站点页面
  */
 async function generateSSGPages() {
@@ -262,7 +326,26 @@ async function generateSSGPages() {
       console.log(`Generated SSG page: ${BASE_PATH}/blog/${blog.id}/index.html`);
     }
 
-    console.log(`Successfully generated ${blogs.length} SSG pages`);
+    // 生成错误页面
+    const errorPath = resolve(distPath, 'error');
+    mkdirSync(errorPath, { recursive: true });
+
+    // 生成 500 错误页面
+    const error500Html = generateErrorHTML(indexHtmlContent, assetPaths, 500, '出错了', '抱歉，页面遇到了一些问题');
+    const error500IndexPath = resolve(errorPath, 'index.html');
+    writeFileSync(error500IndexPath, error500Html, 'utf-8');
+    console.log(`Generated SSG page: ${BASE_PATH}/error/index.html`);
+
+    // 生成 404 错误页面
+    const notFoundPath = resolve(distPath, '404');
+    mkdirSync(notFoundPath, { recursive: true });
+
+    const error404Html = generateErrorHTML(indexHtmlContent, assetPaths, 404, '页面未找到', '抱歉，您访问的页面不存在');
+    const notFoundIndexPath = resolve(notFoundPath, 'index.html');
+    writeFileSync(notFoundIndexPath, error404Html, 'utf-8');
+    console.log(`Generated SSG page: ${BASE_PATH}/404/index.html`);
+
+    console.log(`Successfully generated ${blogs.length + 2} SSG pages (${blogs.length} blogs + 2 error pages)`);
   } catch (error) {
     console.error('Error generating SSG pages:', error);
     process.exit(1);

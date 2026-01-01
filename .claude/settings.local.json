@@ -5,7 +5,10 @@
       "Bash(npm install:*)",
       "Bash(npm run build)",
       "Bash(wc:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)",
+      "Bash(npm run generate:ssg:*)"
     ]
   }
 }
