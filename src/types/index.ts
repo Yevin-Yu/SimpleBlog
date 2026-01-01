@@ -6,6 +6,7 @@ export interface BlogItem {
   title: string;
   date: string;
   category?: string;
+  tags?: string[];
 }
 
 /**
@@ -40,6 +41,7 @@ export interface SelectedBlog extends BlogItem {
  */
 export interface BlogSearchItem extends BlogItem {
   description?: string;
+  tags?: string[];
 }
 
 /**

@@ -4,7 +4,8 @@ export interface Frontmatter {
   category?: string;
   description?: string;
   id?: string;
-  [key: string]: string | undefined;
+  tags?: string[];
+  [key: string]: string | string[] | undefined;
 }
 
 const FRONTMATTER_REGEX = /^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/;
@@ -38,15 +39,42 @@ export function parseFrontmatter(markdown: string): {
     date: getDefaultDate(),
   };
 
+  let currentKey: string | null = null;
+  const arrayValues: string[] = [];
+
   for (const line of frontmatterText.split('\n')) {
+    // 处理数组项（以 "- " 开头）
+    if (line.trim().startsWith('- ')) {
+      const value = line.trim().slice(2).trim().replace(/^["']|["']$/g, '');
+      if (currentKey) {
+        arrayValues.push(value);
+      }
+      continue;
+    }
+
+    // 如果之前在收集数组项，现在保存它们
+    if (currentKey && arrayValues.length > 0) {
+      frontmatter[currentKey] = [...arrayValues];
+      arrayValues.length = 0;
+    }
+
     const colonIndex = line.indexOf(':');
     if (colonIndex > 0) {
-      const key = line.slice(0, colonIndex).trim();
+      currentKey = line.slice(0, colonIndex).trim();
       const value = line.slice(colonIndex + 1).trim().replace(/^["']|["']$/g, '');
-      if (key) {
-        frontmatter[key] = value;
+
+      if (value) {
+        // 如果有值，直接保存
+        frontmatter[currentKey] = value;
+        currentKey = null;
       }
+      // 如果没有值，可能是数组开始，继续等待下一行的数组项
     }
+  }
+
+  // 保存最后的数组
+  if (currentKey && arrayValues.length > 0) {
+    frontmatter[currentKey] = [...arrayValues];
   }
 
   return { frontmatter, content };

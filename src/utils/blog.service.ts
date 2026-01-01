@@ -115,6 +115,7 @@ const loadBlogsFromFiles = (): {
         title: frontmatter.title,
         date,
         category,
+        tags: frontmatter.tags,
       });
 
       blogContents[id] = {
