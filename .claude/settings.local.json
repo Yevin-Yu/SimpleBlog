@@ -9,7 +9,9 @@
       "Bash(git commit:*)",
       "Bash(git reset:*)",
       "Bash(npm run generate:ssg:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(tree:*)",
+      "Bash(find:*)"
     ]
   }
 }
