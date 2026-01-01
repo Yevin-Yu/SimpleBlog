@@ -25,12 +25,14 @@ export function useBlogTree(): UseBlogTreeReturn {
   const [contentLoading, setContentLoading] = useState(false);
   const loadingRef = useRef(false);
   const selectedBlogRef = useRef<SelectedBlog | null>(null);
+  const categoriesInitializedRef = useRef(false);
 
   const loadBlogs = useCallback(async () => {
     try {
       const blogList = await getBlogList();
       const categories = groupBlogsByCategory(blogList);
       setCategories(categories);
+      categoriesInitializedRef.current = true;
     } catch (error) {
       logger.error('加载博客列表失败', error);
     } finally {
@@ -133,10 +135,16 @@ export function useBlogTree(): UseBlogTreeReturn {
     loadBlogs();
   }, [loadBlogs]);
 
+  // 监听 URL id 参数变化来加载文章内容
   useEffect(() => {
     if (id) {
       loadBlogContent(id);
-    } else if (categories.length > 0) {
+    }
+  }, [id, loadBlogContent]);
+
+  // 在 categories 首次加载完成且没有 id 参数时，导航到默认文章
+  useEffect(() => {
+    if (!id && categoriesInitializedRef.current && categories.length > 0) {
       const findBlogById = (cats: typeof categories, targetId: string): BlogItem | null => {
         for (const cat of cats) {
           const blog = cat.blogs.find((b) => b.id === targetId);
@@ -148,14 +156,17 @@ export function useBlogTree(): UseBlogTreeReturn {
         }
         return null;
       };
-      
+
       const defaultBlog = findBlogById(categories, 'aboutme');
       const targetBlog = defaultBlog || categories[0]?.blogs[0];
       if (targetBlog) {
         navigate(ROUTES.BLOG_DETAIL(targetBlog.id), { replace: true });
       }
+
+      // 标记已处理，防止 categories 更新时重复触发
+      categoriesInitializedRef.current = false;
     }
-  }, [id, categories, navigate, loadBlogContent]);
+  }, [id, categories, navigate]);
 
   return useMemo(
     () => ({
