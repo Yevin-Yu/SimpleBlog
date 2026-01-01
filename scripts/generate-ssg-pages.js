@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import MarkdownIt from 'markdown-it';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/common';
 import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
