@@ -11,6 +11,17 @@ interface CategoryNode {
 }
 
 /**
+ * 按日期排序博客
+ */
+const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
+  const dateA = new Date(a.date);
+  const dateB = new Date(b.date);
+  const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+  const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+  return timeB - timeA;
+};
+
+/**
  * 构建分类树结构
  */
 const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
@@ -66,10 +77,6 @@ const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   if (aHasContent && !bHasContent) return -1;
   if (!aHasContent && bHasContent) return 1;
   return a.name.localeCompare(b.name, 'zh-CN');
-};
-
-const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
-  return new Date(b.date).getTime() - new Date(a.date).getTime();
 };
 
 /**

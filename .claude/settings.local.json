@@ -8,7 +8,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git reset:*)",
-      "Bash(npm run generate:ssg:*)"
+      "Bash(npm run generate:ssg:*)",
+      "Bash(npm run lint)"
     ]
   }
 }

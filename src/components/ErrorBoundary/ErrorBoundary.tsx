@@ -1,5 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
+import { ROUTES } from '../../constants/routes';
+import { BASE_PATH } from '../../config';
 import './ErrorBoundary.css';
 
 interface ErrorBoundaryProps {
@@ -30,8 +32,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     logger.error('Error Boundary 捕获到错误:', error);
     logger.error('组件堆栈:', errorInfo.componentStack);
 
-    // 跳转到错误页面
-    window.location.href = '/b/error';
+    window.location.href = `${BASE_PATH}${ROUTES.ERROR}`;
   }
 
   handleReset = () => {
@@ -44,7 +45,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         return this.props.fallback;
       }
 
-      // 显示简化的错误信息，然后跳转
       return (
         <div className="error-boundary">
           <div className="error-boundary-content">

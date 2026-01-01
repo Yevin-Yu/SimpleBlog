@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-
-const SIDEBAR_THRESHOLD = 1024;
+import { LAYOUT_CONSTANTS } from '../constants/layout';
 
 interface UseResponsiveLayoutReturn {
   hasEnoughSpace: boolean;
@@ -13,9 +12,9 @@ interface UseResponsiveLayoutReturn {
  * 根据容器宽度判断是否有足够空间显示侧边栏
  */
 export function useResponsiveLayout(): UseResponsiveLayoutReturn {
-  const initialHasEnoughSpace = 
-    typeof window !== 'undefined' 
-      ? window.innerWidth >= SIDEBAR_THRESHOLD 
+  const initialHasEnoughSpace =
+    typeof window !== 'undefined'
+      ? window.innerWidth >= LAYOUT_CONSTANTS.SIDEBAR_THRESHOLD
       : false;
 
   const [hasEnoughSpace, setHasEnoughSpace] = useState(initialHasEnoughSpace);
@@ -29,7 +28,7 @@ export function useResponsiveLayout(): UseResponsiveLayoutReturn {
 
     const updateSpaceStatus = () => {
       const width = container.offsetWidth;
-      const enoughSpace = width >= SIDEBAR_THRESHOLD;
+      const enoughSpace = width >= LAYOUT_CONSTANTS.SIDEBAR_THRESHOLD;
       
       hasEnoughSpaceRef.current = enoughSpace;
       setHasEnoughSpace(enoughSpace);
