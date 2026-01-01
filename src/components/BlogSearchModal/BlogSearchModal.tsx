@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { getAllBlogsForSearch } from '../../utils/blog.service';
 import type { BlogSearchItem } from '../../types';
 import { logger } from '../../utils/logger';
+import { PERFORMANCE_CONSTANTS } from '../../constants/performance';
 import './BlogSearchModal.css';
 
 interface BlogSearchModalProps {
@@ -9,8 +10,6 @@ interface BlogSearchModalProps {
   onClose: () => void;
   onBlogClick: (id: string) => void;
 }
-
-const FOCUS_DELAY = 100;
 
 export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,10 +29,10 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
           logger.error('加载博客列表失败', error);
           setLoading(false);
         });
-      
+
       setTimeout(() => {
         inputRef.current?.focus();
-      }, FOCUS_DELAY);
+      }, PERFORMANCE_CONSTANTS.SEARCH_FOCUS_DELAY);
     } else {
       setSearchQuery('');
     }

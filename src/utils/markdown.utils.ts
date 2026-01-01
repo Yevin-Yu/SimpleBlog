@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
+import DOMPurify from 'dompurify';
 
 /**
  * 需要过滤的警告关键词
@@ -75,6 +76,19 @@ const markdownRenderer = new MarkdownIt({
  */
 export function renderMarkdown(content: string): string {
   return markdownRenderer.render(content);
+}
+
+/**
+ * 渲染并净化 Markdown 内容（防止 XSS 攻击）
+ */
+export function renderMarkdownAndSanitize(content: string): string {
+  const rawHtml = renderMarkdown(content);
+  // 使用 DOMPurify 净化 HTML，允许安全的标签和属性
+  return DOMPurify.sanitize(rawHtml, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'a', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'del', 's', 'hr', 'div', 'span'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'title', 'target', 'rel', 'id', 'data-highlighted'],
+    ALLOW_DATA_ATTR: true,
+  });
 }
 
 /**

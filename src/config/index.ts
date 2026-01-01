@@ -29,6 +29,7 @@ export const SEO_CONFIG = {
   defaultDescription: '一个现代化的个人博客网站，分享技术思考、生活感悟和知识总结。',
   defaultKeywords: '博客,耶温博客,技术博客,React,TypeScript,前端开发',
   defaultImage: '/og-image.jpg',
+  favicon: '/icon.svg',
   themeColor: '#0a0a0a',
 } as const;
 

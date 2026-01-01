@@ -10,8 +10,131 @@
     <link rel="canonical" href="https://yuwb.cn/b" />
     <link rel="icon" href="icon.svg" />
     <title>耶温博客 - 记录思考，分享知识</title>
+    <style>
+      /* 初始加载遮罩 - 纯净的线条动画 */
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fafafa;
+        background-image:
+          linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
+        background-size: 40px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      #initial-loader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .initial-loader-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        transform: translateY(-8vh);
+      }
+
+      .initial-loader-lines {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .initial-loader-line {
+        width: 8px;
+        height: 1.5px;
+        background: #1a1a1a;
+        border-radius: 0.75px;
+        opacity: 0.25;
+        animation: initial-line-sweep 1.6s ease-in-out infinite;
+      }
+
+      .initial-loader-line:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .initial-loader-line:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .initial-loader-line:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      .initial-loader-line:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+
+      .initial-loader-line:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes initial-line-sweep {
+        0%, 100% {
+          opacity: 0.25;
+          transform: scaleX(0.5);
+        }
+        20% {
+          opacity: 0.8;
+          transform: scaleX(1);
+        }
+        40% {
+          opacity: 0.25;
+          transform: scaleX(0.5);
+        }
+        60% {
+          opacity: 0.25;
+          transform: scaleX(0.5);
+        }
+        80% {
+          opacity: 0.8;
+          transform: scaleX(1);
+        }
+      }
+
+      .initial-loader-text {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 300;
+        color: #666666;
+        letter-spacing: 0;
+      }
+
+      /* 隐藏根元素，防止闪烁 */
+      #root {
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      #root.app-ready {
+        opacity: 1;
+      }
+    </style>
   </head>
   <body>
+    <!-- 初始加载遮罩 -->
+    <div id="initial-loader">
+      <div class="initial-loader-content">
+        <p class="initial-loader-text">耶温博客</p>
+        <div class="initial-loader-lines">
+          <div class="initial-loader-line"></div>
+          <div class="initial-loader-line"></div>
+          <div class="initial-loader-line"></div>
+          <div class="initial-loader-line"></div>
+          <div class="initial-loader-line"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -27,6 +27,14 @@ body {
 
 #root {
   min-height: 100vh;
+  /* 初始隐藏，防止页面闪烁 */
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* 应用准备就绪后显示 */
+#root.app-ready {
+  opacity: 1;
 }
 
 ::-webkit-scrollbar {

@@ -5,7 +5,6 @@ import { useSiteUrl } from '../hooks/useSiteUrl';
 import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
 import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
 import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
-import { LoadingLines } from '../components/LoadingLines/LoadingLines';
 import { SEO } from '../components/SEO/SEO';
 import { ROUTES } from '../config';
 import { generateArticleSEOData, generateBlogListSEOData } from '../utils/seo.utils';
@@ -67,11 +66,6 @@ export function BlogTree() {
         structuredData={seoData.structuredData}
       />
       <div className="blog-tree-page">
-        {loading && (
-          <div className="blog-tree-page-loading">
-            <LoadingLines />
-          </div>
-        )}
         {!hasEnoughSpace && (
           <div className="blog-tree-mobile-header">
             <button

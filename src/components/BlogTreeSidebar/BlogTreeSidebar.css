@@ -9,8 +9,10 @@
   top: 0;
   max-height: 100vh;
   flex-shrink: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
+  /* Firefox 优化：只在需要时显示滚动条占位 */
+  scrollbar-gutter: auto;
 }
 
 .blog-tree-header {

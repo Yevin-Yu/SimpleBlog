@@ -28,6 +28,10 @@
   animation: fadeInOverlay 0.2s ease-out;
 }
 
+.blog-tree-page-loading > * {
+  transform: translateY(-8vh);
+}
+
 .blog-tree-container {
   display: flex;
   flex: 1;

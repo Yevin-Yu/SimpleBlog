@@ -3,6 +3,7 @@ import { MarkdownRenderer } from '../MarkdownRenderer/MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { Footer } from '../Footer/Footer';
 import { fixElementsWidth, restoreElementsWidth } from '../../utils/dom.utils';
+import { PERFORMANCE_CONSTANTS } from '../../constants/performance';
 import type { SelectedBlog } from '../../types';
 import './BlogTreeContent.css';
 
@@ -11,15 +12,13 @@ interface BlogTreeContentProps {
   loading: boolean;
 }
 
-const TRANSITION_DELAY = {
-  FADE: 150,
-  WIDTH_RESTORE: 200,
-} as const;
-
 const TitleSkeleton = () => (
   <div className="blog-tree-article-header-skeleton">
     <div className="skeleton-title-line" />
-    <div className="skeleton-meta-line" />
+    <div className="skeleton-meta-wrapper">
+      <div className="skeleton-meta-line category" />
+      <div className="skeleton-meta-line date" />
+    </div>
   </div>
 );
 
@@ -65,9 +64,8 @@ function BlogTreeContentComponent({
       return;
     }
 
-    if (loading) return;
-
-    const isSameBlog = 
+    // 当 loading 变化时，不要阻止更新，确保骨架屏和加载动画能正确显示
+    const isSameBlog =
       currentBlogId === prevBlogId &&
       currentBlogId !== null &&
       prevBlog !== null &&
@@ -76,7 +74,7 @@ function BlogTreeContentComponent({
       selectedBlog.title === prevBlog.title &&
       selectedBlog.content === prevBlog.content;
 
-    if (isSameBlog || selectedBlog === prevBlog) return;
+    if (isSameBlog && !loading) return;
 
     let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -85,23 +83,23 @@ function BlogTreeContentComponent({
         const container = containerRef.current;
         const page = document.querySelector('.blog-tree-page') as HTMLElement;
         const elements = [container, page, document.body];
-        
+
         if (container) {
           container.scrollTop = 0;
         }
-        
+
         fixElementsWidth(elements);
         setIsVisible(false);
-        
+
         timer = setTimeout(() => {
           if (container) {
             container.scrollTop = 0;
           }
-          
+
           setDisplayBlog(selectedBlog);
           prevBlogIdRef.current = currentBlogId;
           prevSelectedBlogRef.current = selectedBlog;
-          
+
               requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               if (container) {
@@ -110,14 +108,19 @@ function BlogTreeContentComponent({
               setIsVisible(true);
               setTimeout(() => {
                 restoreElementsWidth(elements);
-              }, TRANSITION_DELAY.WIDTH_RESTORE);
+              }, PERFORMANCE_CONSTANTS.WIDTH_RESTORE_DELAY);
             });
           });
-        }, TRANSITION_DELAY.FADE);
-      } else {
+        }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
+      } else if (!isVisible) {
+        // 如果当前不可见，立即显示
         setDisplayBlog(selectedBlog);
         prevSelectedBlogRef.current = selectedBlog;
         setIsVisible(true);
+      } else {
+        // content 更新但 id 相同，直接更新
+        setDisplayBlog(selectedBlog);
+        prevSelectedBlogRef.current = selectedBlog;
       }
     } else {
       setIsVisible(false);
@@ -125,7 +128,7 @@ function BlogTreeContentComponent({
       prevSelectedBlogRef.current = null;
       timer = setTimeout(() => {
         setDisplayBlog(null);
-      }, TRANSITION_DELAY.FADE);
+      }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
     }
 
     return () => {
@@ -133,18 +136,10 @@ function BlogTreeContentComponent({
         clearTimeout(timer);
       }
     };
-  }, [selectedBlog, loading]);
+  }, [selectedBlog, loading, isVisible]);
 
   if (!displayBlog) {
-    return (
-      <main ref={containerRef} className="blog-tree-content">
-        {loading && (
-          <div className="blog-tree-content-loading">
-            <LoadingOverlay />
-          </div>
-        )}
-      </main>
-    );
+    return <main ref={containerRef} className="blog-tree-content" />;
   }
 
   return (
@@ -152,10 +147,10 @@ function BlogTreeContentComponent({
       <div className="blog-tree-article-wrapper">
         {loading && <LoadingOverlay />}
         <article
-          className={`blog-tree-article ${isVisible && !loading ? 'article-visible' : 'article-hidden'}`}
+          className={`blog-tree-article ${isVisible || loading ? 'article-visible' : 'article-hidden'}`}
           key={displayBlog.id}
         >
-          <header className="blog-tree-article-header">
+          <header className={`blog-tree-article-header ${loading ? 'header-loading' : ''}`}>
             {loading ? (
               <TitleSkeleton />
             ) : (
@@ -194,7 +189,7 @@ const arePropsEqual = (
 ): boolean => {
   const prevId = prevProps.selectedBlog?.id ?? null;
   const nextId = nextProps.selectedBlog?.id ?? null;
-  
+
   if (prevId !== nextId) return false;
   if (prevProps.loading !== nextProps.loading) return false;
   if (prevId === null && nextId === null) return true;

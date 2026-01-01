@@ -77,6 +77,9 @@ export function SEO({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content={SEO_CONFIG.themeColor} />
 
+      <link rel="icon" href={SEO_CONFIG.favicon} />
+      <link rel="shortcut icon" href={SEO_CONFIG.favicon} />
+
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}

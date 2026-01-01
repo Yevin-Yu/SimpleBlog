@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { BlogTree } from './pages/BlogTree';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { BASE_PATH } from './config';
 
 /**
@@ -8,18 +9,20 @@ import { BASE_PATH } from './config';
  */
 export function App() {
   return (
-    <BrowserRouter
-      basename={BASE_PATH}
-      future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true,
-      }}
-    >
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/blog" element={<BlogTree />} />
-        <Route path="/blog/:id" element={<BlogTree />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter
+        basename={BASE_PATH}
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/blog" element={<BlogTree />} />
+          <Route path="/blog/:id" element={<BlogTree />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

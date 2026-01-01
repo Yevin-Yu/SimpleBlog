@@ -4,6 +4,7 @@ import { getBlogList, getBlogContent } from '../utils/blog.service';
 import { groupBlogsByCategory } from '../utils/blog.utils';
 import { logger } from '../utils/logger';
 import { ROUTES } from '../constants/routes';
+import { PERFORMANCE_CONSTANTS } from '../constants/performance';
 import type { BlogCategory, SelectedBlog, BlogItem } from '../types';
 
 interface UseBlogTreeReturn {
@@ -43,6 +44,8 @@ export function useBlogTree(): UseBlogTreeReturn {
     loadingRef.current = true;
     setContentLoading(true);
 
+    const startTime = Date.now();
+
     try {
       const [blogData, blogList] = await Promise.all([
         getBlogContent(blogId),
@@ -60,17 +63,22 @@ export function useBlogTree(): UseBlogTreeReturn {
       };
 
       const prevBlog = selectedBlogRef.current;
-      const isSameBlog = 
+      const isSameBlog =
         prevBlog?.id === newBlog.id &&
         prevBlog?.title === newBlog.title &&
         prevBlog?.content === newBlog.content;
 
       if (!isSameBlog) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
         setSelectedBlog(newBlog);
         selectedBlogRef.current = newBlog;
       }
-      
+
+      // 确保至少显示加载动画
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, PERFORMANCE_CONSTANTS.MIN_LOADING_TIME - elapsedTime);
+
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
+
       requestAnimationFrame(() => {
         setContentLoading(false);
         loadingRef.current = false;

@@ -1,6 +1,7 @@
-import type { BlogItem, BlogContent } from '../types';
+import type { BlogItem, BlogContent, BlogSearchItem } from '../types';
 import { parseFrontmatter, generateIdFromFilename } from './frontmatter';
 import { logger } from './logger';
+import { isValidDateString } from './date.utils';
 
 const blogModules = import.meta.glob('../../blogs/**/*.md', {
   query: '?raw',
@@ -103,10 +104,16 @@ const loadBlogsFromFiles = (): {
 
       const id = generateUniqueId(baseId);
 
+      // 验证日期格式
+      const date = frontmatter.date;
+      if (!isValidDateString(date)) {
+        logger.warn(`博客日期格式无效: ${path}, 使用当前日期`);
+      }
+
       blogList.push({
         id,
         title: frontmatter.title,
-        date: frontmatter.date,
+        date,
         category,
       });
 
@@ -127,7 +134,14 @@ const loadBlogsFromFiles = (): {
 const { blogList, blogContents } = loadBlogsFromFiles();
 
 const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
-  return new Date(b.date).getTime() - new Date(a.date).getTime();
+  const dateA = new Date(a.date);
+  const dateB = new Date(b.date);
+
+  // 处理无效日期
+  const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+  const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+
+  return timeB - timeA;
 };
 
 /**
@@ -150,19 +164,17 @@ export function getBlogContent(id: string): Promise<BlogContent> {
   return Promise.resolve(content);
 }
 
-import type { BlogSearchItem } from '../types';
-
 /**
  * 获取所有博客用于搜索（包含描述）
  */
 export function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
   return Promise.resolve(
     blogList.map((blog) => {
-    const content = blogContents[blog.id];
-    return {
-      ...blog,
-      description: content?.description,
-    };
+      const content = blogContents[blog.id];
+      return {
+        ...blog,
+        description: content?.description,
+      };
     })
   );
 }

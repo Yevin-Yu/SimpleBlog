@@ -17,6 +17,8 @@ const BASE_URL = `${SITE_CONFIG.url}${BASE_PATH}`;
 
 const SEO_CONFIG = {
   defaultImage: '/og-image.jpg',
+  favicon: '/icon.svg',
+  themeColor: '#0a0a0a',
 };
 
 const markdownRenderer = new MarkdownIt({
@@ -163,7 +165,11 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
     )
     .replace(
       /<\/head>/,
-      `    <!-- Open Graph / Facebook -->
+      `    <!-- Favicon -->
+    <link rel="icon" href="${BASE_URL}${SEO_CONFIG.favicon}" />
+    <link rel="shortcut icon" href="${BASE_URL}${SEO_CONFIG.favicon}" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content="${escapeHtml(title)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
@@ -174,13 +180,13 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
     <meta property="article:published_time" content="${blog.date}" />
     ${blog.modifiedTime ? `    <meta property="article:modified_time" content="${blog.modifiedTime}" />` : ''}
     ${category ? `    <meta property="article:section" content="${escapeHtml(category)}" />` : ''}
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(title)}" />
     <meta name="twitter:description" content="${escapeHtml(description)}" />
     <meta name="twitter:image" content="${imageUrl}" />
-    
+
     <!-- Structured Data -->
     <script type="application/ld+json">${structuredDataJson}</script>
   </head>`
