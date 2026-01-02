@@ -99,7 +99,6 @@
   border: 1px solid var(--color-border);
   outline: none;
   transition: border-color var(--transition-fast) ease;
-  font-family: inherit;
   color: var(--color-text);
   font-weight: 390;
   background: var(--color-bg);
