@@ -11,7 +11,14 @@
       "Bash(npm run generate:ssg:*)",
       "Bash(npm run lint)",
       "Bash(tree:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebSearch",
+      "Bash(npm run generate:contributions:*)",
+      "Bash(cat:*)",
+      "Bash(npx vite build:*)",
+      "Bash(ls:*)",
+      "Bash(npm run ensure:ids:*)",
+      "Bash(node:*)"
     ]
   }
 }

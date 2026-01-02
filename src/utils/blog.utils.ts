@@ -138,28 +138,21 @@ const convertNodeToCategory = (
  */
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
-  
-  // 查找包含"关于我"文章（ID: aboutme）的分类路径
-  const defaultBlogPath = findCategoryPathForBlog(root, 'aboutme');
+
+  // 默认展开第一个分类
   const expandedPaths = new Set<string>();
-  
-  if (defaultBlogPath) {
-    // 将路径及其所有父路径添加到展开集合
-    let path = '';
-    for (const part of defaultBlogPath) {
-      path = path ? `${path}/${part}` : part;
-      expandedPaths.add(path);
-    }
+  const firstCategory = Array.from(root.children.keys())[0];
+  if (firstCategory) {
+    expandedPaths.add(firstCategory);
   }
-  
+
   const categories: BlogCategory[] = [];
-  
+
   if (root.blogs.length > 0) {
-    const hasDefaultBlog = root.blogs.some((blog) => blog.id === 'aboutme');
     categories.push({
       name: BLOG_CONFIG.defaultCategory,
       blogs: root.blogs.sort(sortBlogsByDate),
-      expanded: hasDefaultBlog,
+      expanded: false,
     });
   }
 

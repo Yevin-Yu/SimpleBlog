@@ -19,10 +19,10 @@ export function App() {
         }}
       >
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blog" element={<BlogTree />} />
-          <Route path="/blog/:id" element={<BlogTree />} />
           <Route path="/error" element={<ErrorPage />} />
+          <Route path="/blog" element={<BlogTree />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/:id" element={<BlogTree />} />
           <Route path="*" element={<ErrorPage statusCode={404} title="页面未找到" message="抱歉，您访问的页面不存在" />} />
         </Routes>
       </BrowserRouter>

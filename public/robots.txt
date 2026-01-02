@@ -8,12 +8,11 @@ Allow: /
 Crawl-delay: 1
 
 # 禁止爬取的路径
-Disallow: /b/error
-Disallow: /b/404
-Disallow: /b/*.json$
+Disallow: /error
+Disallow: /404
 
 # Sitemap 位置
-Sitemap: https://yuwb.cn/b/sitemap.xml
+Sitemap: https://blog.yuwb.cn/sitemap.xml
 
 # 针对特定爬虫的设置
 # Googlebot

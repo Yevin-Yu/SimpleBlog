@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run generate:contributions && vite",
-    "build": "tsc && npm run generate:contributions && vite build && npm run generate:sitemap && npm run generate:ssg",
+    "dev": "npm run ensure:ids && npm run generate:contributions && vite",
+    "build": "npm run ensure:ids && tsc && npm run generate:contributions && vite build && npm run generate:sitemap && npm run generate:ssg",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "ensure:ids": "node scripts/ensure-blog-ids.js",
     "generate:contributions": "node scripts/generate-contributions.js",
     "generate:sitemap": "node scripts/generate-sitemap.js",
     "generate:ssg": "node scripts/generate-ssg-pages.js"

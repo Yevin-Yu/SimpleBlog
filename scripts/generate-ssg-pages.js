@@ -7,10 +7,10 @@ import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const BASE_PATH = '/b';
+const BASE_PATH = '';
 const SITE_CONFIG = {
   name: '耶温博客',
-  url: process.env.SITE_URL || 'https://yuwb.cn',
+  url: process.env.SITE_URL || 'https://blog.yuwb.cn',
   locale: 'zh_CN',
 };
 const BASE_URL = `${SITE_CONFIG.url}${BASE_PATH}`;
@@ -135,8 +135,8 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const title = blog.title || 'Untitled';
   const description = blog.description || blog.title || '耶温博客文章';
   const category = blog.category || '';
-  const blogUrl = `${BASE_URL}/blog/${blog.id}`;
-  const imageUrl = blog.image 
+  const blogUrl = `${BASE_URL}/${blog.id}`;
+  const imageUrl = blog.image
     ? (blog.image.startsWith('http') ? blog.image : `${BASE_URL}${blog.image}`)
     : `${BASE_URL}${SEO_CONFIG.defaultImage}`;
   
@@ -201,24 +201,24 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
 
 /**
  * 调整资源路径为相对路径
- * 从 /b/assets/... 转换为 ../../assets/...
+ * 从 /assets/... 转换为 ../assets/...
  */
 function adjustAssetPaths(html, assetPaths) {
   if (assetPaths.script) {
-    // 去掉 /b/ 前缀，只保留 assets/... 部分
-    const scriptPath = assetPaths.script.replace(/^\/b\//, '');
-    const relativeScriptPath = `../../${scriptPath}`;
-    html = html.replace(assetPaths.script, relativeScriptPath);
+    // 去掉 / 前缀，只保留 assets/... 部分
+    const scriptPath = assetPaths.script.replace(/^\//, '');
+    const relativeScriptPath = `../${scriptPath}`;
+    html = html.replace(new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeScriptPath);
   }
 
   if (assetPaths.stylesheet) {
-    // 去掉 /b/ 前缀，只保留 assets/... 部分
-    const stylesheetPath = assetPaths.stylesheet.replace(/^\/b\//, '');
-    const relativeStylesheetPath = `../../${stylesheetPath}`;
-    html = html.replace(assetPaths.stylesheet, relativeStylesheetPath);
+    // 去掉 / 前缀，只保留 assets/... 部分
+    const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
+    const relativeStylesheetPath = `../${stylesheetPath}`;
+    html = html.replace(new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeStylesheetPath);
   }
 
-  return html.replace(/([^:])\.\.\/\//g, '$1../');
+  return html;
 }
 
 /**
@@ -271,15 +271,15 @@ function generateErrorHTML(indexHtmlContent, assetPaths, statusCode = 500, title
  */
 function adjustAssetPathsForError(html, assetPaths) {
   if (assetPaths.script) {
-    const scriptPath = assetPaths.script.replace(/^\/b\//, '');
-    const relativeScriptPath = `../${scriptPath}`;
-    html = html.replace(assetPaths.script, relativeScriptPath);
+    const scriptPath = assetPaths.script.replace(/^\//, '');
+    const relativeScriptPath = scriptPath;
+    html = html.replace(new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeScriptPath);
   }
 
   if (assetPaths.stylesheet) {
-    const stylesheetPath = assetPaths.stylesheet.replace(/^\/b\//, '');
-    const relativeStylesheetPath = `../${stylesheetPath}`;
-    html = html.replace(assetPaths.stylesheet, relativeStylesheetPath);
+    const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
+    const relativeStylesheetPath = stylesheetPath;
+    html = html.replace(new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeStylesheetPath);
   }
 
   return html;
@@ -291,7 +291,6 @@ function adjustAssetPathsForError(html, assetPaths) {
 async function generateSSGPages() {
   try {
     const distPath = resolve(__dirname, '../dist');
-    const blogPath = resolve(distPath, 'blog');
     const blogsSourcePath = resolve(__dirname, '../blogs');
     const indexHtmlPath = resolve(distPath, 'index.html');
 
@@ -317,13 +316,13 @@ async function generateSSGPages() {
     }
 
     for (const blog of blogs) {
-      const blogDir = resolve(blogPath, blog.id);
+      const blogDir = resolve(distPath, blog.id);
       mkdirSync(blogDir, { recursive: true });
 
       const blogHtml = generateBlogHTML(blog, blog.content, indexHtmlContent, assetPaths);
       const indexPath = resolve(blogDir, 'index.html');
       writeFileSync(indexPath, blogHtml, 'utf-8');
-      console.log(`Generated SSG page: ${BASE_PATH}/blog/${blog.id}/index.html`);
+      console.log(`Generated SSG page: ${BASE_PATH}/${blog.id}/index.html`);
     }
 
     // 生成错误页面

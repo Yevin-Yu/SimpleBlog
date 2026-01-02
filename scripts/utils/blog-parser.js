@@ -73,16 +73,25 @@ export function generateIdFromPath(relativePath) {
     return generateIdFromFilename(pathParts[0]);
   }
 
+  // 使用文件的相对路径，保留中文，转换为适合 URL 的格式
   let id = pathParts
     .join('/')
     .replace(/\.md$/, '')
     .toLowerCase()
-    .replace(/[^a-z0-9/]+/g, '-')
+    // 保留中文字符和字母数字
+    .replace(/[^a-z0-9\u4e00-\u9fa5/]+/g, '-')
     .replace(/\/+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 
-  return id || 'untitled';
+  // 如果生成的 ID 为空（全是中文被过滤掉），使用 nanoid 风格的随机 ID
+  if (!id) {
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substring(2, 8);
+    id = `blog-${timestamp}-${random}`;
+  }
+
+  return id;
 }
 
 /**

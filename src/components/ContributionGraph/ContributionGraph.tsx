@@ -137,7 +137,10 @@ export function ContributionGraph() {
   }, [tooltip.visible, updateTooltipPosition]);
 
   useEffect(() => {
-    fetch(`${BASE_PATH}/contributions.json`)
+    // 使用相对路径，避免协议相对 URL 问题
+    const jsonPath = BASE_PATH.endsWith('/') ? `${BASE_PATH}contributions.json` : `${BASE_PATH}/contributions.json`;
+
+    fetch(jsonPath)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
