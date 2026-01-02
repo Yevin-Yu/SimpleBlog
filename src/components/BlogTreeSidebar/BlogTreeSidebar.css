@@ -40,7 +40,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-weight: 300;
+  font-weight: 390;
   letter-spacing: 0;
   border-radius: 0;
   position: relative;
@@ -193,7 +193,7 @@
 .blog-tree-category-count {
   color: var(--color-text-lighter);
   font-size: 10px;
-  font-weight: 300;
+  font-weight: 390;
   opacity: 0.7;
 }
 
@@ -291,7 +291,7 @@
   font-size: var(--font-size-sm);
   color: inherit;
   line-height: 1.5;
-  font-weight: 300;
+  font-weight: 390;
 }
 
 .blog-tree-item:hover .blog-tree-item-title {
@@ -301,7 +301,7 @@
 .blog-tree-item-date {
   font-size: var(--font-size-xs);
   color: var(--color-text-lighter);
-  font-weight: 300;
+  font-weight: 390;
   opacity: 0.8;
 }
 

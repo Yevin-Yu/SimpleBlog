@@ -165,7 +165,7 @@
 
 .blog-tree-article-title {
   font-size: var(--font-size-3xl);
-  font-weight: 300;
+  font-weight: 390;
   color: var(--color-text);
   line-height: 1.4;
   margin-bottom: var(--spacing-md);
@@ -183,7 +183,7 @@
   background: transparent;
   color: var(--color-text-light);
   font-size: var(--font-size-xs);
-  font-weight: 300;
+  font-weight: 390;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -191,7 +191,7 @@
 .blog-tree-article-date {
   color: var(--color-text-lighter);
   font-size: var(--font-size-xs);
-  font-weight: 300;
+  font-weight: 390;
 }
 
 .blog-tree-article-body {
@@ -360,14 +360,14 @@
 
 .blog-tree-error-title {
   font-size: var(--font-size-2xl);
-  font-weight: 300;
+  font-weight: 390;
   color: var(--color-text);
   margin: 0;
 }
 
 .blog-tree-error-message {
   font-size: var(--font-size-base);
-  font-weight: 300;
+  font-weight: 390;
   color: var(--color-text-light);
   margin: 0;
 }
@@ -387,7 +387,7 @@
   border-bottom: 1px solid transparent;
   color: var(--color-text);
   cursor: pointer;
-  font-weight: 300;
+  font-weight: 390;
   letter-spacing: 0;
   border-radius: 0;
   position: relative;
