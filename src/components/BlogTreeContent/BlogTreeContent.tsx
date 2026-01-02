@@ -10,6 +10,7 @@ import './BlogTreeContent.css';
 interface BlogTreeContentProps {
   selectedBlog: SelectedBlog | null;
   loading: boolean;
+  error: string | null;
 }
 
 const TitleSkeleton = () => (
@@ -39,6 +40,7 @@ const LoadingOverlay = () => (
 function BlogTreeContentComponent({
   selectedBlog,
   loading,
+  error,
 }: BlogTreeContentProps) {
   const containerRef = useRef<HTMLElement>(null);
   const [displayBlog, setDisplayBlog] = useState<SelectedBlog | null>(
@@ -138,6 +140,29 @@ function BlogTreeContentComponent({
     };
   }, [selectedBlog, loading, isVisible]);
 
+  if (!displayBlog && !error) {
+    return <main ref={containerRef} className="blog-tree-content" />;
+  }
+
+  if (error) {
+    return (
+      <main ref={containerRef} className="blog-tree-content">
+        <div className="blog-tree-error-wrapper">
+          <div className="blog-tree-error-content">
+            <div className="blog-tree-error-icon">📭</div>
+            <h2 className="blog-tree-error-title">页面未找到</h2>
+            <p className="blog-tree-error-message">您访问的文章不存在或已被删除</p>
+            <div className="blog-tree-error-actions">
+              <a href="/" className="blog-tree-error-button">
+                返回首页
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   if (!displayBlog) {
     return <main ref={containerRef} className="blog-tree-content" />;
   }
@@ -192,6 +217,7 @@ const arePropsEqual = (
 
   if (prevId !== nextId) return false;
   if (prevProps.loading !== nextProps.loading) return false;
+  if (prevProps.error !== nextProps.error) return false;
   if (prevId === null && nextId === null) return true;
 
   const prevBlog = prevProps.selectedBlog;

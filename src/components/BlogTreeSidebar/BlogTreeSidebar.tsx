@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, memo } from 'react';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
 import { SearchIcon } from './icons';
@@ -82,7 +82,7 @@ function CategoryItem({
           ))}
           {hasChildren &&
             category.children?.map((child) => (
-              <CategoryItem
+              <MemoizedCategoryItem
                 key={child.name}
                 category={child}
                 selectedBlogId={selectedBlogId}
@@ -97,6 +97,20 @@ function CategoryItem({
     </div>
   );
 }
+
+const arePropsEqual = (
+  prevProps: CategoryItemProps,
+  nextProps: CategoryItemProps
+): boolean => {
+  return (
+    prevProps.category === nextProps.category &&
+    prevProps.selectedBlogId === nextProps.selectedBlogId &&
+    prevProps.level === nextProps.level &&
+    prevProps.path === nextProps.path
+  );
+};
+
+const MemoizedCategoryItem = memo(CategoryItem, arePropsEqual);
 
 export function BlogTreeSidebar({
   categories,
@@ -130,7 +144,7 @@ export function BlogTreeSidebar({
         ) : (
           <nav className="blog-tree-nav">
             {categories.map((category) => (
-              <CategoryItem
+              <MemoizedCategoryItem
                 key={category.name}
                 category={category}
                 selectedBlogId={selectedBlogId}

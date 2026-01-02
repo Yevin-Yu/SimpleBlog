@@ -1,5 +1,6 @@
 import type { BlogItem, BlogCategory } from '../types';
 import { BLOG_CONFIG } from '../config';
+import { sortBlogsByDate } from './sort.utils';
 
 /**
  * 分类树节点（内部使用）
@@ -9,17 +10,6 @@ interface CategoryNode {
   blogs: BlogItem[];
   children: Map<string, CategoryNode>;
 }
-
-/**
- * 按日期排序博客
- */
-const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
-  const dateA = new Date(a.date);
-  const dateB = new Date(b.date);
-  const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
-  const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
-  return timeB - timeA;
-};
 
 /**
  * 构建分类树结构

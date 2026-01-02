@@ -18,15 +18,12 @@ const WARNING_FILTERS = [
   '<code class=',
 ] as const;
 
-const originalConsoleWarn = console.warn;
-let isSuppressingWarnings = false;
-
 /**
- * 过滤 highlight.js 相关警告
+ * 安全地执行函数，临时过滤特定警告
  */
-const suppressHighlightWarnings = (): void => {
-  if (isSuppressingWarnings) return;
-  isSuppressingWarnings = true;
+const withWarningSuppressed = <T,>(fn: () => T): T => {
+  const originalWarn = console.warn;
+
   console.warn = (...args: unknown[]) => {
     const message = String(args[0] || '');
     const fullMessage = args.map(String).join(' ');
@@ -34,18 +31,15 @@ const suppressHighlightWarnings = (): void => {
       (filter) => message.includes(filter) || fullMessage.includes(filter)
     );
     if (!shouldSuppress) {
-    originalConsoleWarn.apply(console, args);
+      originalWarn.apply(console, args);
     }
   };
-};
 
-/**
- * 恢复原始 console.warn
- */
-const restoreConsoleWarn = (): void => {
-  if (!isSuppressingWarnings) return;
-  isSuppressingWarnings = false;
-  console.warn = originalConsoleWarn;
+  try {
+    return fn();
+  } finally {
+    console.warn = originalWarn;
+  }
 };
 
 /**
@@ -60,12 +54,10 @@ const markdownRenderer = new MarkdownIt({
       return '';
     }
     try {
-      suppressHighlightWarnings();
-      const result = hljs.highlight(str, { language: lang }).value;
-      restoreConsoleWarn();
-      return result;
+      return withWarningSuppressed(() =>
+        hljs.highlight(str, { language: lang }).value
+      );
     } catch {
-      restoreConsoleWarn();
       return '';
     }
   },
@@ -95,13 +87,10 @@ export function renderMarkdownAndSanitize(content: string): string {
  * 高亮代码块
  */
 export function highlightCodeBlocks(container: HTMLElement): void {
-  suppressHighlightWarnings();
-  try {
+  withWarningSuppressed(() => {
     container.querySelectorAll('pre code').forEach((block) => {
       hljs.highlightElement(block as HTMLElement);
     });
-  } finally {
-    restoreConsoleWarn();
-  }
+  });
 }
 

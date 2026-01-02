@@ -12,6 +12,7 @@ interface UseBlogTreeReturn {
   selectedBlog: SelectedBlog | null;
   loading: boolean;
   contentLoading: boolean;
+  error: string | null;
   toggleCategory: (name: string) => void;
   handleBlogClick: (id: string) => void;
 }
@@ -23,6 +24,7 @@ export function useBlogTree(): UseBlogTreeReturn {
   const [selectedBlog, setSelectedBlog] = useState<SelectedBlog | null>(null);
   const [loading, setLoading] = useState(true);
   const [contentLoading, setContentLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const loadingRef = useRef(false);
   const selectedBlogRef = useRef<SelectedBlog | null>(null);
   const categoriesInitializedRef = useRef(false);
@@ -85,10 +87,12 @@ export function useBlogTree(): UseBlogTreeReturn {
         setContentLoading(false);
         loadingRef.current = false;
       });
-    } catch (error) {
-      logger.error('加载博客内容失败', error);
+    } catch (err) {
+      logger.error('加载博客内容失败', err);
+      setError('文章不存在或已被删除');
       setContentLoading(false);
       loadingRef.current = false;
+      setSelectedBlog(null);
     }
   }, []);
 
@@ -138,6 +142,7 @@ export function useBlogTree(): UseBlogTreeReturn {
   // 监听 URL id 参数变化来加载文章内容
   useEffect(() => {
     if (id) {
+      setError(null);
       loadBlogContent(id);
     }
   }, [id, loadBlogContent]);
@@ -174,9 +179,10 @@ export function useBlogTree(): UseBlogTreeReturn {
       selectedBlog,
       loading,
       contentLoading,
+      error,
       toggleCategory,
       handleBlogClick,
     }),
-    [categories, selectedBlog, loading, contentLoading, toggleCategory, handleBlogClick]
+    [categories, selectedBlog, loading, contentLoading, error, toggleCategory, handleBlogClick]
   );
 }

@@ -19,6 +19,7 @@ export function BlogTree() {
     selectedBlog,
     loading,
     contentLoading,
+    error,
     toggleCategory,
     handleBlogClick,
   } = useBlogTree();
@@ -101,7 +102,7 @@ export function BlogTree() {
             onBlogClick={handleBlogClickWithSidebar}
             visible={isInitialized ? (hasEnoughSpace || sidebarVisible) : false}
           />
-          <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} />
+          <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} error={error} />
         </div>
       </div>
     </>

@@ -17,6 +17,8 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const MAX_SEARCH_LENGTH = 100;
+
   useEffect(() => {
     if (isOpen) {
       setLoading(true);
@@ -96,9 +98,10 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
             className="blog-search-modal-input"
             placeholder="输入关键词搜索标题或简介..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value.slice(0, MAX_SEARCH_LENGTH))}
             onKeyDown={handleKeyDown}
             autoFocus
+            maxLength={MAX_SEARCH_LENGTH}
           />
         </div>
         <div className="blog-search-modal-results">

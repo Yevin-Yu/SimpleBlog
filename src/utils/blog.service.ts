@@ -2,6 +2,7 @@ import type { BlogItem, BlogContent, BlogSearchItem } from '../types';
 import { parseFrontmatter, generateIdFromFilename } from './frontmatter';
 import { logger } from './logger';
 import { isValidDateString } from './date.utils';
+import { sortBlogsByDate } from './sort.utils';
 
 const blogModules = import.meta.glob('../../blogs/**/*.md', {
   query: '?raw',
@@ -133,17 +134,6 @@ const loadBlogsFromFiles = (): {
 };
 
 const { blogList, blogContents } = loadBlogsFromFiles();
-
-const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
-  const dateA = new Date(a.date);
-  const dateB = new Date(b.date);
-
-  // 处理无效日期
-  const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
-  const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
-
-  return timeB - timeA;
-};
 
 /**
  * 获取博客列表（按日期倒序）
