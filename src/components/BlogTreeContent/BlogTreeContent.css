@@ -70,6 +70,7 @@
   background: transparent;
   padding: 0;
   width: 100%;
+  min-height: 100vh;
   transition: opacity 0.15s ease-in-out;
   position: relative;
 }

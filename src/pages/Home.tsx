@@ -6,7 +6,7 @@ import { ContributionGraph } from '../components/ContributionGraph/ContributionG
 import { BlogSearchModal } from '../components/BlogSearchModal/BlogSearchModal';
 import { SnowfallEffect } from '../components/SnowfallEffect/SnowfallEffect';
 import { useSiteUrl } from '../hooks/useSiteUrl';
-import { SITE_CONFIG, SEO_CONFIG, ROUTES } from '../config';
+import { SITE_CONFIG, SEO_CONFIG, ROUTES, BLOG_CONFIG } from '../config';
 import './Home.css';
 
 /**
@@ -30,7 +30,7 @@ export function Home() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const handleNavigateToBlog = () => {
-    navigate(ROUTES.BLOG);
+    navigate(ROUTES.BLOG_DETAIL(BLOG_CONFIG.defaultBlogId));
   };
 
   const handleBlogClick = (blogId: string) => {

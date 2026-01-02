@@ -19,6 +19,7 @@ export const BASE_PATH = '/';
 export const BLOG_CONFIG = {
   defaultCategory: '未分类',
   sidebarWidth: 240,
+  defaultBlogId: '9byt3r60', // 关于我
 } as const;
 
 /**

@@ -5,6 +5,7 @@ import { groupBlogsByCategory } from '../utils/blog.utils';
 import { logger } from '../utils/logger';
 import { ROUTES } from '../constants/routes';
 import { PERFORMANCE_CONSTANTS } from '../constants/performance';
+import { BLOG_CONFIG } from '../config';
 import type { BlogCategory, SelectedBlog, BlogItem } from '../types';
 
 interface UseBlogTreeReturn {
@@ -162,7 +163,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         return null;
       };
 
-      const defaultBlog = findBlogById(categories, 'aboutme');
+      const defaultBlog = findBlogById(categories, BLOG_CONFIG.defaultBlogId);
       const targetBlog = defaultBlog || categories[0]?.blogs[0];
       if (targetBlog) {
         navigate(ROUTES.BLOG_DETAIL(targetBlog.id), { replace: true });

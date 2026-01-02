@@ -129,11 +129,10 @@ const convertNodeToCategory = (
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
 
-  // 默认展开第一个分类
+  // 默认展开"耶温"分类
   const expandedPaths = new Set<string>();
-  const firstCategory = Array.from(root.children.keys())[0];
-  if (firstCategory) {
-    expandedPaths.add(firstCategory);
+  if (root.children.has('耶温')) {
+    expandedPaths.add('耶温');
   }
 
   const categories: BlogCategory[] = [];
