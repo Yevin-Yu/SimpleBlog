@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { SEO } from '../components/SEO/SEO';
 import { InkBackground } from '../components/InkBackground/InkBackground';
 import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
 import { BlogSearchModal } from '../components/BlogSearchModal/BlogSearchModal';
 import { SnowfallEffect } from '../components/SnowfallEffect/SnowfallEffect';
 import { useSiteUrl } from '../hooks/useSiteUrl';
+import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES, BLOG_CONFIG } from '../config';
 import './Home.css';
 
@@ -28,6 +29,13 @@ export function Home() {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
+  const handleOpenSearch = useCallback(() => {
+    setIsSearchModalOpen(true);
+  }, []);
+
+  // 全局搜索快捷键：按Q键打开搜索弹窗
+  useGlobalSearch(handleOpenSearch);
 
   const handleNavigateToBlog = () => {
     navigate(ROUTES.BLOG_DETAIL(BLOG_CONFIG.defaultBlogId));
@@ -68,7 +76,8 @@ export function Home() {
         <button
           className="home-search-button"
           onClick={() => setIsSearchModalOpen(true)}
-          aria-label="搜索文章"
+          aria-label="搜索文章 (快捷键: Q)"
+          title="搜索文章 (快捷键: Q)"
         >
           <svg
             width="16"

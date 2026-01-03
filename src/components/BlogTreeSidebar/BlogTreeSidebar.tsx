@@ -8,6 +8,7 @@ import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
 import { SearchIcon } from './icons';
 import { LAYOUT_CONSTANTS } from '../../constants/layout';
+import { useGlobalSearch } from '../../hooks/useGlobalSearch';
 import type { BlogCategory } from '../../types';
 import './BlogTreeSidebar.css';
 
@@ -127,6 +128,13 @@ export function BlogTreeSidebar({
 }: BlogTreeSidebarProps) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
+  const handleOpenSearch = useCallback(() => {
+    setIsSearchModalOpen(true);
+  }, []);
+
+  // 全局搜索快捷键：按Q键打开搜索弹窗
+  useGlobalSearch(handleOpenSearch);
+
   return (
     <>
       <aside className={`blog-tree-sidebar ${visible ? 'sidebar-visible' : 'sidebar-hidden'}`}>
@@ -136,7 +144,8 @@ export function BlogTreeSidebar({
             <button
               className="blog-tree-search-button"
               onClick={() => setIsSearchModalOpen(true)}
-              aria-label="搜索文章"
+              aria-label="搜索文章 (快捷键: Q)"
+              title="搜索文章 (快捷键: Q)"
             >
               <SearchIcon />
             </button>
