@@ -1,3 +1,8 @@
+/**
+ * 排序工具函数
+ * 提供博客按日期排序等功能
+ */
+
 import type { BlogItem } from '../types';
 
 /**

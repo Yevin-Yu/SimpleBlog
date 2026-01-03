@@ -62,20 +62,20 @@ export function useBlogTree(): UseBlogTreeReturn {
         throw new Error(`博客元数据不存在: ${blogId}`);
       }
 
-      const newBlog: SelectedBlog = {
+      const currentBlog: SelectedBlog = {
         ...blogMeta,
         content: blogData.content,
       };
 
-      const prevBlog = selectedBlogRef.current;
+      const previousBlog = selectedBlogRef.current;
       const isSameBlog =
-        prevBlog?.id === newBlog.id &&
-        prevBlog?.title === newBlog.title &&
-        prevBlog?.content === newBlog.content;
+        previousBlog?.id === currentBlog.id &&
+        previousBlog?.title === currentBlog.title &&
+        previousBlog?.content === currentBlog.content;
 
       if (!isSameBlog) {
-        setSelectedBlog(newBlog);
-        selectedBlogRef.current = newBlog;
+        setSelectedBlog(currentBlog);
+        selectedBlogRef.current = currentBlog;
       }
 
       // 确保至少显示加载动画

@@ -1,6 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js/lib/common';
 import DOMPurify from 'dompurify';
+import { getAllowedTags, getAllowedAttr } from '../constants/security';
 
 /**
  * 需要过滤的警告关键词
@@ -77,8 +78,8 @@ export function renderMarkdownAndSanitize(content: string): string {
   const rawHtml = renderMarkdown(content);
   // 使用 DOMPurify 净化 HTML，允许安全的标签和属性
   return DOMPurify.sanitize(rawHtml, {
-    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'code', 'pre', 'blockquote', 'ul', 'ol', 'li', 'a', 'img', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'del', 's', 'hr', 'div', 'span'],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'title', 'target', 'rel', 'id', 'data-highlighted'],
+    ALLOWED_TAGS: getAllowedTags(),
+    ALLOWED_ATTR: getAllowedAttr(),
     ALLOW_DATA_ATTR: true,
   });
 }

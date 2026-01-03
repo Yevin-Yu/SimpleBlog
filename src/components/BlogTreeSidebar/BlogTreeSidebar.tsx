@@ -1,3 +1,8 @@
+/**
+ * 博客树侧边栏组件
+ * 显示博客分类目录，支持展开/折叠分类，集成搜索功能
+ */
+
 import { useMemo, useCallback, useState, memo } from 'react';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';

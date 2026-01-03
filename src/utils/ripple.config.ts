@@ -1,3 +1,8 @@
+/**
+ * 墨水涟漪效果配置
+ * 用于背景动画的参数设置
+ */
+
 export const RIPPLE_CONFIG = {
   /** 随机涟漪生成间隔（毫秒） */
   GENERATION_INTERVAL: { min: 600, max: 1500 },

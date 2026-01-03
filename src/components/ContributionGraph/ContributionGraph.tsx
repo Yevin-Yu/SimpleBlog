@@ -1,6 +1,12 @@
+/**
+ * 贡献图组件
+ * 显示最近30天的提交活动记录，类似GitHub的贡献墙
+ */
+
 import { useEffect, useState, useRef, useMemo, useCallback, memo } from 'react';
 import { BASE_PATH } from '../../config';
 import { logger } from '../../utils/logger';
+import { CONTRIBUTION_CONFIG, CONTRIBUTION_LEVELS } from '../../constants/performance';
 import './ContributionGraph.css';
 
 interface ContributionData {
@@ -23,9 +29,6 @@ interface TooltipState {
   count: number;
 }
 
-const DAYS_IN_MONTH = 30;
-const TOOLTIP_OFFSET_Y = 60;
-
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'] as const;
 const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] as const;
 
@@ -42,11 +45,12 @@ function ContributionGraphComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getLevel = useCallback((count: number): number => {
-    if (count === 0) return 0;
-    if (count === 1) return 1;
-    if (count <= 3) return 2;
-    if (count <= 5) return 3;
-    return 4;
+    const thresholds = CONTRIBUTION_CONFIG.LEVEL_THRESHOLDS;
+    if (count <= thresholds[0]) return CONTRIBUTION_LEVELS.EMPTY;
+    if (count <= thresholds[1]) return CONTRIBUTION_LEVELS.LOW;
+    if (count <= thresholds[2]) return CONTRIBUTION_LEVELS.MEDIUM;
+    if (count <= thresholds[3]) return CONTRIBUTION_LEVELS.HIGH;
+    return CONTRIBUTION_LEVELS.VERY_HIGH;
   }, []);
 
   const formatDateString = useCallback((date: Date): string => {
@@ -63,12 +67,12 @@ function ContributionGraphComponent() {
     const today = new Date();
     today.setHours(23, 59, 59, 999);
     const todayStr = formatDateString(today);
-    
+
     const startDate = new Date(today);
-    startDate.setDate(startDate.getDate() - DAYS_IN_MONTH + 1);
+    startDate.setDate(startDate.getDate() - CONTRIBUTION_CONFIG.DAYS_IN_MONTH + 1);
     startDate.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < DAYS_IN_MONTH; i++) {
+    for (let i = 0; i < CONTRIBUTION_CONFIG.DAYS_IN_MONTH; i++) {
       const date = new Date(startDate);
       date.setDate(date.getDate() + i);
       const dateStr = formatDateString(date);
@@ -77,7 +81,7 @@ function ContributionGraphComponent() {
         days.push({ date: '', count: 0, level: 0 });
         continue;
       }
-      
+
       const count = data.contributions[dateStr] || 0;
       const level = getLevel(count);
       days.push({ date: dateStr, count, level });
@@ -102,7 +106,7 @@ function ContributionGraphComponent() {
 
     return {
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top - TOOLTIP_OFFSET_Y,
+      y: e.clientY - rect.top - CONTRIBUTION_CONFIG.TOOLTIP_OFFSET_Y,
     };
   }, []);
 

@@ -1,3 +1,9 @@
+/**
+ * 博客树页面
+ * 显示博客列表和文章内容，支持响应式布局
+ * 在桌面端显示侧边栏+内容区，在移动端可切换侧边栏显示
+ */
+
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useBlogTree } from '../hooks/useBlogTree';

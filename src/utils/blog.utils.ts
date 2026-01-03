@@ -57,13 +57,13 @@ const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
   return root;
 };
 
-const hasContent = (category: BlogCategory): boolean => {
+const hasAnyContent = (category: BlogCategory): boolean => {
   return category.blogs.length > 0 || (category.children?.length ?? 0) > 0;
 };
 
 const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
-  const aHasContent = hasContent(a);
-  const bHasContent = hasContent(b);
+  const aHasContent = hasAnyContent(a);
+  const bHasContent = hasAnyContent(b);
   if (aHasContent && !bHasContent) return -1;
   if (!aHasContent && bHasContent) return 1;
   return a.name.localeCompare(b.name, 'zh-CN');

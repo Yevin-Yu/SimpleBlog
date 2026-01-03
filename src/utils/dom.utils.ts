@@ -1,4 +1,9 @@
 /**
+ * DOM 操作工具函数
+ * 提供滚动条宽度计算、元素宽度固定等实用功能
+ */
+
+/**
  * 获取浏览器滚动条宽度
  */
 export function getScrollbarWidth(): number {
