@@ -18,7 +18,8 @@
       "Bash(npx vite build:*)",
       "Bash(ls:*)",
       "Bash(npm run ensure:ids:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(dir:*)"
     ]
   }
 }

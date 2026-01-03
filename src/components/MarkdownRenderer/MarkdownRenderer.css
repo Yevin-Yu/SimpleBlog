@@ -3,8 +3,10 @@
   line-height: 1.8;
   font-size: var(--font-size-base);
   font-weight: 390;
+  word-wrap: break-word;
 }
 
+/* === 标题样式 === */
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3,
@@ -22,10 +24,12 @@
   font-size: var(--font-size-3xl);
   border-bottom: 1px solid var(--color-border);
   padding-bottom: var(--spacing-md);
+  margin-top: 0;
 }
 
 .markdown-content h2 {
   font-size: var(--font-size-2xl);
+  margin-top: var(--spacing-2xl);
 }
 
 .markdown-content h3 {
@@ -36,98 +40,240 @@
   font-size: var(--font-size-lg);
 }
 
+/* === 段落样式 === */
 .markdown-content p {
   margin-bottom: var(--spacing-md);
 }
 
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* === 链接样式 === */
 .markdown-content a {
   color: var(--color-accent);
   text-decoration: none;
   border-bottom: 1px solid transparent;
-  transition: border-color var(--transition-base) ease;
+  transition: all var(--transition-fast) ease;
+  position: relative;
 }
 
 .markdown-content a:hover {
   border-bottom-color: var(--color-accent);
+  opacity: 0.7;
 }
 
+.markdown-content a code {
+  color: inherit;
+}
+
+/* === 列表样式 === */
 .markdown-content ul,
 .markdown-content ol {
   margin-bottom: var(--spacing-md);
-  padding-left: var(--spacing-xl);
+  padding-left: var(--spacing-lg);
+}
+
+.markdown-content ul {
+  list-style-type: disc;
+}
+
+.markdown-content ol {
+  list-style-type: decimal;
 }
 
 .markdown-content li {
   margin-bottom: var(--spacing-xs);
+  line-height: 1.8;
 }
 
+.markdown-content li > p {
+  margin-bottom: var(--spacing-xs);
+}
+
+.markdown-content ul ul,
+.markdown-content ol ul,
+.markdown-content ul ol,
+.markdown-content ol ol {
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* === 引用块样式 === */
 .markdown-content blockquote {
-  border-left: 4px solid var(--color-border);
+  border-left: 3px solid var(--color-border);
   padding-left: var(--spacing-md);
   margin: var(--spacing-md) 0;
   color: var(--color-text-light);
-  font-style: italic;
-}
-
-.markdown-content code {
   background: var(--color-bg-page);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-size: 0.9em;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 0 var(--spacing-sm) var(--spacing-sm) 0;
 }
 
+.markdown-content blockquote p {
+  margin-bottom: 0;
+}
+
+.markdown-content blockquote p + p {
+  margin-top: var(--spacing-sm);
+}
+
+/* === 行内代码样式 === */
+.markdown-content code {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: var(--color-text);
+  word-wrap: break-word;
+}
+
+.markdown-content a code {
+  background: rgba(26, 26, 26, 0.08);
+  border-color: rgba(26, 26, 26, 0.12);
+}
+
+/* === 代码块样式 === */
 .markdown-content pre {
   background: var(--color-bg-page);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
   padding: var(--spacing-md);
   overflow-x: auto;
   margin: var(--spacing-md) 0;
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+.markdown-content pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-lighter);
 }
 
 .markdown-content pre code {
   background: transparent;
   padding: 0;
   border-radius: 0;
-  font-size: 0.9em;
+  border: none;
+  font-size: inherit;
+  color: inherit;
 }
 
+/* === 图片样式 === */
 .markdown-content img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: 6px;
   margin: var(--spacing-md) 0;
+  display: block;
 }
 
+/* === 表格样式 === */
 .markdown-content table {
   width: 100%;
   border-collapse: collapse;
   margin: var(--spacing-md) 0;
+  font-size: 0.9375em;
+  overflow-x: auto;
+  display: block;
+}
+
+.markdown-content thead {
+  border-bottom: 2px solid var(--color-border);
 }
 
 .markdown-content th,
 .markdown-content td {
-  border: 1px solid var(--color-border);
-  padding: var(--spacing-sm);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
 }
 
 .markdown-content th {
   background: var(--color-bg-page);
   font-weight: 500;
+  color: var(--color-text);
 }
 
+.markdown-content tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.markdown-content tbody tr:last-child {
+  border-bottom: none;
+}
+
+.markdown-content tbody tr:hover {
+  background: var(--color-bg-page);
+}
+
+/* === 分隔线样式 === */
 .markdown-content hr {
   border: none;
   border-top: 1px solid var(--color-border);
   margin: var(--spacing-2xl) 0;
 }
 
+/* === 文本强调样式 === */
 .markdown-content strong {
   font-weight: 500;
+  color: var(--color-text);
 }
 
 .markdown-content em {
   font-style: italic;
+  color: var(--color-text-light);
 }
 
+.markdown-content del,
+.markdown-content s {
+  color: var(--color-text-lighter);
+  text-decoration: line-through;
+}
+
+/* === 响应式优化 === */
+@media (max-width: 768px) {
+  .markdown-content {
+    font-size: var(--font-size-sm);
+  }
+
+  .markdown-content h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .markdown-content h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .markdown-content h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  .markdown-content pre {
+    padding: var(--spacing-sm);
+    border-radius: 4px;
+  }
+
+  .markdown-content table {
+    font-size: 0.875em;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
