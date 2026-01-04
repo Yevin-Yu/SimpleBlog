@@ -45,7 +45,8 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
     return allBlogs.filter((blog) => {
       const titleMatch = blog.title.toLowerCase().includes(query);
       const descriptionMatch = blog.description?.toLowerCase().includes(query) ?? false;
-      return titleMatch || descriptionMatch;
+      const tagsMatch = blog.tags?.some(tag => tag.toLowerCase().includes(query)) ?? false;
+      return titleMatch || descriptionMatch || tagsMatch;
     });
   }, [allBlogs, searchQuery]);
 
@@ -94,7 +95,7 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
             ref={inputRef}
             type="text"
             className="blog-search-modal-input"
-            placeholder="输入关键词搜索标题或简介..."
+            placeholder="输入关键词搜索标题、简介或标签..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value.slice(0, PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH))}
             onKeyDown={handleKeyDown}
