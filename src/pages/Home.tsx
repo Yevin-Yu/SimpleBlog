@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import { SEO } from '../components/SEO/SEO';
 import { InkBackground } from '../components/InkBackground/InkBackground';
 import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
@@ -8,6 +8,8 @@ import { SnowfallEffect } from '../components/SnowfallEffect/SnowfallEffect';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { useGlobalSearch } from '../hooks/useGlobalSearch';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES, BLOG_CONFIG } from '../config';
+import { getBlogList } from '../utils/blog.service';
+import type { BlogItem } from '../types';
 import './Home.css';
 
 /**
@@ -29,6 +31,7 @@ export function Home() {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [latestBlogs, setLatestBlogs] = useState<BlogItem[]>([]);
 
   const handleOpenSearch = useCallback(() => {
     setIsSearchModalOpen(true);
@@ -44,6 +47,13 @@ export function Home() {
   const handleBlogClick = (blogId: string) => {
     navigate(ROUTES.BLOG_DETAIL(blogId));
   };
+
+  // 获取最新的3个文档
+  useEffect(() => {
+    getBlogList().then((blogs) => {
+      setLatestBlogs(blogs.slice(0, 3));
+    });
+  }, []);
 
   const structuredData = useMemo(() => ({
     ...STRUCTURED_DATA_TEMPLATE,
@@ -112,6 +122,24 @@ export function Home() {
               查看文章
             </button>
           </nav>
+          {latestBlogs.length > 0 && (
+            <div className="home-latest-blogs">
+              <h3 className="home-latest-blogs-title">最新文章</h3>
+              <ul className="home-latest-blogs-list">
+                {latestBlogs.map((blog) => (
+                  <li key={blog.id} className="home-latest-blogs-item">
+                    <button
+                      className="home-latest-blogs-link"
+                      onClick={() => handleBlogClick(blog.id)}
+                    >
+                      <span className="home-latest-blogs-item-title">{blog.title}</span>
+                      <span className="home-latest-blogs-item-date">{blog.date}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
         <ContributionGraph />
         <BlogSearchModal
