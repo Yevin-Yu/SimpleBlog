@@ -1,13 +1,13 @@
 ---
 title: Git 基础命令
-date: 2025-01-04
+date: 2024-05-11
 category: 开发/Git
 description: Git 版本控制常用命令汇总
 tags:
   - Git
   - 版本控制
   - 开发工具
-id: git-basic-commands
+id: nwd0bpy4
 ---
 
 ## 初始化配置

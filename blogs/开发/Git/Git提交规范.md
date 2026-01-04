@@ -1,13 +1,13 @@
 ---
 title: Git 提交规范
-date: 2025-01-04
+date: 2024-05-16
 category: 开发/Git
 description: 规范化 Git 提交信息的最佳实践
 tags:
   - Git
   - 提交规范
   - 开发规范
-id: git-commit-convention
+id: hleayr4y
 ---
 
 ## 为什么需要提交规范
