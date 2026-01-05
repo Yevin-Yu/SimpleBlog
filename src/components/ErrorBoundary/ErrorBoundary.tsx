@@ -14,10 +14,6 @@ interface ErrorBoundaryState {
   error?: Error;
 }
 
-/**
- * 错误边界组件
- * 捕获子组件树中的 JavaScript 错误，跳转到错误页面
- */
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
@@ -49,9 +45,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="error-boundary">
           <div className="error-boundary-content">
             <h1 className="error-boundary-title">出错了</h1>
-            <p className="error-boundary-message">
-              正在跳转到错误页面...
-            </p>
+            <p className="error-boundary-message">正在跳转到错误页面...</p>
           </div>
         </div>
       );

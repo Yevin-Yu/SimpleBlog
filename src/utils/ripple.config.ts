@@ -47,4 +47,3 @@ export const RIPPLE_SIZE_MULTIPLIERS = {
   medium: { min: 0.5, max: 0.7 },
   large: { min: 0.7, max: 1.0 },
 } as const;
-

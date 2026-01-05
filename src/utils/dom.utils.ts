@@ -8,7 +8,8 @@
  */
 export function getScrollbarWidth(): number {
   const outer = document.createElement('div');
-  outer.style.cssText = 'visibility:hidden;overflow:scroll;width:100px;height:100px;position:absolute;top:-9999px';
+  outer.style.cssText =
+    'visibility:hidden;overflow:scroll;width:100px;height:100px;position:absolute;top:-9999px';
   document.body.appendChild(outer);
 
   const inner = document.createElement('div');
@@ -57,4 +58,3 @@ export function fixElementsWidth(elements: (HTMLElement | null)[]): Array<string
 export function restoreElementsWidth(elements: (HTMLElement | null)[]): void {
   elements.forEach(restoreElementWidth);
 }
-

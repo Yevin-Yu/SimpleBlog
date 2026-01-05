@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { SEO } from '../components/SEO/SEO';
 import { InkBackground } from '../components/InkBackground/InkBackground';
 import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
@@ -12,9 +12,6 @@ import { getBlogList } from '../utils/blog.service';
 import type { BlogItem } from '../types';
 import './Home.css';
 
-/**
- * 结构化数据模板
- */
 const STRUCTURED_DATA_TEMPLATE = {
   '@context': 'https://schema.org',
   '@type': 'WebSite' as const,
@@ -33,11 +30,8 @@ export function Home() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [latestBlogs, setLatestBlogs] = useState<BlogItem[]>([]);
 
-  const handleOpenSearch = useCallback(() => {
-    setIsSearchModalOpen(true);
-  }, []);
+  const handleOpenSearch = () => setIsSearchModalOpen(true);
 
-  // 全局搜索快捷键：按Q键打开搜索弹窗
   useGlobalSearch(handleOpenSearch);
 
   const handleNavigateToBlog = () => {
@@ -48,26 +42,28 @@ export function Home() {
     navigate(ROUTES.BLOG_DETAIL(blogId));
   };
 
-  // 获取最新的3个文档
   useEffect(() => {
     getBlogList().then((blogs) => {
       setLatestBlogs(blogs.slice(0, 3));
     });
   }, []);
 
-  const structuredData = useMemo(() => ({
-    ...STRUCTURED_DATA_TEMPLATE,
-    name: SITE_CONFIG.name,
-    description: SITE_CONFIG.description,
-    url: siteUrl,
-    potentialAction: {
-      ...STRUCTURED_DATA_TEMPLATE.potentialAction,
-      target: {
-        ...STRUCTURED_DATA_TEMPLATE.potentialAction.target,
-        urlTemplate: `${siteUrl}/blog?search={search_term_string}`,
+  const structuredData = useMemo(
+    () => ({
+      ...STRUCTURED_DATA_TEMPLATE,
+      name: SITE_CONFIG.name,
+      description: SITE_CONFIG.description,
+      url: siteUrl,
+      potentialAction: {
+        ...STRUCTURED_DATA_TEMPLATE.potentialAction,
+        target: {
+          ...STRUCTURED_DATA_TEMPLATE.potentialAction.target,
+          urlTemplate: `${siteUrl}/blog?search={search_term_string}`,
+        },
       },
-    },
-  }), [siteUrl]);
+    }),
+    [siteUrl]
+  );
 
   return (
     <>
@@ -79,7 +75,6 @@ export function Home() {
         structuredData={structuredData}
       />
       <div className="home">
-        {/* 雪花特效 */}
         <SnowfallEffect />
         <InkBackground />
         <div className="home-grid" />

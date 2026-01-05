@@ -14,29 +14,8 @@ interface BlogSearchModalProps {
 export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModalProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [allBlogs, setAllBlogs] = useState<BlogSearchItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      setLoading(true);
-      getAllBlogsForSearch()
-        .then((blogs) => {
-          setAllBlogs(blogs);
-          setLoading(false);
-        })
-        .catch((error) => {
-          logger.error('加载博客列表失败', error);
-          setLoading(false);
-        });
-
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, PERFORMANCE_CONSTANTS.SEARCH_FOCUS_DELAY);
-    } else {
-      setSearchQuery('');
-    }
-  }, [isOpen]);
 
   const filteredBlogs = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -45,21 +24,51 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
     return allBlogs.filter((blog) => {
       const titleMatch = blog.title.toLowerCase().includes(query);
       const descriptionMatch = blog.description?.toLowerCase().includes(query) ?? false;
-      const tagsMatch = blog.tags?.some(tag => tag.toLowerCase().includes(query)) ?? false;
+      const tagsMatch = blog.tags?.some((tag) => tag.toLowerCase().includes(query)) ?? false;
       return titleMatch || descriptionMatch || tagsMatch;
     });
   }, [allBlogs, searchQuery]);
 
-  const handleBlogClick = useCallback((blogId: string) => {
-    onBlogClick(blogId);
-    onClose();
-  }, [onBlogClick, onClose]);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onClose();
+  const loadBlogs = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const blogs = await getAllBlogsForSearch();
+      setAllBlogs(blogs);
+    } catch (error) {
+      logger.error('加载博客列表失败', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [onClose]);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadBlogs();
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, PERFORMANCE_CONSTANTS.SEARCH_FOCUS_DELAY);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchQuery('');
+    }
+  }, [isOpen, loadBlogs]);
+
+  const handleBlogClick = useCallback(
+    (blogId: string) => {
+      onBlogClick(blogId);
+      onClose();
+    },
+    [onBlogClick, onClose]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    },
+    [onClose]
+  );
 
   if (!isOpen) return null;
 
@@ -68,11 +77,7 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
       <div className="blog-search-modal">
         <div className="blog-search-modal-header">
           <h3 className="blog-search-modal-title">搜索文章</h3>
-          <button
-            className="blog-search-modal-close"
-            onClick={onClose}
-            aria-label="关闭搜索"
-          >
+          <button className="blog-search-modal-close" onClick={onClose} aria-label="关闭搜索">
             <svg
               width="16"
               height="16"
@@ -97,14 +102,16 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
             className="blog-search-modal-input"
             placeholder="输入关键词搜索标题、简介或标签..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value.slice(0, PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH))}
+            onChange={(e) =>
+              setSearchQuery(e.target.value.slice(0, PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH))
+            }
             onKeyDown={handleKeyDown}
             autoFocus
             maxLength={PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH}
           />
         </div>
         <div className="blog-search-modal-results">
-          {loading ? (
+          {isLoading ? (
             <div className="blog-search-modal-loading">加载中...</div>
           ) : searchQuery.trim() ? (
             filteredBlogs.length > 0 ? (
@@ -127,9 +134,7 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
                       </div>
                     </div>
                     {blog.description && (
-                      <div className="blog-search-modal-item-description">
-                        {blog.description}
-                      </div>
+                      <div className="blog-search-modal-item-description">{blog.description}</div>
                     )}
                   </li>
                 ))}

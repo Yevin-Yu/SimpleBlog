@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   background: var(--color-bg-page);
-  background-image: 
+  background-image:
     linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -29,7 +29,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  transition:
+    background-color var(--transition-fast) ease,
+    color var(--transition-fast) ease;
   z-index: 10;
 }
 
@@ -57,7 +59,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -119,7 +121,10 @@
   letter-spacing: 0;
   border-radius: 0;
   position: relative;
-  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease, border-color var(--transition-base) ease;
+  transition:
+    opacity var(--transition-base) ease,
+    background-color var(--transition-base) ease,
+    border-color var(--transition-base) ease;
 }
 
 .home-nav-button:hover {
@@ -202,7 +207,7 @@
   .home-title {
     font-size: var(--font-size-2xl);
   }
-  
+
   .home-subtitle {
     font-size: var(--font-size-sm);
   }

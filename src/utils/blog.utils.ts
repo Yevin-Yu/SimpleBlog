@@ -2,18 +2,12 @@ import type { BlogItem, BlogCategory } from '../types';
 import { BLOG_CONFIG } from '../config';
 import { sortBlogsByDate } from './sort.utils';
 
-/**
- * 分类树节点（内部使用）
- */
 interface CategoryNode {
   name: string;
   blogs: BlogItem[];
   children: Map<string, CategoryNode>;
 }
 
-/**
- * 构建分类树结构
- */
 const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
   const root: CategoryNode = {
     name: '',
@@ -24,7 +18,7 @@ const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
   for (const blog of blogs) {
     const categoryPath = blog.category || BLOG_CONFIG.defaultCategory;
     const pathParts = categoryPath.split('/').filter(Boolean);
-    
+
     if (pathParts.length === 0) {
       root.blogs.push(blog);
       continue;
@@ -69,40 +63,13 @@ const sortCategories = (a: BlogCategory, b: BlogCategory): number => {
   return a.name.localeCompare(b.name, 'zh-CN');
 };
 
-/**
- * 查找包含特定博客ID的分类路径
- */
-const findCategoryPathForBlog = (
-  node: CategoryNode,
-  targetBlogId: string,
-  currentPath: string[] = []
-): string[] | null => {
-  // 检查当前节点的博客
-  if (node.blogs.some((blog) => blog.id === targetBlogId)) {
-    return currentPath;
-  }
-
-  // 递归检查子节点
-  for (const [name, childNode] of node.children.entries()) {
-    const path = findCategoryPathForBlog(childNode, targetBlogId, [...currentPath, name]);
-    if (path) {
-      return path;
-    }
-  }
-
-  return null;
-};
-
-/**
- * 将节点转换为分类对象
- */
 const convertNodeToCategory = (
   node: CategoryNode,
   expandedPaths: Set<string>,
   currentPath: string = ''
 ): BlogCategory => {
   const shouldExpand = expandedPaths.has(currentPath);
-  
+
   const children: BlogCategory[] = Array.from(node.children.entries())
     .map(([name, childNode]) => {
       const childPath = currentPath ? `${currentPath}/${name}` : name;
@@ -121,15 +88,11 @@ const convertNodeToCategory = (
   }
 
   return category;
-}
+};
 
-/**
- * 将博客列表按分类分组
- */
 export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   const root = buildCategoryTree(blogs);
 
-  // 默认展开"耶温"分类
   const expandedPaths = new Set<string>();
   if (root.children.has('耶温')) {
     expandedPaths.add('耶温');
@@ -153,4 +116,3 @@ export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
 
   return categories;
 }
-

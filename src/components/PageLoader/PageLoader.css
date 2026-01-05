@@ -85,7 +85,8 @@
 }
 
 @keyframes page-loader-line-sweep {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.25;
     transform: scaleX(0.5);
   }
@@ -114,5 +115,3 @@
   color: #666666;
   letter-spacing: 0;
 }
-
-

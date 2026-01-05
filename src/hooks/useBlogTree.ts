@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBlogList, getBlogContent } from '../utils/blog.service';
 import { groupBlogsByCategory } from '../utils/blog.utils';
@@ -52,10 +52,7 @@ export function useBlogTree(): UseBlogTreeReturn {
     const startTime = Date.now();
 
     try {
-      const [blogData, blogList] = await Promise.all([
-        getBlogContent(blogId),
-        getBlogList(),
-      ]);
+      const [blogData, blogList] = await Promise.all([getBlogContent(blogId), getBlogList()]);
 
       const blogMeta = blogList.find((b) => b.id === blogId);
       if (!blogMeta) {
@@ -78,11 +75,10 @@ export function useBlogTree(): UseBlogTreeReturn {
         selectedBlogRef.current = currentBlog;
       }
 
-      // 确保至少显示加载动画
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, PERFORMANCE_CONSTANTS.MIN_LOADING_TIME - elapsedTime);
 
-      await new Promise(resolve => setTimeout(resolve, remainingTime));
+      await new Promise((resolve) => setTimeout(resolve, remainingTime));
 
       requestAnimationFrame(() => {
         setContentLoading(false);
@@ -97,35 +93,37 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, []);
 
-  const toggleCategoryByPath = useCallback((
-    categories: BlogCategory[],
-    path: string,
-    parentPath = ''
-  ): BlogCategory[] => {
-    return categories.map((cat) => {
-      const currentPath = parentPath ? `${parentPath}/${cat.name}` : cat.name;
-      
-      if (currentPath === path) {
-        return { ...cat, expanded: !cat.expanded };
-      }
-      
-      if (cat.children?.length) {
-        const nextPath = `${currentPath}/`;
-        if (path.startsWith(nextPath) || path === currentPath) {
-          return {
-            ...cat,
-            children: toggleCategoryByPath(cat.children, path, currentPath),
-          };
-        }
-      }
-      
-      return cat;
-    });
-  }, []);
+  const toggleCategoryByPath = useCallback(
+    (categories: BlogCategory[], path: string, parentPath = ''): BlogCategory[] => {
+      return categories.map((cat) => {
+        const currentPath = parentPath ? `${parentPath}/${cat.name}` : cat.name;
 
-  const toggleCategory = useCallback((path: string) => {
-    setCategories((prev) => toggleCategoryByPath(prev, path));
-  }, []);
+        if (currentPath === path) {
+          return { ...cat, expanded: !cat.expanded };
+        }
+
+        if (cat.children?.length) {
+          const nextPath = `${currentPath}/`;
+          if (path.startsWith(nextPath) || path === currentPath) {
+            return {
+              ...cat,
+              children: toggleCategoryByPath(cat.children, path, currentPath),
+            };
+          }
+        }
+
+        return cat;
+      });
+    },
+    []
+  );
+
+  const toggleCategory = useCallback(
+    (path: string) => {
+      setCategories((prev) => toggleCategoryByPath(prev, path));
+    },
+    [toggleCategoryByPath]
+  );
 
   const handleBlogClick = useCallback(
     (blogId: string) => {
@@ -140,7 +138,6 @@ export function useBlogTree(): UseBlogTreeReturn {
     loadBlogs();
   }, [loadBlogs]);
 
-  // 监听 URL id 参数变化来加载文章内容
   useEffect(() => {
     if (id) {
       setError(null);
@@ -148,7 +145,6 @@ export function useBlogTree(): UseBlogTreeReturn {
     }
   }, [id, loadBlogContent]);
 
-  // 在 categories 首次加载完成且没有 id 参数时，导航到默认文章
   useEffect(() => {
     if (!id && categoriesInitializedRef.current && categories.length > 0) {
       const findBlogById = (cats: typeof categories, targetId: string): BlogItem | null => {
@@ -169,7 +165,6 @@ export function useBlogTree(): UseBlogTreeReturn {
         navigate(ROUTES.BLOG_DETAIL(targetBlog.id), { replace: true });
       }
 
-      // 标记已处理，防止 categories 更新时重复触发
       categoriesInitializedRef.current = false;
     }
   }, [id, categories, navigate]);

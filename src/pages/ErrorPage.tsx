@@ -11,9 +11,6 @@ interface ErrorPageProps {
   message?: string;
 }
 
-/**
- * 错误页面组件
- */
 export function ErrorPage({
   statusCode = 500,
   title = '出错了',
@@ -24,9 +21,7 @@ export function ErrorPage({
 
   const seoData = generateErrorSEOData(statusCode, siteUrl);
 
-  const handleGoHome = () => {
-    navigate(ROUTES.HOME);
-  };
+  const handleGoHome = () => navigate(ROUTES.HOME);
 
   return (
     <>
@@ -41,7 +36,7 @@ export function ErrorPage({
         structuredData={seoData.structuredData}
       />
       <div className="error-page">
-        <div className="error-page-background"></div>
+        <div className="error-page-background" />
         <div className="error-page-content">
           <div className="error-code">{statusCode}</div>
           <h1 className="error-title">{title}</h1>

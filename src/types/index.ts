@@ -1,6 +1,12 @@
-/**
- * 博客基础信息
- */
+export type SitemapChangeFreq =
+  | 'always'
+  | 'hourly'
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'yearly'
+  | 'never';
+
 export interface BlogItem {
   id: string;
   title: string;
@@ -9,9 +15,6 @@ export interface BlogItem {
   tags?: string[];
 }
 
-/**
- * 博客内容
- */
 export interface BlogContent {
   title: string;
   content: string;
@@ -19,9 +22,14 @@ export interface BlogContent {
   modifiedTime?: string;
 }
 
-/**
- * 博客分类结构
- */
+export interface SelectedBlog extends BlogItem {
+  content: string;
+}
+
+export interface BlogSearchItem extends BlogItem {
+  description?: string;
+}
+
 export interface BlogCategory {
   name: string;
   blogs: BlogItem[];
@@ -29,32 +37,56 @@ export interface BlogCategory {
   children?: BlogCategory[];
 }
 
-/**
- * 选中的博客（包含内容）
- */
-export interface SelectedBlog extends BlogItem {
-  content: string;
-}
-
-/**
- * 用于搜索的博客项
- */
-export interface BlogSearchItem extends BlogItem {
-  description?: string;
-  tags?: string[];
-}
-
-/**
- * Sitemap 变更频率
- */
-export type SitemapChangeFreq = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-
-/**
- * Sitemap URL 配置
- */
 export interface SitemapUrl {
   loc: string;
   lastmod: string;
   changefreq: SitemapChangeFreq;
   priority: number;
 }
+
+export interface FrontmatterData {
+  title?: string;
+  date?: string;
+  category?: string;
+  description?: string;
+  id?: string;
+  tags?: string[];
+  [key: string]: string | string[] | undefined;
+}
+
+export interface ContributionData {
+  generatedAt: string;
+  contributions: Record<string, number>;
+  totalCommits: number;
+}
+
+export interface TooltipState {
+  visible: boolean;
+  x: number;
+  y: number;
+  date: string;
+  count: number;
+}
+
+export interface SEOData {
+  title: string;
+  description: string;
+  keywords?: string;
+  url: string;
+  type: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  image?: string;
+  imageAlt?: string;
+  author?: string;
+  readingTime?: number;
+  tags?: string[];
+  structuredData: Record<string, unknown>;
+  breadcrumbs?: BreadcrumbItem[];
+  noindex?: boolean;
+}
+
+export type BreadcrumbItem = {
+  name: string;
+  url: string;
+};

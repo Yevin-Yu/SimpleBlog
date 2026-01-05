@@ -16,4 +16,3 @@ export function LoadingLines({ count = DEFAULT_COUNT, className = '' }: LoadingL
     </div>
   );
 }
-

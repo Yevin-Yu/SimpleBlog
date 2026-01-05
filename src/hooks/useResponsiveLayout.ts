@@ -13,9 +13,7 @@ interface UseResponsiveLayoutReturn {
  */
 export function useResponsiveLayout(): UseResponsiveLayoutReturn {
   const initialHasEnoughSpace =
-    typeof window !== 'undefined'
-      ? window.innerWidth >= LAYOUT_CONSTANTS.SIDEBAR_THRESHOLD
-      : false;
+    typeof window !== 'undefined' ? window.innerWidth >= LAYOUT_CONSTANTS.SIDEBAR_THRESHOLD : false;
 
   const [hasEnoughSpace, setHasEnoughSpace] = useState(initialHasEnoughSpace);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -29,7 +27,7 @@ export function useResponsiveLayout(): UseResponsiveLayoutReturn {
     const updateSpaceStatus = () => {
       const width = container.offsetWidth;
       const enoughSpace = width >= LAYOUT_CONSTANTS.SIDEBAR_THRESHOLD;
-      
+
       hasEnoughSpaceRef.current = enoughSpace;
       setHasEnoughSpace(enoughSpace);
       setIsInitialized(true);
@@ -54,4 +52,3 @@ export function useResponsiveLayout(): UseResponsiveLayoutReturn {
     containerRef,
   };
 }
-

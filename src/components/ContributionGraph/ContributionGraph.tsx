@@ -30,7 +30,20 @@ interface TooltipState {
 }
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'] as const;
-const MONTHS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'] as const;
+const MONTHS = [
+  '1月',
+  '2月',
+  '3月',
+  '4月',
+  '5月',
+  '6月',
+  '7月',
+  '8月',
+  '9月',
+  '10月',
+  '11月',
+  '12月',
+] as const;
 
 function ContributionGraphComponent() {
   const [data, setData] = useState<ContributionData | null>(null);
@@ -110,39 +123,47 @@ function ContributionGraphComponent() {
     };
   }, []);
 
-  const handleDayMouseEnter = useCallback((e: React.MouseEvent, day: DayData) => {
-    if (!day.date) return;
+  const handleDayMouseEnter = useCallback(
+    (e: React.MouseEvent, day: DayData) => {
+      if (!day.date) return;
 
-    const position = updateTooltipPosition(e);
-    if (!position) return;
+      const position = updateTooltipPosition(e);
+      if (!position) return;
 
-    setTooltip({
-      visible: true,
-      ...position,
-      date: day.date,
-      count: day.count,
-    });
-  }, [updateTooltipPosition]);
+      setTooltip({
+        visible: true,
+        ...position,
+        date: day.date,
+        count: day.count,
+      });
+    },
+    [updateTooltipPosition]
+  );
 
   const handleDayMouseLeave = useCallback(() => {
     setTooltip((prev) => ({ ...prev, visible: false }));
   }, []);
 
-  const handleDayMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!tooltip.visible) return;
+  const handleDayMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!tooltip.visible) return;
 
-    const position = updateTooltipPosition(e);
-    if (!position) return;
+      const position = updateTooltipPosition(e);
+      if (!position) return;
 
-    setTooltip((prev) => ({
-      ...prev,
-      ...position,
-    }));
-  }, [tooltip.visible, updateTooltipPosition]);
+      setTooltip((prev) => ({
+        ...prev,
+        ...position,
+      }));
+    },
+    [tooltip.visible, updateTooltipPosition]
+  );
 
   useEffect(() => {
     // 使用相对路径，避免协议相对 URL 问题
-    const jsonPath = BASE_PATH.endsWith('/') ? `${BASE_PATH}contributions.json` : `${BASE_PATH}/contributions.json`;
+    const jsonPath = BASE_PATH.endsWith('/')
+      ? `${BASE_PATH}contributions.json`
+      : `${BASE_PATH}/contributions.json`;
 
     fetch(jsonPath)
       .then((res) => {
@@ -212,9 +233,7 @@ function ContributionGraphComponent() {
                 </span>
               )}
             </div>
-            <div className="contribution-graph-tooltip-date">
-              {formatDate(tooltip.date)}
-            </div>
+            <div className="contribution-graph-tooltip-date">{formatDate(tooltip.date)}</div>
           </div>
         </div>
       )}
@@ -223,4 +242,3 @@ function ContributionGraphComponent() {
 }
 
 export const ContributionGraph = memo(ContributionGraphComponent);
-

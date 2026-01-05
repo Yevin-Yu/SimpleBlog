@@ -174,18 +174,11 @@ export function SEO({
       {type === 'article' && (
         <>
           <meta property="article:author" content={author} />
-          {publishedTime && (
-            <meta property="article:published_time" content={publishedTime} />
-          )}
-          {modifiedTime && (
-            <meta property="article:modified_time" content={modifiedTime} />
-          )}
-          {tags.length > 0 && tags.map((tag) => (
-            <meta key={tag} property="article:tag" content={tag} />
-          ))}
-          {readingTime && (
-            <meta name="article:reading_time" content={`${readingTime} minutes`} />
-          )}
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+          {tags.length > 0 &&
+            tags.map((tag) => <meta key={tag} property="article:tag" content={tag} />)}
+          {readingTime && <meta name="article:reading_time" content={`${readingTime} minutes`} />}
         </>
       )}
 

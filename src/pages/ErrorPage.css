@@ -69,7 +69,10 @@
   letter-spacing: 0;
   border-radius: 0;
   position: relative;
-  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease, border-color var(--transition-base) ease;
+  transition:
+    opacity var(--transition-base) ease,
+    background-color var(--transition-base) ease,
+    border-color var(--transition-base) ease;
 }
 
 .error-home-button:hover {

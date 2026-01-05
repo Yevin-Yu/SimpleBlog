@@ -35,4 +35,3 @@ export const SEO_CONFIG = {
 } as const;
 
 export { ROUTES } from '../constants/routes';
-

@@ -36,7 +36,7 @@
   position: relative;
 }
 
-.contribution-graph-day[data-date=""] {
+.contribution-graph-day[data-date=''] {
   opacity: 0;
   cursor: default;
   pointer-events: none;
@@ -61,7 +61,6 @@
 .contribution-graph-day.level-4 {
   background: rgba(0, 0, 0, 0.6);
 }
-
 
 .contribution-graph-loading {
   text-align: center;
@@ -146,4 +145,3 @@
     gap: 2px;
   }
 }
-

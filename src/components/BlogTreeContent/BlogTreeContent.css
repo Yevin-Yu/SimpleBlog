@@ -54,7 +54,6 @@
   transform: translateY(-8vh);
 }
 
-
 @keyframes fadeInOverlay {
   from {
     opacity: 0;
@@ -114,12 +113,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.06) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 100%);
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 
@@ -153,12 +147,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.06) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 100%);
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
   animation-delay: 0.3s;
 }
@@ -221,12 +210,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.06) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.06) 50%, transparent 100%);
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 
@@ -392,7 +376,10 @@
   border-radius: 0;
   position: relative;
   text-decoration: none;
-  transition: opacity var(--transition-base) ease, background-color var(--transition-base) ease, border-color var(--transition-base) ease;
+  transition:
+    opacity var(--transition-base) ease,
+    background-color var(--transition-base) ease,
+    border-color var(--transition-base) ease;
 }
 
 .blog-tree-error-button:hover {

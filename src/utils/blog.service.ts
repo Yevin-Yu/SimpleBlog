@@ -2,7 +2,6 @@ import type { BlogItem, BlogContent, BlogSearchItem } from '../types';
 import { parseFrontmatter, generateIdFromFilename } from './frontmatter';
 import { logger } from './logger';
 import { isValidDateString } from './date.utils';
-import { sortBlogsByDate } from './sort.utils';
 
 const blogModules = import.meta.glob('../../blogs/**/*.md', {
   query: '?raw',
@@ -10,23 +9,17 @@ const blogModules = import.meta.glob('../../blogs/**/*.md', {
   eager: true,
 });
 
-/**
- * 从文件路径提取分类
- */
 const extractCategoryFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
-  
+
   if (blogsIndex === -1 || blogsIndex === pathParts.length - 2) {
     return '';
   }
-  
+
   return pathParts.slice(blogsIndex + 1, -1).join('/');
 };
 
-/**
- * 清理并规范化 ID
- */
 const sanitizeId = (id: string): string => {
   return id
     .trim()
@@ -36,18 +29,15 @@ const sanitizeId = (id: string): string => {
     .replace(/^-|-$/g, '');
 };
 
-/**
- * 从文件路径生成 ID
- */
 const generateIdFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
-  
+
   if (blogsIndex === -1) {
     const filename = pathParts[pathParts.length - 1] ?? '';
     return generateIdFromFilename(filename);
   }
-  
+
   return pathParts
     .slice(blogsIndex + 1)
     .join('/')
@@ -59,68 +49,58 @@ const generateIdFromPath = (filePath: string): string => {
     .replace(/\//g, '-');
 };
 
-/**
- * 从文件系统加载所有博客
- */
-const loadBlogsFromFiles = (): {
-  blogList: BlogItem[];
-  blogContents: Record<string, BlogContent>;
-} => {
-  const blogList: BlogItem[] = [];
-  const blogContents: Record<string, BlogContent> = {};
-  const usedIds = new Set<string>();
+class BlogStore {
+  private blogList: BlogItem[] = [];
+  private blogContents: Record<string, BlogContent> = {};
+  private usedIds = new Set<string>();
 
-  const generateUniqueId = (baseId: string): string => {
-    if (!usedIds.has(baseId)) {
-      usedIds.add(baseId);
+  private generateUniqueId(baseId: string): string {
+    if (!this.usedIds.has(baseId)) {
+      this.usedIds.add(baseId);
       return baseId;
     }
-    
+
     let counter = 1;
     let id = `${baseId}-${counter}`;
-    
-    while (usedIds.has(id)) {
+
+    while (this.usedIds.has(id)) {
       counter++;
       id = `${baseId}-${counter}`;
     }
-    
-    usedIds.add(id);
-    return id;
-  };
 
-  for (const [path, content] of Object.entries(blogModules)) {
+    this.usedIds.add(id);
+    return id;
+  }
+
+  private processBlogFile(path: string, content: string): void {
     try {
-      const { frontmatter, content: markdownContent } = parseFrontmatter(content as string);
+      const { frontmatter, content: markdownContent } = parseFrontmatter(content);
       const categoryFromPath = extractCategoryFromPath(path);
       const category = frontmatter.category || categoryFromPath || undefined;
-      
-      const baseId = frontmatter.id 
-        ? sanitizeId(frontmatter.id)
-        : generateIdFromPath(path);
+
+      const baseId = frontmatter.id ? sanitizeId(frontmatter.id) : generateIdFromPath(path);
 
       if (!baseId) {
         logger.error(`无法生成博客ID: ${path}`);
-        continue;
+        return;
       }
 
-      const id = generateUniqueId(baseId);
+      const id = this.generateUniqueId(baseId);
 
-      // 验证日期格式
-      const date = frontmatter.date;
-      if (!isValidDateString(date)) {
+      if (!isValidDateString(frontmatter.date || '')) {
         logger.warn(`博客日期格式无效: ${path}, 使用当前日期`);
       }
 
-      blogList.push({
+      this.blogList.push({
         id,
-        title: frontmatter.title,
-        date,
+        title: frontmatter.title || 'Untitled',
+        date: frontmatter.date || new Date().toISOString().split('T')[0],
         category,
         tags: frontmatter.tags,
       });
 
-      blogContents[id] = {
-        title: frontmatter.title,
+      this.blogContents[id] = {
+        title: frontmatter.title || 'Untitled',
         content: markdownContent,
         description: frontmatter.description,
         modifiedTime: frontmatter.date,
@@ -130,23 +110,37 @@ const loadBlogsFromFiles = (): {
     }
   }
 
-  return { blogList, blogContents };
-};
+  public loadBlogs(): void {
+    for (const [path, content] of Object.entries(blogModules)) {
+      this.processBlogFile(path, content as string);
+    }
+  }
 
-const { blogList, blogContents } = loadBlogsFromFiles();
+  public getBlogList(): BlogItem[] {
+    return [...this.blogList];
+  }
 
-/**
- * 获取博客列表（按日期倒序）
- */
-export function getBlogList(): Promise<BlogItem[]> {
-  return Promise.resolve([...blogList].sort(sortBlogsByDate));
+  public getBlogContent(id: string): BlogContent | null {
+    return this.blogContents[id] ?? null;
+  }
+
+  public getAllBlogsForSearch(): BlogSearchItem[] {
+    return this.blogList.map((blog) => ({
+      ...blog,
+      description: this.blogContents[blog.id]?.description,
+    }));
+  }
 }
 
-/**
- * 获取指定博客的内容
- */
+const blogStore = new BlogStore();
+blogStore.loadBlogs();
+
+export function getBlogList(): Promise<BlogItem[]> {
+  return Promise.resolve(blogStore.getBlogList());
+}
+
 export function getBlogContent(id: string): Promise<BlogContent> {
-  const content = blogContents[id];
+  const content = blogStore.getBlogContent(id);
   if (!content) {
     const error = new Error(`博客内容不存在: ${id}`);
     logger.error('获取博客内容失败', error);
@@ -155,18 +149,6 @@ export function getBlogContent(id: string): Promise<BlogContent> {
   return Promise.resolve(content);
 }
 
-/**
- * 获取所有博客用于搜索（包含描述）
- */
 export function getAllBlogsForSearch(): Promise<BlogSearchItem[]> {
-  return Promise.resolve(
-    blogList.map((blog) => {
-      const content = blogContents[blog.id];
-      return {
-        ...blog,
-        description: content?.description,
-      };
-    })
-  );
+  return Promise.resolve(blogStore.getAllBlogsForSearch());
 }
-

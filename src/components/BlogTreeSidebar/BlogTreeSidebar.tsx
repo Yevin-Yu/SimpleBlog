@@ -1,8 +1,3 @@
-/**
- * 博客树侧边栏组件
- * 显示博客分类目录，支持展开/折叠分类，集成搜索功能
- */
-
 import { useMemo, useCallback, useState, memo } from 'react';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
@@ -30,6 +25,14 @@ interface CategoryItemProps {
   path?: string;
 }
 
+const calculateTotalCount = (category: BlogCategory): number => {
+  let count = category.blogs.length;
+  if (category.children) {
+    count += category.children.reduce((sum, child) => sum + calculateTotalCount(child), 0);
+  }
+  return count;
+};
+
 function CategoryItem({
   category,
   selectedBlogId,
@@ -43,16 +46,7 @@ function CategoryItem({
   const shouldShowToggle = hasChildren || category.blogs.length > 0;
   const isExpanded = category.expanded ?? false;
 
-  const totalCount = useMemo(() => {
-    const getTotalCount = (cat: BlogCategory): number => {
-      let count = cat.blogs.length;
-      if (cat.children) {
-        count += cat.children.reduce((sum, child) => sum + getTotalCount(child), 0);
-      }
-      return count;
-    };
-    return getTotalCount(category);
-  }, [category]);
+  const totalCount = useMemo(() => calculateTotalCount(category), [category]);
 
   const handleToggle = useCallback(() => {
     onToggleCategory(currentPath);
@@ -104,7 +98,7 @@ function CategoryItem({
   );
 }
 
-const arePropsEqual = (
+const areCategoryPropsEqual = (
   prevProps: CategoryItemProps,
   nextProps: CategoryItemProps
 ): boolean => {
@@ -116,7 +110,7 @@ const arePropsEqual = (
   );
 };
 
-const MemoizedCategoryItem = memo(CategoryItem, arePropsEqual);
+const MemoizedCategoryItem = memo(CategoryItem, areCategoryPropsEqual);
 
 export function BlogTreeSidebar({
   categories,
@@ -132,7 +126,6 @@ export function BlogTreeSidebar({
     setIsSearchModalOpen(true);
   }, []);
 
-  // 全局搜索快捷键：按Q键打开搜索弹窗
   useGlobalSearch(handleOpenSearch);
 
   return (

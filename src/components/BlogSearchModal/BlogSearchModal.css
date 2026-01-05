@@ -75,7 +75,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+  transition:
+    background-color var(--transition-fast) ease,
+    color var(--transition-fast) ease;
 }
 
 .blog-search-modal-close svg {

@@ -13,6 +13,11 @@ interface BlogTreeContentProps {
   error: string | null;
 }
 
+interface BlogTreeContentState {
+  displayBlog: SelectedBlog | null;
+  isVisible: boolean;
+}
+
 const TitleSkeleton = () => (
   <div className="blog-tree-article-header-skeleton">
     <div className="skeleton-title-line" />
@@ -37,19 +42,21 @@ const LoadingOverlay = () => (
   </div>
 );
 
-function BlogTreeContentComponent({
-  selectedBlog,
-  loading,
-  error,
-}: BlogTreeContentProps) {
+const isSameBlog = (prev: SelectedBlog | null, next: SelectedBlog | null): boolean => {
+  return prev?.id === next?.id && prev?.title === next?.title && prev?.content === next?.content;
+};
+
+function BlogTreeContentComponent({ selectedBlog, loading, error }: BlogTreeContentProps) {
   const containerRef = useRef<HTMLElement>(null);
-  const [displayBlog, setDisplayBlog] = useState<SelectedBlog | null>(
-    selectedBlog
-  );
-  const [isVisible, setIsVisible] = useState(true);
+  const [state, setState] = useState<BlogTreeContentState>({
+    displayBlog: selectedBlog,
+    isVisible: true,
+  });
   const isInitialMount = useRef(true);
   const prevBlogIdRef = useRef<string | null>(selectedBlog?.id || null);
   const prevSelectedBlogRef = useRef<SelectedBlog | null>(selectedBlog);
+
+  const { displayBlog, isVisible } = state;
 
   useEffect(() => {
     const currentBlogId = selectedBlog?.id ?? null;
@@ -59,24 +66,17 @@ function BlogTreeContentComponent({
     if (isInitialMount.current) {
       isInitialMount.current = false;
       if (selectedBlog) {
-        setDisplayBlog(selectedBlog);
+        requestAnimationFrame(() => {
+          setState({ displayBlog: selectedBlog, isVisible: true });
+        });
         prevBlogIdRef.current = currentBlogId;
         prevSelectedBlogRef.current = selectedBlog;
       }
       return;
     }
 
-    // 当 loading 变化时，不要阻止更新，确保骨架屏和加载动画能正确显示
-    const isSameBlog =
-      currentBlogId === prevBlogId &&
-      currentBlogId !== null &&
-      prevBlog !== null &&
-      selectedBlog !== null &&
-      selectedBlog.id === prevBlog.id &&
-      selectedBlog.title === prevBlog.title &&
-      selectedBlog.content === prevBlog.content;
-
-    if (isSameBlog && !loading) return;
+    const shouldSkipUpdate = isSameBlog(prevBlog, selectedBlog) && !loading;
+    if (shouldSkipUpdate) return;
 
     let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -91,23 +91,29 @@ function BlogTreeContentComponent({
         }
 
         fixElementsWidth(elements);
-        setIsVisible(false);
+        requestAnimationFrame(() => {
+          setState((prev) => ({ ...prev, isVisible: false }));
+        });
 
         timer = setTimeout(() => {
           if (container) {
             container.scrollTop = 0;
           }
 
-          setDisplayBlog(selectedBlog);
+          setState({ displayBlog: selectedBlog, isVisible: false });
           prevBlogIdRef.current = currentBlogId;
           prevSelectedBlogRef.current = selectedBlog;
 
-              requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               if (container) {
                 container.scrollTop = 0;
               }
-              setIsVisible(true);
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  setState({ displayBlog: selectedBlog, isVisible: true });
+                });
+              });
               setTimeout(() => {
                 restoreElementsWidth(elements);
               }, PERFORMANCE_CONSTANTS.WIDTH_RESTORE_DELAY);
@@ -115,21 +121,24 @@ function BlogTreeContentComponent({
           });
         }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
       } else if (!isVisible) {
-        // 如果当前不可见，立即显示
-        setDisplayBlog(selectedBlog);
+        requestAnimationFrame(() => {
+          setState({ displayBlog: selectedBlog, isVisible: true });
+        });
         prevSelectedBlogRef.current = selectedBlog;
-        setIsVisible(true);
       } else {
-        // content 更新但 id 相同，直接更新
-        setDisplayBlog(selectedBlog);
+        requestAnimationFrame(() => {
+          setState({ displayBlog: selectedBlog, isVisible: true });
+        });
         prevSelectedBlogRef.current = selectedBlog;
       }
     } else {
-      setIsVisible(false);
+      requestAnimationFrame(() => {
+        setState((prev) => ({ ...prev, isVisible: false }));
+      });
       prevBlogIdRef.current = null;
       prevSelectedBlogRef.current = null;
       timer = setTimeout(() => {
-        setDisplayBlog(null);
+        setState({ displayBlog: null, isVisible: false });
       }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
     }
 
@@ -183,9 +192,7 @@ function BlogTreeContentComponent({
                 <h1 className="blog-tree-article-title">{displayBlog.title}</h1>
                 <div className="blog-tree-article-meta">
                   {displayBlog.category && (
-                    <span className="blog-tree-article-category">
-                      {displayBlog.category}
-                    </span>
+                    <span className="blog-tree-article-category">{displayBlog.category}</span>
                   )}
                   <time className="blog-tree-article-date">{displayBlog.date}</time>
                 </div>
@@ -193,11 +200,7 @@ function BlogTreeContentComponent({
             )}
           </header>
           <div className="blog-tree-article-body">
-            {loading ? (
-              <SkeletonLoader />
-            ) : (
-              <MarkdownRenderer content={displayBlog.content} />
-            )}
+            {loading ? <SkeletonLoader /> : <MarkdownRenderer content={displayBlog.content} />}
           </div>
         </article>
         <div className={`blog-tree-footer-wrapper ${loading ? 'footer-hidden' : 'footer-visible'}`}>

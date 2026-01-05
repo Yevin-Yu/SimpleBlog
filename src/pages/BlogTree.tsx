@@ -34,12 +34,14 @@ export function BlogTree() {
 
   useEffect(() => {
     const prevHasEnoughSpace = prevHasEnoughSpaceRef.current;
-    
+
     if (prevHasEnoughSpace !== hasEnoughSpace) {
       prevHasEnoughSpaceRef.current = hasEnoughSpace;
-      
+
       if (prevHasEnoughSpace && !hasEnoughSpace && sidebarVisible) {
-        setSidebarVisible(false);
+        requestAnimationFrame(() => {
+          setSidebarVisible(false);
+        });
       }
     }
   }, [hasEnoughSpace, sidebarVisible]);
@@ -106,7 +108,7 @@ export function BlogTree() {
             selectedBlogId={selectedBlog?.id}
             onToggleCategory={toggleCategory}
             onBlogClick={handleBlogClickWithSidebar}
-            visible={isInitialized ? (hasEnoughSpace || sidebarVisible) : false}
+            visible={isInitialized ? hasEnoughSpace || sidebarVisible : false}
           />
           <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} error={error} />
         </div>
