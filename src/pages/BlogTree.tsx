@@ -5,7 +5,6 @@
  */
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { useBlogTree } from '../hooks/useBlogTree';
 import { useSiteUrl } from '../hooks/useSiteUrl';
 import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
@@ -13,7 +12,6 @@ import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
 import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
 import { SEO } from '../components/SEO/SEO';
 import { FloatingActionButton } from '../components/FloatingActionButton/FloatingActionButton';
-import { ROUTES } from '../config';
 import { generateArticleSEOData, generateBlogListSEOData } from '../utils/seo.utils';
 import './BlogTree.css';
 
@@ -81,27 +79,6 @@ export function BlogTree() {
         structuredData={seoData.structuredData}
       />
       <div className="blog-tree-page">
-        {!hasEnoughSpace && (
-          <div className="blog-tree-mobile-header">
-            <button
-              className="blog-tree-mobile-menu-button"
-              onClick={() => setSidebarVisible(!sidebarVisible)}
-              aria-label={sidebarVisible ? '隐藏目录' : '显示目录'}
-            >
-              {sidebarVisible ? '✕' : '☰'}
-            </button>
-            <Link to={ROUTES.HOME} className="blog-tree-mobile-home-button">
-              首页
-            </Link>
-          </div>
-        )}
-        {hasEnoughSpace && (
-          <nav className="blog-tree-desktop-nav">
-            <Link to={ROUTES.HOME} className="blog-tree-desktop-home-button">
-              首页
-            </Link>
-          </nav>
-        )}
         <div className="blog-tree-container" ref={containerRef}>
           <BlogTreeSidebar
             categories={categories}
@@ -114,7 +91,7 @@ export function BlogTree() {
           <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} error={error} />
         </div>
       </div>
-      <FloatingActionButton />
+      <FloatingActionButton onBlogClick={handleBlogClickWithSidebar} />
     </>
   );
 }

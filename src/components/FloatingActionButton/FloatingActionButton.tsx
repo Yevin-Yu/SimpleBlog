@@ -1,17 +1,40 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../config';
+import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
 import './FloatingActionButton.css';
 
-export function FloatingActionButton() {
+interface FloatingActionButtonProps {
+  onBlogClick?: (id: string) => void;
+}
+
+export function FloatingActionButton({ onBlogClick }: FloatingActionButtonProps) {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleNavigateToHome = () => {
+    navigate(ROUTES.HOME);
+    setIsOpen(false);
+  };
+
+  const handleOpenSearch = () => {
+    setIsSearchModalOpen(true);
+    setIsOpen(false);
+  };
+
   return (
     <div className="fab-container">
       <div className={`fab-menu ${isOpen ? 'fab-menu-open' : ''}`}>
-        <button className="fab-action-button fab-action-1" aria-label="首页">
+        <button
+          className="fab-action-button fab-action-1"
+          aria-label="首页"
+          onClick={handleNavigateToHome}
+        >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -31,7 +54,11 @@ export function FloatingActionButton() {
             ></path>
           </svg>
         </button>
-        <button className="fab-action-button fab-action-3" aria-label="搜索">
+        <button
+          className="fab-action-button fab-action-3"
+          aria-label="搜索"
+          onClick={handleOpenSearch}
+        >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -70,6 +97,13 @@ export function FloatingActionButton() {
           </svg>
         )}
       </button>
+      <BlogSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onBlogClick={(id) => {
+          onBlogClick?.(id);
+        }}
+      />
     </div>
   );
 }

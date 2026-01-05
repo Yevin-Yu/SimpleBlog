@@ -6,7 +6,7 @@
   bottom: 0;
   background: transparent;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   z-index: 2000;
   padding: var(--spacing-xl);
@@ -24,12 +24,17 @@
 }
 
 .blog-search-modal {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 32px rgba(0, 0, 0, 0.04);
   width: 100%;
   max-width: 600px;
   max-height: calc(100vh - var(--spacing-xl) * 2);
-  margin-top: 10vh;
+  margin-top: -10vh;
   display: flex;
   flex-direction: column;
   animation: slideDown var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,7 +57,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-xl);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .blog-search-modal-title {
@@ -98,12 +103,14 @@
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-base);
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   outline: none;
   transition: border-color var(--transition-fast) ease;
   color: var(--color-text);
   font-weight: 390;
-  background: var(--color-bg);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
 .blog-search-modal-input:focus {
@@ -138,12 +145,12 @@
 .blog-search-modal-item {
   padding: var(--spacing-md) var(--spacing-xl);
   cursor: pointer;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
   transition: background-color var(--transition-fast) ease;
 }
 
 .blog-search-modal-item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: rgba(255, 255, 255, 0.65);
 }
 
 .blog-search-modal-item:last-child {
@@ -190,7 +197,7 @@
   color: var(--color-text-lighter);
   display: inline-block;
   padding: 2px 6px;
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.4);
   border-radius: 2px;
 }
 
@@ -206,7 +213,6 @@
 
   .blog-search-modal {
     max-height: calc(100vh - var(--spacing-md) * 2);
-    margin-top: 5vh;
   }
 
   .blog-search-modal-results {
