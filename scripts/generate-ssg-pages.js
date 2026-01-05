@@ -2,7 +2,6 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import MarkdownIt from 'markdown-it';
-import hljs from 'highlight.js/lib/common';
 import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -25,18 +24,7 @@ const markdownRenderer = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-  highlight: (str, lang) => {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(str, { language: lang }).value;
-      } catch {
-        return '';
-      }
-    }
-    return '';
-  },
 });
-
 
 /**
  * HTML 转义
@@ -97,8 +85,10 @@ function renderBlogContent(blog, blogContent) {
  */
 function generateStructuredData(blog) {
   const blogUrl = `${BASE_URL}/blog/${blog.id}`;
-  const imageUrl = blog.image 
-    ? (blog.image.startsWith('http') ? blog.image : `${BASE_URL}${blog.image}`)
+  const imageUrl = blog.image
+    ? blog.image.startsWith('http')
+      ? blog.image
+      : `${BASE_URL}${blog.image}`
     : `${BASE_URL}${SEO_CONFIG.defaultImage}`;
 
   return {
@@ -137,10 +127,12 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const category = blog.category || '';
   const blogUrl = `${BASE_URL}/${blog.id}`;
   const imageUrl = blog.image
-    ? (blog.image.startsWith('http') ? blog.image : `${BASE_URL}${blog.image}`)
+    ? blog.image.startsWith('http')
+      ? blog.image
+      : `${BASE_URL}${blog.image}`
     : `${BASE_URL}${SEO_CONFIG.defaultImage}`;
-  
-  const keywords = category 
+
+  const keywords = category
     ? `耶温博客,${escapeHtml(category)},${escapeHtml(title)}`
     : `耶温博客,${escapeHtml(title)}`;
 
@@ -159,10 +151,7 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
       /<meta name="keywords" content="[^"]*" \/>/,
       `<meta name="keywords" content="${escapeHtml(keywords)}" />`
     )
-    .replace(
-      /<link rel="canonical" href="[^"]*" \/>/,
-      `<link rel="canonical" href="${blogUrl}" />`
-    )
+    .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${blogUrl}" />`)
     .replace(
       /<\/head>/,
       `    <!-- Favicon -->
@@ -191,10 +180,7 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
     <script type="application/ld+json">${structuredDataJson}</script>
   </head>`
     )
-    .replace(
-      /<div id="root"><\/div>/,
-      `<div id="root">${renderedContent}</div>`
-    );
+    .replace(/<div id="root"><\/div>/, `<div id="root">${renderedContent}</div>`);
 
   return adjustAssetPaths(html, assetPaths);
 }
@@ -208,14 +194,20 @@ function adjustAssetPaths(html, assetPaths) {
     // 去掉 / 前缀，只保留 assets/... 部分
     const scriptPath = assetPaths.script.replace(/^\//, '');
     const relativeScriptPath = `../${scriptPath}`;
-    html = html.replace(new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeScriptPath);
+    html = html.replace(
+      new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      relativeScriptPath
+    );
   }
 
   if (assetPaths.stylesheet) {
     // 去掉 / 前缀，只保留 assets/... 部分
     const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
     const relativeStylesheetPath = `../${stylesheetPath}`;
-    html = html.replace(new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeStylesheetPath);
+    html = html.replace(
+      new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      relativeStylesheetPath
+    );
   }
 
   return html;
@@ -224,7 +216,13 @@ function adjustAssetPaths(html, assetPaths) {
 /**
  * 生成错误页面的 HTML
  */
-function generateErrorHTML(indexHtmlContent, assetPaths, statusCode = 500, title = '出错了', message = '抱歉，页面遇到了一些问题') {
+function generateErrorHTML(
+  indexHtmlContent,
+  assetPaths,
+  statusCode = 500,
+  title = '出错了',
+  message = '抱歉，页面遇到了一些问题'
+) {
   const pageTitle = `错误 ${statusCode} - ${SITE_CONFIG.name}`;
   const errorPageUrl = `${BASE_URL}/error`;
 
@@ -258,10 +256,7 @@ function generateErrorHTML(indexHtmlContent, assetPaths, statusCode = 500, title
     <link rel="shortcut icon" href="${BASE_URL}${SEO_CONFIG.favicon}" />
   </head>`
     )
-    .replace(
-      /<div id="root"><\/div>/,
-      `<div id="root">${errorPageContent}</div>`
-    );
+    .replace(/<div id="root"><\/div>/, `<div id="root">${errorPageContent}</div>`);
 
   return adjustAssetPathsForError(html, assetPaths);
 }
@@ -273,13 +268,19 @@ function adjustAssetPathsForError(html, assetPaths) {
   if (assetPaths.script) {
     const scriptPath = assetPaths.script.replace(/^\//, '');
     const relativeScriptPath = scriptPath;
-    html = html.replace(new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeScriptPath);
+    html = html.replace(
+      new RegExp(assetPaths.script.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      relativeScriptPath
+    );
   }
 
   if (assetPaths.stylesheet) {
     const stylesheetPath = assetPaths.stylesheet.replace(/^\//, '');
     const relativeStylesheetPath = stylesheetPath;
-    html = html.replace(new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), relativeStylesheetPath);
+    html = html.replace(
+      new RegExp(assetPaths.stylesheet.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+      relativeStylesheetPath
+    );
   }
 
   return html;
@@ -330,7 +331,13 @@ async function generateSSGPages() {
     mkdirSync(errorPath, { recursive: true });
 
     // 生成 500 错误页面
-    const error500Html = generateErrorHTML(indexHtmlContent, assetPaths, 500, '出错了', '抱歉，页面遇到了一些问题');
+    const error500Html = generateErrorHTML(
+      indexHtmlContent,
+      assetPaths,
+      500,
+      '出错了',
+      '抱歉，页面遇到了一些问题'
+    );
     const error500IndexPath = resolve(errorPath, 'index.html');
     writeFileSync(error500IndexPath, error500Html, 'utf-8');
     console.log(`Generated SSG page: ${BASE_PATH}/error/index.html`);
@@ -339,12 +346,20 @@ async function generateSSGPages() {
     const notFoundPath = resolve(distPath, '404');
     mkdirSync(notFoundPath, { recursive: true });
 
-    const error404Html = generateErrorHTML(indexHtmlContent, assetPaths, 404, '页面未找到', '抱歉，您访问的页面不存在');
+    const error404Html = generateErrorHTML(
+      indexHtmlContent,
+      assetPaths,
+      404,
+      '页面未找到',
+      '抱歉，您访问的页面不存在'
+    );
     const notFoundIndexPath = resolve(notFoundPath, 'index.html');
     writeFileSync(notFoundIndexPath, error404Html, 'utf-8');
     console.log(`Generated SSG page: ${BASE_PATH}/404/index.html`);
 
-    console.log(`Successfully generated ${blogs.length + 2} SSG pages (${blogs.length} blogs + 2 error pages)`);
+    console.log(
+      `Successfully generated ${blogs.length + 2} SSG pages (${blogs.length} blogs + 2 error pages)`
+    );
   } catch (error) {
     console.error('Error generating SSG pages:', error);
     process.exit(1);
@@ -352,4 +367,3 @@ async function generateSSGPages() {
 }
 
 generateSSGPages();
-

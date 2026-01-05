@@ -25,15 +25,15 @@ export default defineConfig({
             src: '/icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
-          }
+            purpose: 'any maskable',
+          },
         ],
         start_url: '/',
         scope: '/',
         orientation: 'portrait-primary',
         categories: ['education', 'technology', 'blog'],
         lang: 'zh-CN',
-        dir: 'ltr'
+        dir: 'ltr',
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,xml,txt}'],
@@ -45,19 +45,19 @@ export default defineConfig({
               cacheName: 'runtime-cache',
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 3600 * 24 * 7
+                maxAgeSeconds: 3600 * 24 * 7,
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
       },
       devOptions: {
-        enabled: false
-      }
-    })
+        enabled: false,
+      },
+    }),
   ],
   resolve: {
     alias: {
@@ -77,9 +77,9 @@ export default defineConfig({
           // React 核心库
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           // Markdown 相关
-          'markdown-vendor': ['markdown-it', 'dompurify', 'highlight.js'],
+          'markdown-vendor': ['markdown-it', 'dompurify'],
           // 其他第三方库
-          'vendor': ['react-helmet-async'],
+          vendor: ['react-helmet-async'],
         },
       },
     },

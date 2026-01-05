@@ -50,7 +50,6 @@ export const MARKDOWN_ALLOWED_ATTR = [
   'target',
   'rel',
   'id',
-  'data-highlighted',
 ] as const;
 
 /**
