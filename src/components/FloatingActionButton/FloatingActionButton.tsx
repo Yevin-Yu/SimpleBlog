@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../config';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
+import { BlogListDrawer } from '../BlogListDrawer/BlogListDrawer';
 import './FloatingActionButton.css';
 
 interface FloatingActionButtonProps {
   onBlogClick?: (id: string) => void;
+  selectedBlogId?: string;
 }
 
-export function FloatingActionButton({ onBlogClick }: FloatingActionButtonProps) {
+export function FloatingActionButton({ onBlogClick, selectedBlogId }: FloatingActionButtonProps) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isListDrawerOpen, setIsListDrawerOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -24,6 +27,11 @@ export function FloatingActionButton({ onBlogClick }: FloatingActionButtonProps)
 
   const handleOpenSearch = () => {
     setIsSearchModalOpen(true);
+    setIsOpen(false);
+  };
+
+  const handleOpenListDrawer = () => {
+    setIsListDrawerOpen(true);
     setIsOpen(false);
   };
 
@@ -42,7 +50,11 @@ export function FloatingActionButton({ onBlogClick }: FloatingActionButtonProps)
             ></path>
           </svg>
         </button>
-        <button className="fab-action-button fab-action-2" aria-label="列表">
+        <button
+          className="fab-action-button fab-action-2"
+          aria-label="列表"
+          onClick={handleOpenListDrawer}
+        >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
@@ -103,6 +115,14 @@ export function FloatingActionButton({ onBlogClick }: FloatingActionButtonProps)
         onBlogClick={(id) => {
           onBlogClick?.(id);
         }}
+      />
+      <BlogListDrawer
+        isOpen={isListDrawerOpen}
+        onClose={() => setIsListDrawerOpen(false)}
+        onBlogClick={(id) => {
+          onBlogClick?.(id);
+        }}
+        selectedBlogId={selectedBlogId}
       />
     </div>
   );

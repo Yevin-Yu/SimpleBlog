@@ -91,7 +91,10 @@ export function BlogTree() {
           <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} error={error} />
         </div>
       </div>
-      <FloatingActionButton onBlogClick={handleBlogClickWithSidebar} />
+      <FloatingActionButton
+        onBlogClick={handleBlogClickWithSidebar}
+        selectedBlogId={selectedBlog?.id}
+      />
     </>
   );
 }

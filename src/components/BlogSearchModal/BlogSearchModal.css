@@ -33,7 +33,7 @@
     0 8px 32px rgba(0, 0, 0, 0.04);
   width: 100%;
   max-width: 600px;
-  max-height: calc(100vh - var(--spacing-xl) * 2);
+  height: 600px;
   margin-top: -10vh;
   display: flex;
   flex-direction: column;
@@ -124,8 +124,7 @@
 .blog-search-modal-results {
   flex: 1;
   overflow-y: auto;
-  min-height: 200px;
-  max-height: calc(100vh - 300px);
+  min-height: 0;
 }
 
 .blog-search-modal-loading,
@@ -212,10 +211,6 @@
   }
 
   .blog-search-modal {
-    max-height: calc(100vh - var(--spacing-md) * 2);
-  }
-
-  .blog-search-modal-results {
-    max-height: calc(100vh - 250px);
+    height: 500px;
   }
 }
