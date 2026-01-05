@@ -3,6 +3,13 @@ import { createHighlighter, type Highlighter } from 'shiki';
 import DOMPurify from 'dompurify';
 import { getAllowedTags, getAllowedAttr } from '../constants/security';
 
+export interface TOCItem {
+  id: string;
+  text: string;
+  level: number;
+  children?: TOCItem[];
+}
+
 let highlighterInstance: Highlighter | null = null;
 
 const SUPPORTED_LANGUAGES = [
@@ -29,6 +36,15 @@ const SUPPORTED_LANGUAGES = [
 
 const THEME = 'github-light-default';
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export async function initHighlighter() {
   if (!highlighterInstance) {
     highlighterInstance = await createHighlighter({
@@ -45,6 +61,50 @@ const markdownRenderer = new MarkdownIt({
   typographer: true,
 });
 
+markdownRenderer.renderer.rules.heading_open = (tokens, idx) => {
+  const token = tokens[idx];
+  const level = token.markup.length;
+  const text = tokens[idx + 1].content || '';
+  const slug = slugify(text);
+
+  return `<h${level} id="${slug}" class="markdown-heading">`;
+};
+
+export function extractTOC(content: string): TOCItem[] {
+  const tokens = markdownRenderer.parse(content, {});
+  const items: TOCItem[] = [];
+
+  for (const token of tokens) {
+    if (token.type === 'heading_open') {
+      const level = parseInt(token.tag.slice(1), 10);
+      const text = tokens[tokens.indexOf(token) + 1].content || '';
+      const id = slugify(text);
+
+      const item: TOCItem = {
+        id,
+        text,
+        level,
+      };
+
+      if (level > items[items.length - 1]?.level) {
+        if (items.length > 0) {
+          const parent = items[items.length - 1];
+          if (!parent.children) {
+            parent.children = [];
+          }
+          parent.children.push(item);
+        } else {
+          items.push(item);
+        }
+      } else {
+        items.push(item);
+      }
+    }
+  }
+
+  return items;
+}
+
 export function renderMarkdown(content: string): string {
   return markdownRenderer.render(content);
 }
@@ -53,7 +113,7 @@ export function renderMarkdownAndSanitize(content: string): string {
   const rawHtml = renderMarkdown(content);
   return DOMPurify.sanitize(rawHtml, {
     ALLOWED_TAGS: [...getAllowedTags(), 'style'],
-    ALLOWED_ATTR: [...getAllowedAttr(), 'tabindex'],
+    ALLOWED_ATTR: [...getAllowedAttr(), 'tabindex', 'id'],
     ALLOW_DATA_ATTR: true,
   });
 }

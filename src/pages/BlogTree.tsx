@@ -12,11 +12,13 @@ import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
 import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
 import { SEO } from '../components/SEO/SEO';
 import { FloatingActionButton } from '../components/FloatingActionButton/FloatingActionButton';
+import { BlogTOCDrawer } from '../components/BlogTOCDrawer/BlogTOCDrawer';
 import { generateArticleSEOData, generateBlogListSEOData } from '../utils/seo.utils';
 import './BlogTree.css';
 
 export function BlogTree() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [tocDrawerOpen, setTocDrawerOpen] = useState(false);
   const { hasEnoughSpace, isInitialized, containerRef } = useResponsiveLayout();
   const prevHasEnoughSpaceRef = useRef(false);
   const {
@@ -94,6 +96,13 @@ export function BlogTree() {
       <FloatingActionButton
         onBlogClick={handleBlogClickWithSidebar}
         selectedBlogId={selectedBlog?.id}
+        onTocClick={() => setTocDrawerOpen(true)}
+      />
+      <BlogTOCDrawer
+        isOpen={tocDrawerOpen}
+        onClose={() => setTocDrawerOpen(false)}
+        content={selectedBlog?.content}
+        isSmallScreen={!hasEnoughSpace}
       />
     </>
   );

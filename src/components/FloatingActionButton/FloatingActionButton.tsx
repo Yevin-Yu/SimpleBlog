@@ -8,9 +8,14 @@ import './FloatingActionButton.css';
 interface FloatingActionButtonProps {
   onBlogClick?: (id: string) => void;
   selectedBlogId?: string;
+  onTocClick?: () => void;
 }
 
-export function FloatingActionButton({ onBlogClick, selectedBlogId }: FloatingActionButtonProps) {
+export function FloatingActionButton({
+  onBlogClick,
+  selectedBlogId,
+  onTocClick,
+}: FloatingActionButtonProps) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -27,12 +32,10 @@ export function FloatingActionButton({ onBlogClick, selectedBlogId }: FloatingAc
 
   const handleOpenSearch = () => {
     setIsSearchModalOpen(true);
-    setIsOpen(false);
   };
 
   const handleOpenListDrawer = () => {
     setIsListDrawerOpen(true);
-    setIsOpen(false);
   };
 
   return (
@@ -78,7 +81,7 @@ export function FloatingActionButton({ onBlogClick, selectedBlogId }: FloatingAc
             ></path>
           </svg>
         </button>
-        <button className="fab-action-button fab-action-4" aria-label="目录">
+        <button className="fab-action-button fab-action-4" aria-label="目录" onClick={onTocClick}>
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="currentColor"
