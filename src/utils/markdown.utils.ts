@@ -24,6 +24,11 @@ export async function initHighlighter() {
         'markdown',
         'yaml',
         'toml',
+        'ini',
+        'xml',
+        'sql',
+        'vim',
+        'docker',
       ],
     });
   }

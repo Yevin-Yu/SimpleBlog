@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import MarkdownIt from 'markdown-it';
 import { createHighlighter } from 'shiki';
+import { DOMParser } from 'linkedom';
 import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -48,6 +49,11 @@ async function initShiki() {
         'markdown',
         'yaml',
         'toml',
+        'ini',
+        'xml',
+        'sql',
+        'vim',
+        'docker',
       ],
     });
   }
