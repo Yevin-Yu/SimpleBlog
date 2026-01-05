@@ -10,7 +10,7 @@
   justify-content: center;
   z-index: 2000;
   padding: var(--spacing-xl);
-  pointer-events: none;
+  pointer-events: auto;
   overflow-y: auto;
 }
 
@@ -56,7 +56,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-sm) var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
@@ -83,6 +83,7 @@
   transition:
     background-color var(--transition-fast) ease,
     color var(--transition-fast) ease;
+  margin-right: -8px;
 }
 
 .blog-search-modal-close svg {

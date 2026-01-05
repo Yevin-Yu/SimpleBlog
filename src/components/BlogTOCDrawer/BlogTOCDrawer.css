@@ -38,7 +38,7 @@
     -2px 0 8px rgba(0, 0, 0, 0.04),
     -8px 0 32px rgba(0, 0, 0, 0.04);
   width: 100%;
-  max-width: 280px;
+  max-width: 220px;
   height: 600px;
   display: flex;
   flex-direction: column;
@@ -54,7 +54,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-sm) var(--spacing-md);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .blog-toc-drawer-title {
@@ -80,6 +80,7 @@
   transition:
     background-color var(--transition-fast) ease,
     color var(--transition-fast) ease;
+  margin-right: -8px;
 }
 
 .blog-toc-drawer-close svg {
@@ -137,6 +138,9 @@
   color: var(--color-text-light);
   line-height: 1.5;
   transition: color var(--transition-fast) ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .blog-toc-item-button:hover .blog-toc-item-text {

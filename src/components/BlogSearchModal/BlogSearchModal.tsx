@@ -73,8 +73,8 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
   if (!isOpen) return null;
 
   return (
-    <div className="blog-search-modal-overlay">
-      <div className="blog-search-modal">
+    <div className="blog-search-modal-overlay" onClick={onClose}>
+      <div className="blog-search-modal" onClick={(e) => e.stopPropagation()}>
         <div className="blog-search-modal-header">
           <h3 className="blog-search-modal-title">搜索文章</h3>
           <button className="blog-search-modal-close" onClick={onClose} aria-label="关闭搜索">
