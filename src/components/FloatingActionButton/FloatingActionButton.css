@@ -1,0 +1,141 @@
+.fab-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: block;
+}
+
+.fab-main-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 32px rgba(0, 0, 0, 0.04);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.fab-main-button svg {
+  opacity: 0.7;
+}
+
+.fab-main-button:hover {
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.06);
+  transform: scale(1.02);
+}
+
+.fab-main-button:active {
+  transform: scale(0.98);
+}
+
+.fab-main-button .fab-icon {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  user-select: none;
+  color: var(--color-text);
+}
+
+.fab-menu {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+
+.fab-action-button {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.03),
+    0 6px 20px rgba(0, 0, 0, 0.04);
+  color: var(--color-text);
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(0, 0) scale(0.8);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 6px;
+  bottom: 6px;
+}
+
+.fab-action-button svg {
+  opacity: 0.7;
+}
+
+.fab-action-button:hover {
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.04),
+    0 8px 28px rgba(0, 0, 0, 0.06);
+  transform: scale(1.02);
+}
+
+.fab-action-button:active {
+  transform: scale(0.98);
+}
+
+.fab-menu-open .fab-action-button {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+.fab-menu-open .fab-action-1 {
+  transition-delay: 0s;
+  transform: translate(-80px, 20px) scale(1);
+}
+
+.fab-menu-open .fab-action-2 {
+  transition-delay: 0.05s;
+  transform: translate(-70px, -30px) scale(1);
+}
+
+.fab-menu-open .fab-action-3 {
+  transition-delay: 0.1s;
+  transform: translate(-30px, -70px) scale(1);
+}
+
+.fab-menu-open .fab-action-4 {
+  transition-delay: 0.15s;
+  transform: translate(20px, -80px) scale(1);
+}
+
+@media screen and (min-width: 1024px) {
+  .fab-action-2 {
+    display: none;
+  }
+
+  .fab-menu-open .fab-action-3 {
+    transform: translate(-55px, -55px) scale(1);
+  }
+}
+
+.fab-main-button[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.fab-main-button[aria-expanded='true']:hover {
+  background: rgba(255, 255, 255, 0.72);
+}

@@ -12,6 +12,7 @@ import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
 import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
 import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
 import { SEO } from '../components/SEO/SEO';
+import { FloatingActionButton } from '../components/FloatingActionButton/FloatingActionButton';
 import { ROUTES } from '../config';
 import { generateArticleSEOData, generateBlogListSEOData } from '../utils/seo.utils';
 import './BlogTree.css';
@@ -113,6 +114,7 @@ export function BlogTree() {
           <BlogTreeContent selectedBlog={selectedBlog} loading={contentLoading} error={error} />
         </div>
       </div>
+      <FloatingActionButton />
     </>
   );
 }
