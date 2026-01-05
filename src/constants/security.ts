@@ -36,6 +36,7 @@ export const MARKDOWN_ALLOWED_TAGS = [
   'hr',
   'div',
   'span',
+  'style',
 ] as const;
 
 /**
@@ -50,6 +51,8 @@ export const MARKDOWN_ALLOWED_ATTR = [
   'target',
   'rel',
   'id',
+  'style',
+  'tabindex',
 ] as const;
 
 /**

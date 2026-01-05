@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import MarkdownIt from 'markdown-it';
+import { createHighlighter } from 'shiki';
 import { loadAllBlogs, parseFrontmatter } from './utils/blog-parser.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -25,6 +26,33 @@ const markdownRenderer = new MarkdownIt({
   linkify: true,
   typographer: true,
 });
+
+let shikiHighlighter = null;
+
+async function initShiki() {
+  if (!shikiHighlighter) {
+    shikiHighlighter = await createHighlighter({
+      themes: ['github-light-default'],
+      langs: [
+        'bash',
+        'sh',
+        'javascript',
+        'typescript',
+        'json',
+        'html',
+        'css',
+        'python',
+        'java',
+        'go',
+        'rust',
+        'markdown',
+        'yaml',
+        'toml',
+      ],
+    });
+  }
+  return shikiHighlighter;
+}
 
 /**
  * HTML 转义
@@ -55,8 +83,35 @@ function getAssetPaths(indexHtmlContent) {
 /**
  * 渲染博客内容为 HTML
  */
-function renderBlogContent(blog, blogContent) {
+async function renderBlogContent(blog, blogContent) {
   const htmlContent = markdownRenderer.render(blogContent);
+  const highlighter = await initShiki();
+
+  const dom = new DOMParser().parseFromString(htmlContent, 'text/html');
+  const codeBlocks = dom.querySelectorAll('pre code');
+
+  for (const codeElement of codeBlocks) {
+    const code = codeElement.textContent;
+    const classList = Array.from(codeElement.classList);
+    const langClass = classList.find((cls) => cls.startsWith('language-'));
+    const lang = langClass ? langClass.replace('language-', '') : 'plaintext';
+
+    try {
+      const highlightedHtml = highlighter.codeToHtml(code, {
+        lang,
+        theme: 'github-light-default',
+      });
+
+      const preElement = codeElement.parentElement;
+      if (preElement) {
+        preElement.outerHTML = highlightedHtml;
+      }
+    } catch (error) {
+      console.error(`Error highlighting code block:`, error);
+    }
+  }
+
+  const highlightedContent = dom.querySelector('.markdown-content')?.innerHTML || htmlContent;
   const categoryHtml = blog.category
     ? `<span class="blog-tree-article-category">${escapeHtml(blog.category)}</span>`
     : '';
@@ -73,7 +128,7 @@ function renderBlogContent(blog, blogContent) {
             </div>
           </header>
           <div class="blog-tree-article-body">
-            <div class="markdown-content">${htmlContent}</div>
+            <div class="markdown-content">${highlightedContent}</div>
           </div>
         </article>
       </div>
@@ -121,7 +176,7 @@ function generateStructuredData(blog) {
 /**
  * 生成博客 HTML 页面
  */
-function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
+async function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const title = blog.title || 'Untitled';
   const description = blog.description || blog.title || '耶温博客文章';
   const category = blog.category || '';
@@ -139,7 +194,7 @@ function generateBlogHTML(blog, blogContent, indexHtmlContent, assetPaths) {
   const structuredData = generateStructuredData(blog);
   const structuredDataJson = JSON.stringify(structuredData, null, 2);
 
-  const renderedContent = renderBlogContent(blog, blogContent);
+  const renderedContent = await renderBlogContent(blog, blogContent);
 
   let html = indexHtmlContent
     .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)} - 耶温博客</title>`)
@@ -320,7 +375,7 @@ async function generateSSGPages() {
       const blogDir = resolve(distPath, blog.id);
       mkdirSync(blogDir, { recursive: true });
 
-      const blogHtml = generateBlogHTML(blog, blog.content, indexHtmlContent, assetPaths);
+      const blogHtml = await generateBlogHTML(blog, blog.content, indexHtmlContent, assetPaths);
       const indexPath = resolve(blogDir, 'index.html');
       writeFileSync(indexPath, blogHtml, 'utf-8');
       console.log(`Generated SSG page: ${BASE_PATH}/${blog.id}/index.html`);

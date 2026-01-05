@@ -77,7 +77,7 @@ export default defineConfig({
           // React 核心库
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           // Markdown 相关
-          'markdown-vendor': ['markdown-it', 'dompurify'],
+          'markdown-vendor': ['markdown-it', 'dompurify', 'shiki'],
           // 其他第三方库
           vendor: ['react-helmet-async'],
         },
