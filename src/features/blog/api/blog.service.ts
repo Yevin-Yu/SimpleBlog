@@ -115,7 +115,7 @@ class BlogStore {
   }
 
   public getBlogList(): BlogItem[] {
-    return [...this.blogList];
+    return [...this.blogList].sort((a, b) => b.date.localeCompare(a.date));
   }
 
   public getBlogContent(id: string): BlogContent | null {
