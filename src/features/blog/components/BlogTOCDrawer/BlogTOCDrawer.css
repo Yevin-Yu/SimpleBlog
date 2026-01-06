@@ -107,7 +107,7 @@
 }
 
 .blog-toc-list {
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-md) var(--spacing-xs);
 }
 
 .blog-toc-item {
