@@ -123,14 +123,15 @@
   cursor: pointer;
   transition:
     background-color var(--transition-fast) ease,
-    color var(--transition-fast) ease,
-    transform var(--transition-base) ease;
+    color var(--transition-fast) ease;
   display: flex;
   align-items: center;
+  border-radius: 4px;
 }
 
 .blog-toc-item-button:hover {
   color: var(--color-text);
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .blog-toc-item-text {
@@ -138,10 +139,16 @@
   font-weight: 400;
   color: var(--color-text-light);
   line-height: 1.5;
-  transition: color var(--transition-fast) ease;
+  transition:
+    color var(--transition-fast) ease,
+    transform var(--transition-fast) ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.blog-toc-item-button:active .blog-toc-item-text {
+  transform: translateX(2px);
 }
 
 .blog-toc-item-button:hover .blog-toc-item-text {
