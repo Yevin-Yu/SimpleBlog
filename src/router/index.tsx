@@ -1,0 +1,25 @@
+import { Routes, Route } from 'react-router-dom';
+import { Home } from '../pages/Home';
+import { BlogTree } from '../pages/BlogTree';
+import { ErrorPage } from '../pages/ErrorPage';
+import { ErrorBoundary } from '../components/ui/ErrorBoundary/ErrorBoundary';
+import { ROUTES } from '../config';
+
+export function RouterConfig() {
+  return (
+    <ErrorBoundary>
+      <Routes>
+        <Route path={ROUTES.ERROR} element={<ErrorPage />} />
+        <Route path={ROUTES.BLOG} element={<BlogTree />} />
+        <Route path={ROUTES.HOME} element={<Home />} />
+        <Route path="/:id" element={<BlogTree />} />
+        <Route
+          path="*"
+          element={
+            <ErrorPage statusCode={404} title="页面未找到" message="抱歉，您访问的页面不存在" />
+          }
+        />
+      </Routes>
+    </ErrorBoundary>
+  );
+}

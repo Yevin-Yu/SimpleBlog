@@ -1,36 +1,14 @@
-/**
- * App - 主应用路由配置
- * - 配置 React Router 路由
- * - 提供全局 ErrorBoundary
- */
-
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { BlogTree } from './pages/BlogTree';
-import { ErrorPage } from './pages/ErrorPage';
-import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
-import { BASE_PATH, ROUTES } from './config';
+import { BrowserRouter } from 'react-router-dom';
+import { RouterConfig } from './router';
+import { BASE_PATH } from './config';
 
 export function App() {
   return (
-    <ErrorBoundary>
-      <BrowserRouter
-        basename={BASE_PATH}
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
-        <Routes>
-          <Route path={ROUTES.ERROR} element={<ErrorPage />} />
-          <Route path={ROUTES.BLOG} element={<BlogTree />} />
-          <Route path={ROUTES.HOME} element={<Home />} />
-          <Route path="/:id" element={<BlogTree />} />
-          <Route
-            path="*"
-            element={
-              <ErrorPage statusCode={404} title="页面未找到" message="抱歉，您访问的页面不存在" />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <BrowserRouter
+      basename={BASE_PATH}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
+      <RouterConfig />
+    </BrowserRouter>
   );
 }

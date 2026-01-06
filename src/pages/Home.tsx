@@ -5,15 +5,15 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
-import { SEO } from '../components/SEO/SEO';
-import { InkBackground } from '../components/InkBackground/InkBackground';
-import { ContributionGraph } from '../components/ContributionGraph/ContributionGraph';
-import { BlogSearchModal } from '../components/BlogSearchModal/BlogSearchModal';
-import { SnowfallEffect } from '../components/SnowfallEffect/SnowfallEffect';
-import { useSiteUrl } from '../hooks/useSiteUrl';
-import { useGlobalSearch } from '../hooks/useGlobalSearch';
+import { SEO } from '../features/blog/components/SEO/SEO';
+import { InkBackground } from '../components/layout/InkBackground/InkBackground';
+import { ContributionGraph } from '../features/blog/components/ContributionGraph/ContributionGraph';
+import { BlogSearchModal } from '../features/search/BlogSearchModal/BlogSearchModal';
+import { SnowfallEffect } from '../components/ui/SnowfallEffect/SnowfallEffect';
+import { useSiteUrl } from '../features/blog/hooks/useSiteUrl';
+import { useGlobalSearch } from '../features/blog/hooks/useGlobalSearch';
 import { SITE_CONFIG, SEO_CONFIG, ROUTES, BLOG_CONFIG } from '../config';
-import { getBlogList } from '../utils/blog.service';
+import { getBlogList } from '../features/blog/api/blog.service';
 import type { BlogItem } from '../types';
 import './Home.css';
 

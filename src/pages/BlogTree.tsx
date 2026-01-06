@@ -5,15 +5,15 @@
  */
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { useBlogTree } from '../hooks/useBlogTree';
-import { useSiteUrl } from '../hooks/useSiteUrl';
-import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
-import { BlogTreeSidebar } from '../components/BlogTreeSidebar/BlogTreeSidebar';
-import { BlogTreeContent } from '../components/BlogTreeContent/BlogTreeContent';
-import { SEO } from '../components/SEO/SEO';
-import { FloatingActionButton } from '../components/FloatingActionButton/FloatingActionButton';
-import { BlogTOCDrawer } from '../components/BlogTOCDrawer/BlogTOCDrawer';
-import { generateArticleSEOData, generateBlogListSEOData } from '../utils/seo.utils';
+import { useBlogTree } from '../features/blog/hooks/useBlogTree';
+import { useSiteUrl } from '../features/blog/hooks/useSiteUrl';
+import { useResponsiveLayout } from '../features/blog/hooks/useResponsiveLayout';
+import { BlogTreeSidebar } from '../features/blog/components/BlogTreeSidebar/BlogTreeSidebar';
+import { BlogTreeContent } from '../features/blog/components/BlogTreeContent/BlogTreeContent';
+import { SEO } from '../features/blog/components/SEO/SEO';
+import { FloatingActionButton } from '../components/ui/FloatingActionButton/FloatingActionButton';
+import { BlogTOCDrawer } from '../features/blog/components/BlogTOCDrawer/BlogTOCDrawer';
+import { generateArticleSEOData, generateBlogListSEOData } from '../features/blog/utils/seo.utils';
 import './BlogTree.css';
 
 export function BlogTree() {

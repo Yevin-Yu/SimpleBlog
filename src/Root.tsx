@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { App } from './App';
-import { PageLoader } from './components/PageLoader/PageLoader';
+import { PageLoader } from './components/ui/PageLoader/PageLoader';
 
 export function Root() {
   const [isAppReady, setIsAppReady] = useState(false);

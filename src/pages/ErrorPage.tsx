@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { SEO } from '../components/SEO/SEO';
+import { SEO } from '../features/blog/components/SEO/SEO';
 import { ROUTES } from '../config';
-import { generateErrorSEOData } from '../utils/seo.utils';
-import { useSiteUrl } from '../hooks/useSiteUrl';
+import { generateErrorSEOData } from '../features/blog/utils/seo.utils';
+import { useSiteUrl } from '../features/blog/hooks/useSiteUrl';
 import './ErrorPage.css';
 
 interface ErrorPageProps {

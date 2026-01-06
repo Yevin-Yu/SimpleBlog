@@ -19,7 +19,8 @@
       "Bash(ls:*)",
       "Bash(npm run ensure:ids:*)",
       "Bash(node:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(npm run dev)"
     ]
   }
 }
