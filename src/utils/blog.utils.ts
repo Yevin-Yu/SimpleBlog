@@ -1,3 +1,5 @@
+/** 博客工具 - 分类管理、排序 */
+
 import type { BlogItem, BlogCategory, CategoryNode } from '../types';
 import { BLOG_CONFIG } from '../config';
 
@@ -10,11 +12,7 @@ const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
 };
 
 const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
-  const root: CategoryNode = {
-    name: '',
-    blogs: [],
-    children: new Map(),
-  };
+  const root: CategoryNode = { name: '', blogs: [], children: new Map() };
 
   for (const blog of blogs) {
     const categoryPath = blog.category || BLOG_CONFIG.defaultCategory;
@@ -31,11 +29,7 @@ const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
       const isLeaf = i === pathParts.length - 1;
 
       if (!current.children.has(part)) {
-        current.children.set(part, {
-          name: part,
-          blogs: [],
-          children: new Map(),
-        });
+        current.children.set(part, { name: part, blogs: [], children: new Map() });
       }
 
       const childNode = current.children.get(part);
@@ -138,10 +132,7 @@ export function toggleCategoryByPath(
     }
 
     if (cat.children?.length) {
-      return {
-        ...cat,
-        children: toggleCategoryByPath(cat.children, targetName),
-      };
+      return { ...cat, children: toggleCategoryByPath(cat.children, targetName) };
     }
 
     return cat;

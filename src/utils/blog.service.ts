@@ -1,8 +1,11 @@
+/** 博客服务 - 解析和提供博客数据 */
+
 import type { BlogItem, BlogContent, BlogSearchItem } from '../types';
 import { parseFrontmatter, generateIdFromFilename } from './frontmatter';
 import { logger } from './logger';
 import { isValidDateString } from './date.utils';
 
+// Vite glob 导入所有 md 文件
 const blogModules = import.meta.glob('../../blogs/**/*.md', {
   query: '?raw',
   import: 'default',
@@ -12,11 +15,9 @@ const blogModules = import.meta.glob('../../blogs/**/*.md', {
 const extractCategoryFromPath = (filePath: string): string => {
   const pathParts = filePath.split('/');
   const blogsIndex = pathParts.indexOf('blogs');
-
   if (blogsIndex === -1 || blogsIndex === pathParts.length - 2) {
     return '';
   }
-
   return pathParts.slice(blogsIndex + 1, -1).join('/');
 };
 

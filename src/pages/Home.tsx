@@ -1,3 +1,8 @@
+/**
+ * Home - 首页
+ * 展示品牌信息、背景特效、贡献图和最新文章
+ */
+
 import { useNavigate } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { SEO } from '../components/SEO/SEO';
@@ -17,9 +22,7 @@ const STRUCTURED_DATA_TEMPLATE = {
   '@type': 'WebSite' as const,
   potentialAction: {
     '@type': 'SearchAction' as const,
-    target: {
-      '@type': 'EntryPoint' as const,
-    },
+    target: { '@type': 'EntryPoint' as const },
     'query-input': 'required name=search_term_string',
   },
 } as const;
@@ -32,14 +35,10 @@ export function Home() {
 
   useGlobalSearch(() => setIsSearchModalOpen(true));
 
-  const handleBlogClick = (blogId: string) => {
-    navigate(ROUTES.BLOG_DETAIL(blogId));
-  };
+  const handleBlogClick = (blogId: string) => navigate(ROUTES.BLOG_DETAIL(blogId));
 
   useEffect(() => {
-    getBlogList().then((blogs) => {
-      setLatestBlogs(blogs.slice(0, 3));
-    });
+    getBlogList().then((blogs) => setLatestBlogs(blogs.slice(0, 3)));
   }, []);
 
   const structuredData = useMemo(

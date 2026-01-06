@@ -1,3 +1,9 @@
+/**
+ * App - 主应用路由配置
+ * - 配置 React Router 路由
+ * - 提供全局 ErrorBoundary
+ */
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { BlogTree } from './pages/BlogTree';
@@ -10,10 +16,7 @@ export function App() {
     <ErrorBoundary>
       <BrowserRouter
         basename={BASE_PATH}
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
       >
         <Routes>
           <Route path={ROUTES.ERROR} element={<ErrorPage />} />

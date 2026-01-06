@@ -1,3 +1,8 @@
+/**
+ * ErrorBoundary - 全局错误边界
+ * 捕获子组件错误，自动跳转到错误页面
+ */
+
 import { Component, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
 import { BASE_PATH, ROUTES } from '../../config';

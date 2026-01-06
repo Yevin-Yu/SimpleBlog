@@ -1,3 +1,8 @@
+/**
+ * useBlogTree - 博客树状态管理
+ * 管理博客分类、选中文章、加载状态
+ */
+
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBlogList, getBlogContent } from '../utils/blog.service';
@@ -42,10 +47,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         if (cat.children?.length) {
           const nextPath = `${currentPath}/`;
           if (path.startsWith(nextPath) || path === currentPath) {
-            return {
-              ...cat,
-              children: toggleCategoryByPath(cat.children, path, currentPath),
-            };
+            return { ...cat, children: toggleCategoryByPath(cat.children, path, currentPath) };
           }
         }
 
@@ -84,10 +86,7 @@ export function useBlogTree(): UseBlogTreeReturn {
         throw new Error(`博客元数据不存在: ${blogId}`);
       }
 
-      const currentBlog: SelectedBlog = {
-        ...blogMeta,
-        content: blogData.content,
-      };
+      const currentBlog: SelectedBlog = { ...blogMeta, content: blogData.content };
 
       const previousBlog = selectedBlogRef.current;
       const isSameBlog =

@@ -1,3 +1,5 @@
+/** 应用配置 - 站点、博客、SEO、路由 */
+
 export const SITE_CONFIG = {
   name: '耶温博客',
   description: '一个简约的个人博客网站，分享技术思考、生活感悟和知识总结',
