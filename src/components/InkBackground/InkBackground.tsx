@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { RIPPLE_CONFIG, RIPPLE_SIZE_MULTIPLIERS } from '../../utils/ripple.config';
 import './InkBackground.css';
 
 interface Ripple {
@@ -15,6 +14,74 @@ interface Ripple {
   waveCount: number;
   phase: number;
 }
+
+const RIPPLE_CONFIG = {
+  GENERATION_INTERVAL: { min: 600, max: 1500 },
+  BASE_MAX_RADIUS_RATIO: 0.18,
+  INITIAL_RADIUS: { min: 2, max: 8 },
+  LIFETIME: { min: 280, max: 420 },
+  BASE_SPEED: { min: 0.4, max: 0.7 },
+  OPACITY: { min: 0.08, max: 0.18 },
+  INTENSITY_THRESHOLDS: { small: 0.3, medium: 0.6 },
+  WAVE_COUNT: { small: 2, medium: 3, large: 4 },
+  MOUSE_MOVE: { enabled: true, minDistance: 80, intensity: 0.2, maxCount: 8 },
+  HIGHLIGHT: { enabled: true, opacity: 0.12, offset: 0.15 },
+};
+
+const RIPPLE_SIZE_MULTIPLIERS = {
+  small: { min: 0.2, max: 0.5 },
+  medium: { min: 0.5, max: 0.7 },
+  large: { min: 0.7, max: 1.0 },
+};
+
+const getSizeMultiplier = (intensity: number): number => {
+  const { small, medium, large } = RIPPLE_SIZE_MULTIPLIERS;
+  const { INTENSITY_THRESHOLDS } = RIPPLE_CONFIG;
+
+  if (intensity < INTENSITY_THRESHOLDS.small) {
+    return small.min + intensity * (small.max - small.min);
+  }
+  if (intensity < INTENSITY_THRESHOLDS.medium) {
+    return medium.min + (intensity - INTENSITY_THRESHOLDS.small) * (medium.max - medium.min);
+  }
+  return large.min + (intensity - INTENSITY_THRESHOLDS.medium) * (large.max - large.min);
+};
+
+const getWaveCount = (intensity: number): number => {
+  const { INTENSITY_THRESHOLDS, WAVE_COUNT } = RIPPLE_CONFIG;
+  return intensity > INTENSITY_THRESHOLDS.medium ? WAVE_COUNT.large : WAVE_COUNT.medium;
+};
+
+const createRipple = (
+  x: number,
+  y: number,
+  intensity: number,
+  canvas: HTMLCanvasElement
+): Ripple => {
+  const sizeMultiplier = getSizeMultiplier(intensity);
+  const { BASE_MAX_RADIUS_RATIO, INITIAL_RADIUS, LIFETIME, BASE_SPEED, OPACITY } = RIPPLE_CONFIG;
+
+  const baseMaxRadius = Math.max(canvas.width, canvas.height) * BASE_MAX_RADIUS_RATIO;
+  const maxRadius = baseMaxRadius * sizeMultiplier + Math.random() * 50 * sizeMultiplier;
+  const maxLife = (LIFETIME.min + Math.random() * (LIFETIME.max - LIFETIME.min)) * sizeMultiplier;
+  const baseSpeed = BASE_SPEED.min + Math.random() * (BASE_SPEED.max - BASE_SPEED.min);
+  const speed = baseSpeed * (1 + sizeMultiplier * 0.15);
+
+  return {
+    x,
+    y,
+    radius: INITIAL_RADIUS.min + Math.random() * (INITIAL_RADIUS.max - INITIAL_RADIUS.min),
+    maxRadius,
+    opacity:
+      (OPACITY.min + Math.random() * (OPACITY.max - OPACITY.min)) * (0.85 + intensity * 0.15),
+    life: maxLife,
+    maxLife,
+    speed,
+    intensity,
+    waveCount: getWaveCount(intensity),
+    phase: Math.random() * Math.PI * 2,
+  };
+};
 
 export function InkBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -40,58 +107,10 @@ export function InkBackground() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const getSizeMultiplier = (intensity: number): number => {
-      const { small, medium, large } = RIPPLE_SIZE_MULTIPLIERS;
-      const { INTENSITY_THRESHOLDS } = RIPPLE_CONFIG;
-
-      if (intensity < INTENSITY_THRESHOLDS.small) {
-        return small.min + intensity * (small.max - small.min);
-      }
-      if (intensity < INTENSITY_THRESHOLDS.medium) {
-        return medium.min + (intensity - INTENSITY_THRESHOLDS.small) * (medium.max - medium.min);
-      }
-      return large.min + (intensity - INTENSITY_THRESHOLDS.medium) * (large.max - large.min);
-    };
-
-    const getWaveCount = (intensity: number): number => {
-      const { INTENSITY_THRESHOLDS, WAVE_COUNT } = RIPPLE_CONFIG;
-      if (intensity > INTENSITY_THRESHOLDS.medium) return WAVE_COUNT.large;
-      return WAVE_COUNT.medium;
-    };
-
-    const createRipple = (x: number, y: number, intensity: number = Math.random()): Ripple => {
-      const sizeMultiplier = getSizeMultiplier(intensity);
-      const { BASE_MAX_RADIUS_RATIO, INITIAL_RADIUS, LIFETIME, BASE_SPEED, OPACITY } =
-        RIPPLE_CONFIG;
-
-      const baseMaxRadius = Math.max(canvas.width, canvas.height) * BASE_MAX_RADIUS_RATIO;
-      const maxRadius = baseMaxRadius * sizeMultiplier + Math.random() * 50 * sizeMultiplier;
-      const maxLife =
-        (LIFETIME.min + Math.random() * (LIFETIME.max - LIFETIME.min)) * sizeMultiplier;
-      const baseSpeed = BASE_SPEED.min + Math.random() * (BASE_SPEED.max - BASE_SPEED.min);
-      const speed = baseSpeed * (1 + sizeMultiplier * 0.15);
-
-      return {
-        x,
-        y,
-        radius: INITIAL_RADIUS.min + Math.random() * (INITIAL_RADIUS.max - INITIAL_RADIUS.min),
-        maxRadius,
-        opacity:
-          (OPACITY.min + Math.random() * (OPACITY.max - OPACITY.min)) * (0.85 + intensity * 0.15),
-        life: maxLife,
-        maxLife,
-        speed,
-        intensity,
-        waveCount: getWaveCount(intensity),
-        phase: Math.random() * Math.PI * 2,
-      };
-    };
-
     createRippleRef.current = (x: number, y: number, intensity: number = Math.random()) => {
       const rippleCount = getWaveCount(intensity);
-
       for (let i = 0; i < rippleCount; i++) {
-        const ripple = createRipple(x, y, intensity);
+        const ripple = createRipple(x, y, intensity, canvas);
         ripple.radius = i * (6 + intensity * 10);
         ripple.speed = (0.4 + i * 0.1) * (1 + intensity * 0.15);
         ripple.phase = i * Math.PI * 0.5;
@@ -105,7 +124,6 @@ export function InkBackground() {
       const currentTime = Date.now();
       const { GENERATION_INTERVAL, HIGHLIGHT } = RIPPLE_CONFIG;
 
-      // 自动生成涟漪
       if (
         currentTime - lastRippleTimeRef.current >
         GENERATION_INTERVAL.min +
@@ -117,7 +135,6 @@ export function InkBackground() {
         lastRippleTimeRef.current = currentTime;
       }
 
-      // 更新和绘制涟漪
       ripplesRef.current = ripplesRef.current.filter((ripple) => {
         ripple.radius += ripple.speed;
         ripple.life--;
@@ -126,7 +143,6 @@ export function InkBackground() {
         const lifeRatio = ripple.life / ripple.maxLife;
         const radiusRatio = ripple.radius / ripple.maxRadius;
 
-        // 使用更自然的衰减曲线
         const lifeDecay = Math.pow(lifeRatio, 0.7);
         const radiusDecay = 1 - Math.pow(radiusRatio, 0.8);
         const waveModulation = Math.sin(ripple.phase) * 0.1 + 0.9;
@@ -147,7 +163,6 @@ export function InkBackground() {
           const waveOpacity = currentOpacity * (1 - wave * 0.2) * (1 - radiusRatio * 0.5);
           if (waveOpacity <= 0.005) continue;
 
-          // 主波纹渐变 - 更柔和的边缘
           const gradient = ctx.createRadialGradient(
             ripple.x,
             ripple.y,
@@ -176,7 +191,6 @@ export function InkBackground() {
           ctx.arc(ripple.x, ripple.y, waveRadius, 0, Math.PI * 2);
           ctx.stroke();
 
-          // 添加高光效果（仅在波纹较新时）
           if (HIGHLIGHT.enabled && radiusRatio < 0.4 && wave === 0) {
             const highlightRadius = waveRadius * (1 + HIGHLIGHT.offset);
             const highlightGradient = ctx.createRadialGradient(
@@ -201,7 +215,6 @@ export function InkBackground() {
           }
         }
 
-        // 中心水滴效果（仅在初期显示）
         if (radiusRatio < 0.25) {
           const centerSize = (3 + ripple.intensity * 3) * (1 - radiusRatio * 4);
           const centerGradient = ctx.createRadialGradient(
@@ -223,7 +236,6 @@ export function InkBackground() {
           ctx.arc(ripple.x, ripple.y, centerSize, 0, Math.PI * 2);
           ctx.fill();
 
-          // 中心高光
           if (HIGHLIGHT.enabled) {
             const highlightGradient = ctx.createRadialGradient(
               ripple.x - centerSize * 0.3,
@@ -273,19 +285,15 @@ export function InkBackground() {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // 计算鼠标移动距离
       const dx = x - mousePosRef.current.x;
       const dy = y - mousePosRef.current.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       mousePosRef.current = { x, y };
 
-      // 当移动距离超过阈值时创建微小涟漪
       if (distance > MOUSE_MOVE.minDistance) {
         const currentTime = Date.now();
-        // 限制鼠标涟漪的生成频率
         if (currentTime - lastMouseRippleRef.current > 150) {
-          // 限制鼠标涟漪的总数量
           const mouseRipples = ripplesRef.current.filter((r) => r.intensity < 0.3);
           if (mouseRipples.length < MOUSE_MOVE.maxCount) {
             createRippleRef.current?.(x, y, MOUSE_MOVE.intensity + Math.random() * 0.1);

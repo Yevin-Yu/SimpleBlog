@@ -1,12 +1,13 @@
-import type { BlogItem, BlogCategory } from '../types';
+import type { BlogItem, BlogCategory, CategoryNode } from '../types';
 import { BLOG_CONFIG } from '../config';
-import { sortBlogsByDate } from './sort.utils';
 
-interface CategoryNode {
-  name: string;
-  blogs: BlogItem[];
-  children: Map<string, CategoryNode>;
-}
+const sortBlogsByDate = (a: BlogItem, b: BlogItem): number => {
+  const dateA = new Date(a.date);
+  const dateB = new Date(b.date);
+  const timeA = isNaN(dateA.getTime()) ? 0 : dateA.getTime();
+  const timeB = isNaN(dateB.getTime()) ? 0 : dateB.getTime();
+  return timeB - timeA;
+};
 
 const buildCategoryTree = (blogs: BlogItem[]): CategoryNode => {
   const root: CategoryNode = {
@@ -71,7 +72,7 @@ const convertNodeToCategory = (
   const shouldExpand = expandedPaths.has(currentPath);
 
   const children: BlogCategory[] = Array.from(node.children.entries())
-    .map(([name, childNode]) => {
+    .map(([name, childNode]: [string, CategoryNode]) => {
       const childPath = currentPath ? `${currentPath}/${name}` : name;
       return convertNodeToCategory(childNode, expandedPaths, childPath);
     })
@@ -109,10 +110,40 @@ export function groupBlogsByCategory(blogs: BlogItem[]): BlogCategory[] {
   }
 
   const childCategories = Array.from(root.children.entries())
-    .map(([name, childNode]) => convertNodeToCategory(childNode, expandedPaths, name))
+    .map(([name, childNode]: [string, CategoryNode]) =>
+      convertNodeToCategory(childNode, expandedPaths, name)
+    )
     .sort(sortCategories);
 
   categories.push(...childCategories);
 
   return categories;
+}
+
+export function calculateTotalCount(category: BlogCategory): number {
+  let count = category.blogs.length;
+  if (category.children) {
+    count += category.children.reduce((sum, child) => sum + calculateTotalCount(child), 0);
+  }
+  return count;
+}
+
+export function toggleCategoryByPath(
+  categories: BlogCategory[],
+  targetName: string
+): BlogCategory[] {
+  return categories.map((cat) => {
+    if (cat.name === targetName) {
+      return { ...cat, expanded: !cat.expanded };
+    }
+
+    if (cat.children?.length) {
+      return {
+        ...cat,
+        children: toggleCategoryByPath(cat.children, targetName),
+      };
+    }
+
+    return cat;
+  });
 }

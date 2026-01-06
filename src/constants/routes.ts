@@ -1,6 +1,0 @@
-export const ROUTES = {
-  HOME: '/',
-  BLOG: '/blog',
-  BLOG_DETAIL: (id: string) => `/${id}`,
-  ERROR: '/error',
-} as const;

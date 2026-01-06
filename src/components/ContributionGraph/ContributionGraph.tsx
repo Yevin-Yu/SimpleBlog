@@ -1,33 +1,20 @@
-/**
- * 贡献图组件
- * 显示最近30天的提交活动记录，类似GitHub的贡献墙
- */
-
-import { useEffect, useState, useRef, useMemo, useCallback, memo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { BASE_PATH } from '../../config';
 import { logger } from '../../utils/logger';
-import { CONTRIBUTION_CONFIG, CONTRIBUTION_LEVELS } from '../../constants/performance';
+import type { ContributionData, DayData, TooltipState } from '../../types';
 import './ContributionGraph.css';
 
-interface ContributionData {
-  generatedAt: string;
-  contributions: Record<string, number>;
-  totalCommits: number;
-}
+const DAYS_IN_MONTH = 30;
+const TOOLTIP_OFFSET_Y = 60;
+const LEVEL_THRESHOLDS = [0, 1, 3, 5] as const;
 
-interface DayData {
-  date: string;
-  count: number;
-  level: number;
-}
-
-interface TooltipState {
-  visible: boolean;
-  x: number;
-  y: number;
-  date: string;
-  count: number;
-}
+const CONTRIBUTION_LEVELS = {
+  EMPTY: 0,
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+  VERY_HIGH: 4,
+} as const;
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'] as const;
 const MONTHS = [
@@ -45,7 +32,7 @@ const MONTHS = [
   '12月',
 ] as const;
 
-function ContributionGraphComponent() {
+export function ContributionGraph() {
   const [data, setData] = useState<ContributionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tooltip, setTooltip] = useState<TooltipState>({
@@ -58,11 +45,10 @@ function ContributionGraphComponent() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getLevel = useCallback((count: number): number => {
-    const thresholds = CONTRIBUTION_CONFIG.LEVEL_THRESHOLDS;
-    if (count <= thresholds[0]) return CONTRIBUTION_LEVELS.EMPTY;
-    if (count <= thresholds[1]) return CONTRIBUTION_LEVELS.LOW;
-    if (count <= thresholds[2]) return CONTRIBUTION_LEVELS.MEDIUM;
-    if (count <= thresholds[3]) return CONTRIBUTION_LEVELS.HIGH;
+    if (count <= LEVEL_THRESHOLDS[0]) return CONTRIBUTION_LEVELS.EMPTY;
+    if (count <= LEVEL_THRESHOLDS[1]) return CONTRIBUTION_LEVELS.LOW;
+    if (count <= LEVEL_THRESHOLDS[2]) return CONTRIBUTION_LEVELS.MEDIUM;
+    if (count <= LEVEL_THRESHOLDS[3]) return CONTRIBUTION_LEVELS.HIGH;
     return CONTRIBUTION_LEVELS.VERY_HIGH;
   }, []);
 
@@ -82,10 +68,10 @@ function ContributionGraphComponent() {
     const todayStr = formatDateString(today);
 
     const startDate = new Date(today);
-    startDate.setDate(startDate.getDate() - CONTRIBUTION_CONFIG.DAYS_IN_MONTH + 1);
+    startDate.setDate(startDate.getDate() - DAYS_IN_MONTH + 1);
     startDate.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < CONTRIBUTION_CONFIG.DAYS_IN_MONTH; i++) {
+    for (let i = 0; i < DAYS_IN_MONTH; i++) {
       const date = new Date(startDate);
       date.setDate(date.getDate() + i);
       const dateStr = formatDateString(date);
@@ -119,7 +105,7 @@ function ContributionGraphComponent() {
 
     return {
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top - CONTRIBUTION_CONFIG.TOOLTIP_OFFSET_Y,
+      y: e.clientY - rect.top - TOOLTIP_OFFSET_Y,
     };
   }, []);
 
@@ -160,7 +146,6 @@ function ContributionGraphComponent() {
   );
 
   useEffect(() => {
-    // 使用相对路径，避免协议相对 URL 问题
     const jsonPath = BASE_PATH.endsWith('/')
       ? `${BASE_PATH}contributions.json`
       : `${BASE_PATH}/contributions.json`;
@@ -240,5 +225,3 @@ function ContributionGraphComponent() {
     </div>
   );
 }
-
-export const ContributionGraph = memo(ContributionGraphComponent);

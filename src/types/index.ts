@@ -90,3 +90,52 @@ export type BreadcrumbItem = {
   name: string;
   url: string;
 };
+
+export interface TOCItem {
+  id: string;
+  text: string;
+  level: number;
+  children?: TOCItem[];
+}
+
+export interface BlogTreeState {
+  displayBlog: SelectedBlog | null;
+  isVisible: boolean;
+}
+
+export interface CategoryNode {
+  name: string;
+  blogs: BlogItem[];
+  children: Map<string, CategoryNode>;
+}
+
+export interface Snowflake {
+  x: number;
+  y: number;
+  radius: number;
+  speed: number;
+  wind: number;
+  opacity: number;
+  rotation: number;
+  rotationSpeed: number;
+}
+
+export interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  opacity: number;
+  life: number;
+  maxLife: number;
+  speed: number;
+  intensity: number;
+  waveCount: number;
+  phase: number;
+}
+
+export interface DayData {
+  date: string;
+  count: number;
+  level: number;
+}

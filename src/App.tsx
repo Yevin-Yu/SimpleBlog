@@ -3,11 +3,8 @@ import { Home } from './pages/Home';
 import { BlogTree } from './pages/BlogTree';
 import { ErrorPage } from './pages/ErrorPage';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
-import { BASE_PATH } from './config';
+import { BASE_PATH, ROUTES } from './config';
 
-/**
- * 应用根组件
- */
 export function App() {
   return (
     <ErrorBoundary>
@@ -19,9 +16,9 @@ export function App() {
         }}
       >
         <Routes>
-          <Route path="/error" element={<ErrorPage />} />
-          <Route path="/blog" element={<BlogTree />} />
-          <Route path="/" element={<Home />} />
+          <Route path={ROUTES.ERROR} element={<ErrorPage />} />
+          <Route path={ROUTES.BLOG} element={<BlogTree />} />
+          <Route path={ROUTES.HOME} element={<Home />} />
           <Route path="/:id" element={<BlogTree />} />
           <Route
             path="*"

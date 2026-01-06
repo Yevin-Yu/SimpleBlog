@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { getBlogList } from '../../utils/blog.service';
-import { groupBlogsByCategory } from '../../utils/blog.utils';
+import {
+  groupBlogsByCategory,
+  calculateTotalCount,
+  toggleCategoryByPath,
+} from '../../utils/blog.utils';
 import { logger } from '../../utils/logger';
-import { LAYOUT_CONSTANTS } from '../../constants/layout';
 import type { BlogCategory } from '../../types';
 import './BlogListDrawer.css';
 
@@ -21,13 +24,9 @@ interface CategoryItemProps {
   level?: number;
 }
 
-const calculateTotalCount = (category: BlogCategory): number => {
-  let count = category.blogs.length;
-  if (category.children) {
-    count += category.children.reduce((sum, child) => sum + calculateTotalCount(child), 0);
-  }
-  return count;
-};
+const INDENT_BASE = 16;
+const INDENT_STEP = 16;
+const INDENT_ITEM_BASE = 32;
 
 function CategoryItem({
   category,
@@ -36,14 +35,13 @@ function CategoryItem({
   onToggleCategory,
   level = 0,
 }: CategoryItemProps) {
-  const { INDENT } = LAYOUT_CONSTANTS;
   const isExpanded = category.expanded ?? false;
   const hasChildren = category.children && category.children.length > 0;
 
   const totalCount = useCallback(() => calculateTotalCount(category), [category]);
 
-  const headerPaddingLeft = `${INDENT.BASE + level * INDENT.STEP}px`;
-  const itemPaddingLeft = `${INDENT.ITEM_BASE + level * INDENT.STEP}px`;
+  const headerPaddingLeft = INDENT_BASE + level * INDENT_STEP;
+  const itemPaddingLeft = INDENT_ITEM_BASE + level * INDENT_STEP;
 
   return (
     <div className="blog-list-drawer-category">
@@ -90,23 +88,6 @@ function CategoryItem({
 }
 
 const MemoizedCategoryItem = memo(CategoryItem);
-
-const toggleCategoryByPath = (categories: BlogCategory[], targetName: string): BlogCategory[] => {
-  return categories.map((cat) => {
-    if (cat.name === targetName) {
-      return { ...cat, expanded: !cat.expanded };
-    }
-
-    if (cat.children?.length) {
-      return {
-        ...cat,
-        children: toggleCategoryByPath(cat.children, targetName),
-      };
-    }
-
-    return cat;
-  });
-};
 
 export function BlogListDrawer({
   isOpen,

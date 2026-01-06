@@ -1,6 +1,7 @@
 import { useMemo, memo, useState, useEffect } from 'react';
-import { extractTOC, type TOCItem } from '../../utils/markdown.utils';
+import { extractTOC } from '../../utils/markdown.utils';
 import { logger } from '../../utils/logger';
+import type { TOCItem } from '../../types';
 import './BlogTOCDrawer.css';
 
 interface BlogTOCDrawerProps {
@@ -31,7 +32,7 @@ function TOCItemComponent({ item, onHeadingClick }: TOCItemProps) {
       </button>
       {item.children && (
         <div className="blog-toc-children">
-          {item.children.map((child) => (
+          {item.children?.map((child: TOCItem) => (
             <MemoizedTOCItem key={child.id} item={child} onHeadingClick={onHeadingClick} />
           ))}
         </div>

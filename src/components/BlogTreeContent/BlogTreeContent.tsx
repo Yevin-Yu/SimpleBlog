@@ -3,9 +3,11 @@ import { MarkdownRenderer } from '../MarkdownRenderer/MarkdownRenderer';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { Footer } from '../Footer/Footer';
 import { fixElementsWidth, restoreElementsWidth } from '../../utils/dom.utils';
-import { PERFORMANCE_CONSTANTS } from '../../constants/performance';
 import type { SelectedBlog } from '../../types';
 import './BlogTreeContent.css';
+
+const WIDTH_RESTORE_DELAY = 200;
+const FADE_OUT_DURATION = 150;
 
 interface BlogTreeContentProps {
   selectedBlog: SelectedBlog | null;
@@ -116,10 +118,10 @@ function BlogTreeContentComponent({ selectedBlog, loading, error }: BlogTreeCont
               });
               setTimeout(() => {
                 restoreElementsWidth(elements);
-              }, PERFORMANCE_CONSTANTS.WIDTH_RESTORE_DELAY);
+              }, WIDTH_RESTORE_DELAY);
             });
           });
-        }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
+        }, FADE_OUT_DURATION);
       } else if (!isVisible) {
         requestAnimationFrame(() => {
           setState({ displayBlog: selectedBlog, isVisible: true });
@@ -139,7 +141,7 @@ function BlogTreeContentComponent({ selectedBlog, loading, error }: BlogTreeCont
       prevSelectedBlogRef.current = null;
       timer = setTimeout(() => {
         setState({ displayBlog: null, isVisible: false });
-      }, PERFORMANCE_CONSTANTS.FADE_OUT_DURATION);
+      }, FADE_OUT_DURATION);
     }
 
     return () => {

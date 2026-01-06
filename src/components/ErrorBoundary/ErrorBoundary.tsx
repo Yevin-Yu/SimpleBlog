@@ -1,7 +1,6 @@
 import { Component, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
-import { ROUTES } from '../../constants/routes';
-import { BASE_PATH } from '../../config';
+import { BASE_PATH, ROUTES } from '../../config';
 import './ErrorBoundary.css';
 
 interface ErrorBoundaryProps {

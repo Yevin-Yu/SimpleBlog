@@ -30,13 +30,7 @@ export function Home() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [latestBlogs, setLatestBlogs] = useState<BlogItem[]>([]);
 
-  const handleOpenSearch = () => setIsSearchModalOpen(true);
-
-  useGlobalSearch(handleOpenSearch);
-
-  const handleNavigateToBlog = () => {
-    navigate(ROUTES.BLOG_DETAIL(BLOG_CONFIG.defaultBlogId));
-  };
+  useGlobalSearch(() => setIsSearchModalOpen(true));
 
   const handleBlogClick = (blogId: string) => {
     navigate(ROUTES.BLOG_DETAIL(blogId));
@@ -113,7 +107,10 @@ export function Home() {
             <p className="home-subtitle">记录思考，分享知识</p>
           </header>
           <nav className="home-nav">
-            <button className="home-nav-button" onClick={handleNavigateToBlog}>
+            <button
+              className="home-nav-button"
+              onClick={() => navigate(ROUTES.BLOG_DETAIL(BLOG_CONFIG.defaultBlogId))}
+            >
               查看文章
             </button>
           </nav>

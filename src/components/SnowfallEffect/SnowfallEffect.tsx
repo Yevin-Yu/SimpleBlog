@@ -1,18 +1,7 @@
 import { useEffect, useRef } from 'react';
+import type { Snowflake } from '../../types';
 import './SnowfallEffect.css';
 
-interface Snowflake {
-  x: number;
-  y: number;
-  radius: number;
-  speed: number;
-  wind: number;
-  opacity: number;
-  rotation: number;
-  rotationSpeed: number;
-}
-
-// 用户提供的精美蓝色雪花SVG（基于1024x1024画布）
 const SNOWFLAKE_SVG = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
 <g fill-opacity="0.5">
@@ -58,7 +47,7 @@ const SNOWFLAKE_SVG = `<?xml version="1.0" encoding="UTF-8"?>
 <path d="M501.245205 801.247717l90.639609 68.140504 35.746244-11.997875-1.855342-19.740832-104.158863-47.966758-20.371648 11.564961z" fill="#7CC0F2" p-id="9476"></path>
 <path d="M501.245205 801.247717l90.639609 68.140504 10.748611-23.562836-86.867082-52.815384-14.521138 8.237716z" fill="#AEDAFD" p-id="9477"></path>
 <path d="M602.633425 845.825385l-10.748611 23.562836 35.746244-11.997875-1.855342-19.740832-23.142291 8.175871z" fill="#89CEF4" p-id="9478"></path>
-<path d="M532.29125 952.000387m-14.842731 0l-9.895154 0q-14.842731 0-14.842731-14.842731l0-329.013867q0-14.842731 14.842731-14.842731l9.895154 0q14.842731 0 14.842731 14.842731l0 329.013867q0 14.842731-14.842731 14.842731Z" fill="#B6DFFC" p-id="9479"></path>
+<path d="M532.29125 952.000387m-14.842731 0l-9.895154 0q-14.842731 0-14.842731-14.842731l0-329.013867q0-14.842731 14.842731-14.842731l9.895154 0q14.842731 0 14.842731 14.842731l0 329.013867q0-14.842731 14.842731-14.842731Z" fill="#B6DFFC" p-id="9479"></path>
 <path d="M415.81292 932.395613s59.977001-22.758854 69.476349-30.242064c6.951346-5.479441 17.551529-67.682853 27.087984-67.682853 11.614437 0 18.24419 59.890419 25.690293 67.682853 7.01319 7.334783 69.266077 31.478958 69.266077 31.478958s-60.125429 20.792192-64.739044 27.434314c-7.421365 10.538339-30.217326 62.933179-30.217326 62.933179s-23.50099-55.660241-30.922356-62.834227c-7.594531-7.433734-65.641977-28.77016-65.641977-28.77016z" fill="#B6DFFC" p-id="9480"></path>
 <path d="M422.207663 546.781466l-133.844325 18.00918-28.510412-32.060299 14.199545-18.875006 134.858579 9.895154 13.296613 23.030971z" fill="#AEDAFD" p-id="9481"></path>
 <path d="M422.207663 546.781466l-133.844325 18.00918 3.896217-29.747306 120.473498-4.68783 9.47461 16.425956z" fill="#7CC0F2" p-id="9482"></path>
@@ -98,7 +87,6 @@ export function SnowfallEffect() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 设置 canvas 尺寸
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -107,7 +95,6 @@ export function SnowfallEffect() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // 创建雪花图片
     const createSnowflakeImage = (): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
@@ -116,34 +103,28 @@ export function SnowfallEffect() {
       });
     };
 
-    // 预加载雪花图片
     createSnowflakeImage().then((img) => {
       snowflakeImageRef.current = img;
     });
 
-    // 初始化雪花
     const initSnowflakes = () => {
       const snowflakes: Snowflake[] = [];
-      const count = 60; // 雪花数量
+      const count = 60;
 
       for (let i = 0; i < count; i++) {
-        // 三种不同大小的雪花
         const sizeType = Math.random();
         let radius: number;
         let speed: number;
 
         if (sizeType < 0.25) {
-          // 大雪花（调整为原来的一半）
-          radius = Math.random() * 7.5 + 10; // 10-17.5px
-          speed = Math.random() * 0.4 + 0.3; // 0.3-0.7
+          radius = Math.random() * 7.5 + 10;
+          speed = Math.random() * 0.4 + 0.3;
         } else if (sizeType < 0.65) {
-          // 中雪花（调整为原来的一半）
-          radius = Math.random() * 4 + 6; // 6-10px
-          speed = Math.random() * 0.6 + 0.5; // 0.5-1.1
+          radius = Math.random() * 4 + 6;
+          speed = Math.random() * 0.6 + 0.5;
         } else {
-          // 小雪花（调整为原来的一半）
-          radius = Math.random() * 2.5 + 3; // 3-5.5px
-          speed = Math.random() * 0.8 + 0.8; // 0.8-1.6
+          radius = Math.random() * 2.5 + 3;
+          speed = Math.random() * 0.8 + 0.8;
         }
 
         snowflakes.push({
@@ -151,10 +132,10 @@ export function SnowfallEffect() {
           y: Math.random() * canvas.height,
           radius,
           speed,
-          wind: Math.random() * 0.6 - 0.3, // 风向偏移
-          opacity: Math.random() * 0.3 + 0.5, // 透明度 0.5-0.8
-          rotation: Math.random() * Math.PI * 2, // 初始旋转角度
-          rotationSpeed: (Math.random() - 0.5) * 0.02, // 旋转速度
+          wind: Math.random() * 0.6 - 0.3,
+          opacity: Math.random() * 0.3 + 0.5,
+          rotation: Math.random() * Math.PI * 2,
+          rotationSpeed: (Math.random() - 0.5) * 0.02,
         });
       }
 
@@ -163,7 +144,6 @@ export function SnowfallEffect() {
 
     snowflakesRef.current = initSnowflakes();
 
-    // 绘制雪花
     const drawSnowflake = (snowflake: Snowflake) => {
       const { x, y, radius, opacity, rotation } = snowflake;
       const img = snowflakeImageRef.current;
@@ -175,26 +155,22 @@ export function SnowfallEffect() {
       ctx.rotate(rotation);
       ctx.globalAlpha = opacity;
 
-      // 绘制雪花图片
       const size = radius * 2;
       ctx.drawImage(img, -size / 2, -size / 2, size, size);
 
       ctx.restore();
     };
 
-    // 更新雪花位置
     const updateSnowflake = (snowflake: Snowflake) => {
       snowflake.y += snowflake.speed;
       snowflake.x += snowflake.wind;
-      snowflake.rotation += snowflake.rotationSpeed; // 旋转
+      snowflake.rotation += snowflake.rotationSpeed;
 
-      // 如果雪花飘出底部，从顶部重新开始
       if (snowflake.y > canvas.height + 40) {
         snowflake.y = -40;
         snowflake.x = Math.random() * canvas.width;
       }
 
-      // 如果雪花飘出左右边界，从另一侧进入
       if (snowflake.x > canvas.width + 40) {
         snowflake.x = -40;
       } else if (snowflake.x < -40) {
@@ -202,7 +178,6 @@ export function SnowfallEffect() {
       }
     };
 
-    // 动画循环
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -216,7 +191,6 @@ export function SnowfallEffect() {
 
     animate();
 
-    // 清理
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       if (animationRef.current) {

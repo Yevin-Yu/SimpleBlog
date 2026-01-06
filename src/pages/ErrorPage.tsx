@@ -18,10 +18,7 @@ export function ErrorPage({
 }: ErrorPageProps) {
   const navigate = useNavigate();
   const siteUrl = useSiteUrl();
-
   const seoData = generateErrorSEOData(statusCode, siteUrl);
-
-  const handleGoHome = () => navigate(ROUTES.HOME);
 
   return (
     <>
@@ -41,7 +38,7 @@ export function ErrorPage({
           <div className="error-code">{statusCode}</div>
           <h1 className="error-title">{title}</h1>
           <p className="error-message">{message}</p>
-          <button className="error-home-button" onClick={handleGoHome}>
+          <button className="error-home-button" onClick={() => navigate(ROUTES.HOME)}>
             返回首页
           </button>
         </div>

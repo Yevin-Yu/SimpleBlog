@@ -1,12 +1,12 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getBlogList, getBlogContent } from '../utils/blog.service';
 import { groupBlogsByCategory } from '../utils/blog.utils';
 import { logger } from '../utils/logger';
-import { ROUTES } from '../constants/routes';
-import { PERFORMANCE_CONSTANTS } from '../constants/performance';
-import { BLOG_CONFIG } from '../config';
-import type { BlogCategory, SelectedBlog, BlogItem } from '../types';
+import { ROUTES } from '../config';
+import type { BlogCategory, SelectedBlog } from '../types';
+
+const MIN_LOADING_TIME = 500;
 
 interface UseBlogTreeReturn {
   categories: BlogCategory[];
@@ -30,7 +30,32 @@ export function useBlogTree(): UseBlogTreeReturn {
   const selectedBlogRef = useRef<SelectedBlog | null>(null);
   const categoriesInitializedRef = useRef(false);
 
-  const loadBlogs = useCallback(async () => {
+  const toggleCategoryByPath = useCallback(
+    (categories: BlogCategory[], path: string, parentPath = ''): BlogCategory[] => {
+      return categories.map((cat) => {
+        const currentPath = parentPath ? `${parentPath}/${cat.name}` : cat.name;
+
+        if (currentPath === path) {
+          return { ...cat, expanded: !cat.expanded };
+        }
+
+        if (cat.children?.length) {
+          const nextPath = `${currentPath}/`;
+          if (path.startsWith(nextPath) || path === currentPath) {
+            return {
+              ...cat,
+              children: toggleCategoryByPath(cat.children, path, currentPath),
+            };
+          }
+        }
+
+        return cat;
+      });
+    },
+    []
+  );
+
+  const loadBlogs = async () => {
     try {
       const blogList = await getBlogList();
       const categories = groupBlogsByCategory(blogList);
@@ -41,9 +66,9 @@ export function useBlogTree(): UseBlogTreeReturn {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const loadBlogContent = useCallback(async (blogId: string) => {
+  const loadBlogContent = async (blogId: string) => {
     if (loadingRef.current) return;
 
     loadingRef.current = true;
@@ -76,7 +101,7 @@ export function useBlogTree(): UseBlogTreeReturn {
       }
 
       const elapsedTime = Date.now() - startTime;
-      const remainingTime = Math.max(0, PERFORMANCE_CONSTANTS.MIN_LOADING_TIME - elapsedTime);
+      const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
 
       await new Promise((resolve) => setTimeout(resolve, remainingTime));
 
@@ -91,63 +116,25 @@ export function useBlogTree(): UseBlogTreeReturn {
       loadingRef.current = false;
       setSelectedBlog(null);
     }
-  }, []);
-
-  const toggleCategoryByPath = useCallback(
-    (categories: BlogCategory[], path: string, parentPath = ''): BlogCategory[] => {
-      return categories.map((cat) => {
-        const currentPath = parentPath ? `${parentPath}/${cat.name}` : cat.name;
-
-        if (currentPath === path) {
-          return { ...cat, expanded: !cat.expanded };
-        }
-
-        if (cat.children?.length) {
-          const nextPath = `${currentPath}/`;
-          if (path.startsWith(nextPath) || path === currentPath) {
-            return {
-              ...cat,
-              children: toggleCategoryByPath(cat.children, path, currentPath),
-            };
-          }
-        }
-
-        return cat;
-      });
-    },
-    []
-  );
-
-  const toggleCategory = useCallback(
-    (path: string) => {
-      setCategories((prev) => toggleCategoryByPath(prev, path));
-    },
-    [toggleCategoryByPath]
-  );
-
-  const handleBlogClick = useCallback(
-    (blogId: string) => {
-      if (selectedBlogRef.current?.id === blogId) return;
-      navigate(ROUTES.BLOG_DETAIL(blogId));
-      loadBlogContent(blogId);
-    },
-    [navigate, loadBlogContent]
-  );
+  };
 
   useEffect(() => {
     loadBlogs();
-  }, [loadBlogs]);
+  }, []);
 
   useEffect(() => {
     if (id) {
       setError(null);
       loadBlogContent(id);
     }
-  }, [id, loadBlogContent]);
+  }, [id]);
 
   useEffect(() => {
     if (!id && categoriesInitializedRef.current && categories.length > 0) {
-      const findBlogById = (cats: typeof categories, targetId: string): BlogItem | null => {
+      const findBlogById = (
+        cats: typeof categories,
+        targetId: string
+      ): (typeof categories)[0]['blogs'][0] | null => {
         for (const cat of cats) {
           const blog = cat.blogs.find((b) => b.id === targetId);
           if (blog) return blog;
@@ -159,7 +146,8 @@ export function useBlogTree(): UseBlogTreeReturn {
         return null;
       };
 
-      const defaultBlog = findBlogById(categories, BLOG_CONFIG.defaultBlogId);
+      const defaultBlogId = '9byt3r60';
+      const defaultBlog = findBlogById(categories, defaultBlogId);
       const targetBlog = defaultBlog || categories[0]?.blogs[0];
       if (targetBlog) {
         navigate(ROUTES.BLOG_DETAIL(targetBlog.id), { replace: true });
@@ -176,9 +164,15 @@ export function useBlogTree(): UseBlogTreeReturn {
       loading,
       contentLoading,
       error,
-      toggleCategory,
-      handleBlogClick,
+      toggleCategory: (path: string) => {
+        setCategories((prev) => toggleCategoryByPath(prev, path));
+      },
+      handleBlogClick: (blogId: string) => {
+        if (selectedBlogRef.current?.id === blogId) return;
+        navigate(ROUTES.BLOG_DETAIL(blogId));
+        loadBlogContent(blogId);
+      },
     }),
-    [categories, selectedBlog, loading, contentLoading, error, toggleCategory, handleBlogClick]
+    [categories, selectedBlog, loading, contentLoading, error, navigate, toggleCategoryByPath]
   );
 }

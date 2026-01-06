@@ -21,30 +21,16 @@ export function FloatingActionButton({
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isListDrawerOpen, setIsListDrawerOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleNavigateToHome = () => {
-    navigate(ROUTES.HOME);
-    setIsOpen(false);
-  };
-
-  const handleOpenSearch = () => {
-    setIsSearchModalOpen(true);
-  };
-
-  const handleOpenListDrawer = () => {
-    setIsListDrawerOpen(true);
-  };
-
   return (
     <div className="fab-container">
       <div className={`fab-menu ${isOpen ? 'fab-menu-open' : ''}`}>
         <button
           className="fab-action-button fab-action-1"
           aria-label="首页"
-          onClick={handleNavigateToHome}
+          onClick={() => {
+            navigate(ROUTES.HOME);
+            setIsOpen(false);
+          }}
         >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -56,7 +42,7 @@ export function FloatingActionButton({
         <button
           className="fab-action-button fab-action-2"
           aria-label="列表"
-          onClick={handleOpenListDrawer}
+          onClick={() => setIsListDrawerOpen(true)}
         >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -72,7 +58,7 @@ export function FloatingActionButton({
         <button
           className="fab-action-button fab-action-3"
           aria-label="搜索"
-          onClick={handleOpenSearch}
+          onClick={() => setIsSearchModalOpen(true)}
         >
           <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -92,7 +78,7 @@ export function FloatingActionButton({
       </div>
       <button
         className="fab-main-button"
-        onClick={toggleMenu}
+        onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? '关闭菜单' : '打开菜单'}
         aria-expanded={isOpen}
       >

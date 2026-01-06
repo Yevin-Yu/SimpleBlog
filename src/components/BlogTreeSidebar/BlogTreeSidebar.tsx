@@ -1,9 +1,9 @@
-import { useMemo, useCallback, useState, memo } from 'react';
+import { useMemo, useState, memo } from 'react';
 import { LoadingLines } from '../LoadingLines/LoadingLines';
 import { BlogSearchModal } from '../BlogSearchModal/BlogSearchModal';
 import { SearchIcon } from './icons';
-import { LAYOUT_CONSTANTS } from '../../constants/layout';
 import { useGlobalSearch } from '../../hooks/useGlobalSearch';
+import { calculateTotalCount } from '../../utils/blog.utils';
 import type { BlogCategory } from '../../types';
 import './BlogTreeSidebar.css';
 
@@ -25,13 +25,9 @@ interface CategoryItemProps {
   path?: string;
 }
 
-const calculateTotalCount = (category: BlogCategory): number => {
-  let count = category.blogs.length;
-  if (category.children) {
-    count += category.children.reduce((sum, child) => sum + calculateTotalCount(child), 0);
-  }
-  return count;
-};
+const INDENT_BASE = 16;
+const INDENT_STEP = 16;
+const INDENT_ITEM_BASE = 32;
 
 function CategoryItem({
   category,
@@ -48,20 +44,14 @@ function CategoryItem({
 
   const totalCount = useMemo(() => calculateTotalCount(category), [category]);
 
-  const handleToggle = useCallback(() => {
-    onToggleCategory(currentPath);
-  }, [onToggleCategory, currentPath]);
-
-  const { INDENT } = LAYOUT_CONSTANTS;
-
   return (
     <div className={`blog-tree-category blog-tree-category-level-${level}`}>
       {shouldShowToggle && (
         <button
           className="blog-tree-category-header"
-          onClick={handleToggle}
+          onClick={() => onToggleCategory(currentPath)}
           aria-expanded={isExpanded}
-          style={{ paddingLeft: `${INDENT.BASE + level * INDENT.STEP}px` }}
+          style={{ paddingLeft: INDENT_BASE + level * INDENT_STEP }}
         >
           <span className="blog-tree-category-icon">▶</span>
           <span className="blog-tree-category-name">{category.name}</span>
@@ -75,7 +65,7 @@ function CategoryItem({
               key={blog.id}
               className={`blog-tree-item ${selectedBlogId === blog.id ? 'active' : ''}`}
               onClick={() => onBlogClick(blog.id)}
-              style={{ paddingLeft: `${INDENT.ITEM_BASE + level * INDENT.STEP}px` }}
+              style={{ paddingLeft: INDENT_ITEM_BASE + level * INDENT_STEP }}
             >
               <span className="blog-tree-item-title">{blog.title}</span>
             </div>
@@ -122,11 +112,7 @@ export function BlogTreeSidebar({
 }: BlogTreeSidebarProps) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
-  const handleOpenSearch = useCallback(() => {
-    setIsSearchModalOpen(true);
-  }, []);
-
-  useGlobalSearch(handleOpenSearch);
+  useGlobalSearch(() => setIsSearchModalOpen(true));
 
   return (
     <>

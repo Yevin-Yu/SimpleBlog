@@ -1,6 +1,3 @@
-/**
- * 站点配置
- */
 export const SITE_CONFIG = {
   name: '耶温博客',
   description: '一个简约的个人博客网站，分享技术思考、生活感悟和知识总结',
@@ -8,23 +5,14 @@ export const SITE_CONFIG = {
   locale: 'zh_CN',
 } as const;
 
-/**
- * 基础路径
- */
 export const BASE_PATH = '/';
 
-/**
- * 博客配置
- */
 export const BLOG_CONFIG = {
   defaultCategory: '未分类',
   sidebarWidth: 240,
-  defaultBlogId: '9byt3r60', // 关于我
+  defaultBlogId: '9byt3r60',
 } as const;
 
-/**
- * SEO 配置
- */
 export const SEO_CONFIG = {
   defaultTitle: '耶温博客 - 记录思考，分享知识',
   defaultDescription: '一个现代化的个人博客网站，分享技术思考、生活感悟和知识总结。',
@@ -34,4 +22,9 @@ export const SEO_CONFIG = {
   themeColor: '#fafafa',
 } as const;
 
-export { ROUTES } from '../constants/routes';
+export const ROUTES = {
+  HOME: '/',
+  BLOG: '/blog',
+  BLOG_DETAIL: (id: string) => `/${id}`,
+  ERROR: '/error',
+} as const;

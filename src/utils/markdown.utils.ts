@@ -1,14 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import { createHighlighter, type Highlighter } from 'shiki';
 import DOMPurify from 'dompurify';
-import { getAllowedTags, getAllowedAttr } from '../constants/security';
-
-export interface TOCItem {
-  id: string;
-  text: string;
-  level: number;
-  children?: TOCItem[];
-}
+import type { TOCItem } from '../types';
 
 let highlighterInstance: Highlighter | null = null;
 
@@ -36,14 +29,60 @@ const SUPPORTED_LANGUAGES = [
 
 const THEME = 'github-light-default';
 
-function slugify(text: string): string {
+const slugify = (text: string): string => {
   return text
     .toLowerCase()
     .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
-}
+};
+
+const MARKDOWN_ALLOWED_TAGS = [
+  'p',
+  'br',
+  'strong',
+  'em',
+  'code',
+  'pre',
+  'blockquote',
+  'ul',
+  'ol',
+  'li',
+  'a',
+  'img',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'table',
+  'thead',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+  'del',
+  's',
+  'hr',
+  'div',
+  'span',
+  'style',
+] as const;
+
+const MARKDOWN_ALLOWED_ATTR = [
+  'href',
+  'src',
+  'alt',
+  'class',
+  'title',
+  'target',
+  'rel',
+  'id',
+  'style',
+  'tabindex',
+] as const;
 
 export async function initHighlighter() {
   if (!highlighterInstance) {
@@ -80,18 +119,12 @@ export function extractTOC(content: string): TOCItem[] {
       const text = tokens[tokens.indexOf(token) + 1].content || '';
       const id = slugify(text);
 
-      const item: TOCItem = {
-        id,
-        text,
-        level,
-      };
+      const item: TOCItem = { id, text, level };
 
       if (level > items[items.length - 1]?.level) {
         if (items.length > 0) {
           const parent = items[items.length - 1];
-          if (!parent.children) {
-            parent.children = [];
-          }
+          if (!parent.children) parent.children = [];
           parent.children.push(item);
         } else {
           items.push(item);
@@ -112,8 +145,8 @@ export function renderMarkdown(content: string): string {
 export function renderMarkdownAndSanitize(content: string): string {
   const rawHtml = renderMarkdown(content);
   return DOMPurify.sanitize(rawHtml, {
-    ALLOWED_TAGS: [...getAllowedTags(), 'style'],
-    ALLOWED_ATTR: [...getAllowedAttr(), 'tabindex', 'id'],
+    ALLOWED_TAGS: [...MARKDOWN_ALLOWED_TAGS, 'style'],
+    ALLOWED_ATTR: [...MARKDOWN_ALLOWED_ATTR, 'tabindex', 'id'],
     ALLOW_DATA_ATTR: true,
   });
 }
@@ -135,10 +168,7 @@ const highlightCodeElement = async (
   const lang = extractLanguage(codeElement);
 
   try {
-    const html = highlighter.codeToHtml(code, {
-      lang,
-      theme: THEME,
-    });
+    const html = highlighter.codeToHtml(code, { lang, theme: THEME });
 
     const preElement = codeElement.parentElement as HTMLElement;
     if (!preElement) return;

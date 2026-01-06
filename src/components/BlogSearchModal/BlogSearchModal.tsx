@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { getAllBlogsForSearch } from '../../utils/blog.service';
 import type { BlogSearchItem } from '../../types';
 import { logger } from '../../utils/logger';
-import { PERFORMANCE_CONSTANTS } from '../../constants/performance';
 import './BlogSearchModal.css';
 
 interface BlogSearchModalProps {
@@ -46,7 +45,7 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
       loadBlogs();
       const timer = setTimeout(() => {
         inputRef.current?.focus();
-      }, PERFORMANCE_CONSTANTS.SEARCH_FOCUS_DELAY);
+      }, 100);
       return () => clearTimeout(timer);
     } else {
       setSearchQuery('');
@@ -102,12 +101,10 @@ export function BlogSearchModal({ isOpen, onClose, onBlogClick }: BlogSearchModa
             className="blog-search-modal-input"
             placeholder="输入关键词搜索标题、简介或标签..."
             value={searchQuery}
-            onChange={(e) =>
-              setSearchQuery(e.target.value.slice(0, PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH))
-            }
+            onChange={(e) => setSearchQuery(e.target.value.slice(0, 100))}
             onKeyDown={handleKeyDown}
             autoFocus
-            maxLength={PERFORMANCE_CONSTANTS.SEARCH_MAX_LENGTH}
+            maxLength={100}
           />
         </div>
         <div className="blog-search-modal-results">
